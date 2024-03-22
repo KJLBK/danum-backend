@@ -19,7 +19,7 @@ public class MemberController {
     @PostMapping("/member/join")
     public ResponseEntity<?> register(@RequestBody MemberDTO member){
         memberService.join(member);
-        return ResponseEntity.ok(memberService.join(member));
+        return ResponseEntity.ok(member);
     }
 
 }
