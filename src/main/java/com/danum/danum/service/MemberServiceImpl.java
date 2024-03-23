@@ -39,7 +39,16 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public Optional<MemberDTO> delete(MemberDTO member) {
-        return Optional.empty();
+        memberRepository.delete(member);
+        leaveMember(member.getEmail());
+        return Optional.of(member);
+    }
+
+    private void leaveMember(String email){
+        memberRepository.findByEmail(email)
+                .ifPresent(m -> {
+                    throw new MemberException(ErrorCode.LEAVE_EXEPTION);
+                });
     }
 
     @Override
