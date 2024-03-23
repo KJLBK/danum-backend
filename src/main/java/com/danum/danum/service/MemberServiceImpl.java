@@ -61,8 +61,13 @@ public class MemberServiceImpl implements MemberService{
         Optional<MemberDTO> loginCheck = memberRepository.findByEmail(member.getEmail());
         if(loginCheck.isPresent()){
             MemberDTO user = loginCheck.get();
-            if(user.getPassword().equals(member.getPassword())) return Optional.of(member.getEmail());
+            if(user.getPassword().equals(member.getPassword())){
+                return Optional.of(member.getEmail());
+            }else{
+                throw new MemberException(ErrorCode.MISTAKE_PASSWORD);
+            }
+        }else{
+            throw new MemberException(ErrorCode.AWITHOUT_MEMBER);
         }
-        return Optional.empty();
     }
 }
