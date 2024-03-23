@@ -14,6 +14,6 @@ public interface MemberService {
 
     public Optional<MemberDTO> update(MemberDTO member);
 
-    public Optional<MemberDTO> login(MemberDTO member);
+    public Optional<String> login(MemberDTO member);
 
 }

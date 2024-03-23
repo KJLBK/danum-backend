@@ -57,7 +57,12 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public Optional<MemberDTO> login(MemberDTO member) {
+    public Optional<String> login(MemberDTO member) {
+        Optional<MemberDTO> loginCheck = memberRepository.findByEmail(member.getEmail());
+        if(loginCheck.isPresent()){
+            MemberDTO user = loginCheck.get();
+            if(user.getPassword().equals(member.getPassword())) return Optional.of(member.getEmail());
+        }
         return Optional.empty();
     }
 }
