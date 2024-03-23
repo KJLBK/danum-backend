@@ -8,7 +8,8 @@ public enum ErrorCode {
     
     PASSWORD_SHORT_EXCEPTION(HttpStatus.BAD_REQUEST, "M001", "비밀번호가 8자보다 적습니다."),
     PASSWORD_LONG_EXCEPTION(HttpStatus.BAD_REQUEST, "M002", "비밀번호가 16자를 초과합니다."),
-    DUPLICATION_EXEPTION(HttpStatus.NOT_FOUND, "M003", "이미 중복되는 회원입니다.");
+    DUPLICATION_EXEPTION(HttpStatus.NOT_FOUND, "M003", "이미 중복되는 회원입니다."),
+    LEAVE_EXEPTION(HttpStatus.BAD_REQUEST, "M004", "회원 탈퇴에 실패하셨습니다.");
 
     private final HttpStatus status;
 
