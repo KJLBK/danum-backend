@@ -52,8 +52,17 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public Optional<MemberDTO> update(MemberDTO member) {
-        return Optional.empty();
+    public Optional<String> update(MemberDTO member) {
+        Optional<MemberDTO> updateCheck = memberRepository.findByEmail(member.getEmail());
+        if(updateCheck.isPresent()){
+            MemberDTO user = updateCheck.get();
+            passwordLimit(member.getPassword());
+            user.setPassword(member.getPassword());
+            user.setPhone(member.getPhone());
+            return Optional.of(member.getEmail());
+        }else{
+            throw new MemberException(ErrorCode.AWITHOUT_MEMBER);
+        }
     }
 
     @Override
