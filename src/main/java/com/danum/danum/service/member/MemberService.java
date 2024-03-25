@@ -1,4 +1,4 @@
-package com.danum.danum.service;
+package com.danum.danum.service.member;
 
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.domain.member.RegisterDto;
