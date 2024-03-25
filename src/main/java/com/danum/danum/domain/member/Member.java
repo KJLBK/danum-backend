@@ -1,13 +1,15 @@
-package com.danum.danum.domain;
+package com.danum.danum.domain.member;
 
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.time.LocalDateTime;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
+@Builder
 @Table(name = "members")
 public class Member {
 
@@ -33,6 +35,9 @@ public class Member {
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'USER'")
     @Column(name = "member_role")
-    private String role;
+    private Role role;
+
+    @Column(name = "join")
+    private LocalDateTime joinDateTime;
 
 }
