@@ -37,7 +37,7 @@ public class Member {
     @Column(name = "member_role")
     private Role role;
 
-    @Column(name = "join")
+    @Column(name = "member_join")
     private LocalDateTime joinDateTime;
 
 }
