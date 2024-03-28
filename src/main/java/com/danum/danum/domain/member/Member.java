@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 @Table(name = "members")
 public class Member {
 
@@ -39,5 +40,17 @@ public class Member {
 
     @Column(name = "member_join")
     private LocalDateTime joinDateTime;
+
+    public void updateUserPassword(String password){
+        this.password = password;
+    }
+
+    public void updateUserPhone(String phone){
+        this.phone = phone;
+    }
+
+    public void updateUserName(String username){
+        this.name = username;
+    }
 
 }
