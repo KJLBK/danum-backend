@@ -3,6 +3,7 @@ package com.danum.danum.service.member;
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.domain.member.RegisterDto;
 import com.danum.danum.domain.member.RegisterMapper;
+import com.danum.danum.domain.member.UpdateDto;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.MemberException;
 import com.danum.danum.repository.MemberRepository;
@@ -22,6 +23,7 @@ public class MemberServiceImpl implements MemberService{
 
         validateId(registerDto.getEmail());
         validatePassword(registerDto.getPassword());
+        validateName(registerDto.getName());
 
         Member member = RegisterMapper.toEntity(registerDto);
 
@@ -34,7 +36,7 @@ public class MemberServiceImpl implements MemberService{
         Optional<Member> member = memberRepository.findByEmail(email);
 
         if (member.isPresent()) {
-            throw new MemberException(ErrorCode.DUPLICATION_EXEPTION);
+            throw new MemberException(ErrorCode.DUPLICATION_EXCEPTION);
         }
 
     }
@@ -53,18 +55,40 @@ public class MemberServiceImpl implements MemberService{
 
     }
 
+    private void validateName(String name){
+
+        Optional<Member> member = memberRepository.findByName(name);
+
+        if(member.isPresent()){
+            throw new MemberException(ErrorCode.NICKNAME_EXCEPTION);
+        }
+
+    }
+
     @Override
     public Optional<Member> delete(Member member) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<String> update(Member member) {
-        return Optional.empty();
+    public Member update(UpdateDto updateDto) {
+
+        validatePassword(updateDto.getPassword());
+        validateName(updateDto.getName());
+
+        Member member = memberRepository.findByEmail(updateDto.getEmail()).get();
+
+        member.updateUserPassword(updateDto.getPassword());
+        member.updateUserPhone(updateDto.getPhone());
+        member.updateUserName(updateDto.getName());
+
+        return memberRepository.save(member);
+
     }
 
     @Override
     public Optional<String> login(Member member) {
         return Optional.empty();
     }
+
 }
