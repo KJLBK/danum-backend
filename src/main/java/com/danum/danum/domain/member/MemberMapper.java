@@ -1,12 +1,11 @@
 package com.danum.danum.domain.member;
 
-import lombok.Builder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 
-public class RegisterMapper {
+public class MemberMapper {
 
     public static Member toEntity(RegisterDto registerDto){
 
