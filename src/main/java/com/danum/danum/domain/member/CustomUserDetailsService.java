@@ -1,25 +1,32 @@
 package com.danum.danum.domain.member;
 
+import com.danum.danum.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.util.Optional;
 
 
 @Service
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
+
+    private final MemberRepository memberRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if ("admin".equals(username)) {
-            return new CustomUserDetails(username, "password", Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN")));
-        } else if ("user".equals(username)) {
-            return new CustomUserDetails(username, "password", Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+        Optional<Member> optionalMember = memberRepository.findById(username);
+
+        if (optionalMember.isEmpty()) {
+            throw new IllegalArgumentException("해당 회원 정보가 존재하지 않습니다.");
         }
-        throw new UsernameNotFoundException("User not found with username: " + username);
+
+        Member member = optionalMember.get();
+
+        return member.mappingUserDetails();
     }
 
     // 모든 사용자 정보를 출력하는 메서드
