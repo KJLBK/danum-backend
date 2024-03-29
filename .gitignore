@@ -26,6 +26,9 @@ out/
 *.properties
 !**/src/main/**/out/
 !**/src/test/**/out/
+DiscordServiceImpl.java
+application.properties
+
 
 ### NetBeans ###
 /nbproject/private/
