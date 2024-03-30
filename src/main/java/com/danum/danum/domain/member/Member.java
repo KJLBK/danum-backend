@@ -53,4 +53,8 @@ public class Member {
         this.name = username;
     }
 
+    public String getPassword(){
+        return this.password;
+    }
+
 }
