@@ -37,17 +37,23 @@ jobs:
 
     - name: Build with Gradle
       run: ./gradlew build
-      
-    - name: executing remote ssh commands using ssh key
-      uses: appleboy/ssh-action@v0.1.10
+    
+name: remote ssh command
+on: [push]
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: executing remote ssh commands using password
+      uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.PRIVATE_KEY }}
+        password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
-        script: |
-          whoami
-          ls -al
+        script: whoami
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
     # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
