@@ -39,7 +39,7 @@ jobs:
       run: ./gradlew build
     
     - name: executing remote ssh commands using ssh key
-      uses: appleboy/ssh-action@v0.1.10
+      uses: appleboy/ssh-action@v0.1.4
       with:
         key: ${{ secrets.PRIVATE_KEY }}
         host: ${{ secrets.HOST }}
