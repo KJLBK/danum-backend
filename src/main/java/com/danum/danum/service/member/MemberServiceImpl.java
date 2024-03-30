@@ -1,22 +1,24 @@
 package com.danum.danum.service.member;
 
-import com.danum.danum.domain.member.Member;
-import com.danum.danum.domain.member.RegisterDto;
-import com.danum.danum.domain.member.RegisterMapper;
-import com.danum.danum.domain.member.UpdateDto;
+import com.danum.danum.domain.member.*;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.MemberException;
 import com.danum.danum.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService{
 
     @Autowired
     MemberRepository memberRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public Member join(RegisterDto registerDto) {
@@ -24,6 +26,8 @@ public class MemberServiceImpl implements MemberService{
         validateId(registerDto.getEmail());
         validatePassword(registerDto.getPassword());
         validateName(registerDto.getName());
+
+        registerDto.settingPassword(passwordEncoder.encode(registerDto.getPassword()));
 
         Member member = RegisterMapper.toEntity(registerDto);
 
@@ -77,7 +81,7 @@ public class MemberServiceImpl implements MemberService{
         validateName(updateDto.getName());
 
         Member member = memberRepository.findByEmail(updateDto.getEmail()).get();
-
+        // 수정 필요
         member.updateUserPassword(updateDto.getPassword());
         member.updateUserPhone(updateDto.getPhone());
         member.updateUserName(updateDto.getName());
@@ -87,8 +91,21 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public Optional<String> login(Member member) {
-        return Optional.empty();
+    public Member login(LoginDto loginDto) {
+
+        Optional<Member> memberOptional = memberRepository.findByEmail(loginDto.getEmail());
+
+        if (memberOptional.isPresent()) {
+
+            Member member = memberOptional.get();
+
+            if (passwordEncoder.matches(loginDto.getPassword(), member.getPassword())) {
+                return member;
+            } else {
+                throw new MemberException(ErrorCode.PASSWORD_NOTMATCH);
+            }
+        }
+        throw new MemberException(ErrorCode.NULLID_EXCEPTION);
     }
 
 }
