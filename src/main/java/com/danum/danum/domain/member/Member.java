@@ -3,8 +3,16 @@ package com.danum.danum.domain.member;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @NoArgsConstructor
@@ -53,8 +61,20 @@ public class Member {
         this.name = username;
     }
 
-    public String getPassword(){
+    public String getPassword() {
         return this.password;
+    }
+
+    public UserDetails mappingUserDetails() {
+        Collection<? extends GrantedAuthority> auth = Stream.of(this.role.toString())
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+
+        return User.builder()
+                .username(this.email)
+                .password(this.password)
+                .authorities(auth)
+                .build();
     }
 
 }

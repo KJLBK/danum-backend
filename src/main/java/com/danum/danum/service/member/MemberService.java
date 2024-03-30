@@ -6,14 +6,12 @@ import com.danum.danum.domain.member.RegisterDto;
 import com.danum.danum.domain.member.UpdateDto;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 public interface MemberService {
 
     public Member join(RegisterDto registerDto);
 
-    public Optional<Member> delete(Member member);
+    public Member delete(String id);
 
     public Member update(UpdateDto updateDto);
 

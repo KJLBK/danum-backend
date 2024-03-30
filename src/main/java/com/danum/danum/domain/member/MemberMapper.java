@@ -2,7 +2,7 @@ package com.danum.danum.domain.member;
 
 import java.time.LocalDateTime;
 
-public class RegisterMapper {
+public class MemberMapper {
 
     public static Member toEntity(RegisterDto registerDto){
 

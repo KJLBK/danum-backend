@@ -5,7 +5,6 @@ import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.MemberException;
 import com.danum.danum.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,38 +14,32 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService{
 
-    @Autowired
-    MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public Member join(RegisterDto registerDto) {
-
         validateId(registerDto.getEmail());
         validatePassword(registerDto.getPassword());
         validateName(registerDto.getName());
 
         registerDto.settingPassword(passwordEncoder.encode(registerDto.getPassword()));
 
-        Member member = RegisterMapper.toEntity(registerDto);
+        Member member = MemberMapper.toEntity(registerDto);
 
         return memberRepository.save(member);
-
     }
 
     private void validateId(String email) {
-
-        Optional<Member> member = memberRepository.findByEmail(email);
+        Optional<Member> member = memberRepository.findById(email);
 
         if (member.isPresent()) {
             throw new MemberException(ErrorCode.DUPLICATION_EXCEPTION);
         }
-
     }
 
     private void validatePassword(String password) {
-
         int passwordLength = password.length();
 
         if (passwordLength < 8) {
@@ -56,32 +49,36 @@ public class MemberServiceImpl implements MemberService{
         if (passwordLength > 16) {
             throw new MemberException(ErrorCode.PASSWORD_LONG_EXCEPTION);
         }
-
     }
 
     private void validateName(String name){
-
         Optional<Member> member = memberRepository.findByName(name);
 
         if(member.isPresent()){
             throw new MemberException(ErrorCode.NICKNAME_EXCEPTION);
         }
-
     }
 
     @Override
-    public Optional<Member> delete(Member member) {
-        return Optional.empty();
+    public Member delete(String id) {
+        Optional<Member> optionalMember = memberRepository.findById(id);
+        if (optionalMember.isEmpty()) {
+            throw new IllegalArgumentException("존재하지 않는 회원입니다.");
+        }
+
+        Member member = optionalMember.get();
+        memberRepository.delete(member);
+
+        return member;
     }
 
     @Override
     public Member update(UpdateDto updateDto) {
-
         validatePassword(updateDto.getPassword());
         validateName(updateDto.getName());
 
-        Member member = memberRepository.findByEmail(updateDto.getEmail()).get();
-        // 수정 필요
+        Member member = memberRepository.findById(updateDto.getEmail()).get();
+
         member.updateUserPassword(updateDto.getPassword());
         member.updateUserPhone(updateDto.getPhone());
         member.updateUserName(updateDto.getName());
@@ -93,7 +90,7 @@ public class MemberServiceImpl implements MemberService{
     @Override
     public Member login(LoginDto loginDto) {
 
-        Optional<Member> memberOptional = memberRepository.findByEmail(loginDto.getEmail());
+        Optional<Member> memberOptional = memberRepository.findById(loginDto.getEmail());
 
         if (memberOptional.isPresent()) {
 
