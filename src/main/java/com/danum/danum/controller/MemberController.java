@@ -1,6 +1,7 @@
 package com.danum.danum.controller;
 
 
+import com.danum.danum.domain.member.LoginDto;
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.domain.member.RegisterDto;
 import com.danum.danum.domain.member.UpdateDto;
@@ -32,6 +33,15 @@ public class MemberController {
         Member member = memberService.update(updateDto);
 
         return ResponseEntity.ok(member);
+    }
+
+    @PostMapping("/member/login")
+    public ResponseEntity<?> login(@RequestBody LoginDto loginDto){
+
+        Member member = memberService.login(loginDto);
+
+        return ResponseEntity.ok(member);
+
     }
 
 }

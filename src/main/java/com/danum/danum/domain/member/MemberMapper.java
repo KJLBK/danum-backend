@@ -1,15 +1,10 @@
 package com.danum.danum.domain.member;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import java.time.LocalDateTime;
 
 public class MemberMapper {
 
     public static Member toEntity(RegisterDto registerDto){
-
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
         return Member.builder()
                 .email(registerDto.getEmail())

@@ -61,6 +61,10 @@ public class Member {
         this.name = username;
     }
 
+    public String getPassword() {
+        return this.password;
+    }
+
     public UserDetails mappingUserDetails() {
         Collection<? extends GrantedAuthority> auth = Stream.of(this.role.toString())
                 .map(SimpleGrantedAuthority::new)

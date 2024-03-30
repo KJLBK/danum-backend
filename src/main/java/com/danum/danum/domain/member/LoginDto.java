@@ -7,18 +7,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterDto {
+public class LoginDto {
 
     private String email;
 
     private String password;
-
-    private String phone;
-
-    private String name;
-
-    public void settingPassword(String password){
-        this.password = password;
-    }
 
 }
