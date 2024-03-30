@@ -23,7 +23,7 @@ public class DiscordServiceImpl implements DiscordService {
                 .build()
                 .awaitReady();
         TextChannel channel = jda.getTextChannelById(CHANNEL_ID);
-        channel.sendMessage("우빈서버 실행").queue();
+        channel.sendMessage("우빈 서버").queue();
     }
 
 }
