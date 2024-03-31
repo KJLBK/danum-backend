@@ -10,8 +10,8 @@ public interface QuestionService {
 
     public Question created(QuestionNewDto newQuestionDto);
 
-    public Question stop(QuestionFindDto questionFindDto);
+    public void stop(QuestionFindDto questionFindDto);
 
-    public Question start(QuestionFindDto questionFindDto);
+    public void start(QuestionFindDto questionFindDto);
 
 }

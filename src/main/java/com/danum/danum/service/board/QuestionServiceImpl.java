@@ -28,26 +28,27 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Question stop(QuestionFindDto questionFindDto) {
+    public void stop(QuestionFindDto questionFindDto) {
         Optional<Question> check = questionRepository.findById(String.valueOf(questionFindDto.getId()));
 
-        if(check.isPresent()){
-            Question question = check.get();
-            question.checkState(false);
+        if(check.isEmpty()){
+            throw new MemberException(ErrorCode.NULLBOARD_EXCEPTION);
         }
-        throw new MemberException(ErrorCode.NULLBOARD_EXCEPTION);
+
+        Question question = check.get();
+        question.checkState(false);
     }
 
     @Override
-    public Question start(QuestionFindDto questionFindDto) {
+    public void start(QuestionFindDto questionFindDto) {
         Optional<Question> check = questionRepository.findById(String.valueOf(questionFindDto.getId()));
 
-        if(check.isPresent()){
-            Question question = check.get();
-            question.checkState(true);
+        if(check.isEmpty()){
+            throw new MemberException(ErrorCode.NULLBOARD_EXCEPTION);
         }
-        throw new MemberException(ErrorCode.NULLBOARD_EXCEPTION);
-    }
 
+        Question question = check.get();
+        question.checkState(true);
+    }
 
 }
