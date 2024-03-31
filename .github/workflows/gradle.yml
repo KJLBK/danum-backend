@@ -23,5 +23,6 @@ jobs:
           script: |
             cd danum-backend # 내가 Clone한 폴더 안으로 들어간다.
             git pull # 자동으로 pull해서 주기적 업데이트
-            .gradle build
+            chmod +x ./gradlew
+            ./gradle build
             
