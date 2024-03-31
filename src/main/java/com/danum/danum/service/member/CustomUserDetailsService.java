@@ -1,5 +1,6 @@
-package com.danum.danum.domain.member;
+package com.danum.danum.service.member;
 
+import com.danum.danum.domain.member.Member;
 import com.danum.danum.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

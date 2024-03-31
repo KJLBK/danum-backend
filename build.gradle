@@ -19,6 +19,11 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven { url 'https://repo.spring.io/milestone' }
+}
+
+ext {
+	set('springAiVersion', "0.8.1")
 }
 
 dependencies {
@@ -26,6 +31,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'net.dv8tion:JDA:5.0.0-beta.5'
+	implementation 'org.springframework.ai:spring-ai-openai-spring-boot-starter'
 
 	compileOnly 'org.projectlombok:lombok'
 
@@ -35,4 +41,10 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+	}
 }
