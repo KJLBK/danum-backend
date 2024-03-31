@@ -41,4 +41,8 @@ public class Question {
     @Column(name = "question_check")
     private boolean check;
 
+    public void checkState(boolean check){
+        this.check = check;
+    }
+
 }
