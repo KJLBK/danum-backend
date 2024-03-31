@@ -1,7 +1,10 @@
 package com.danum.danum.config;
 
+import com.danum.danum.service.member.CustomUserDetailsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -16,7 +19,10 @@ import java.util.List;
 
 @Configuration // 애플리케이션 컨텍스트의 구성을 포함한다는 걸 알려줌
 @EnableWebSecurity // 웹 보안 구성 클래스임을 알려줌
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -24,8 +30,16 @@ public class SecurityConfig {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain (HttpSecurity http) throws Exception {
-        return http.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+                .userDetailsService(customUserDetailsService)
+                .passwordEncoder(passwordEncoder());
+    }
+
+    @Bean
+    protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        return http
+                .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                 authorizationManagerRequestMatcherRegistry
                         .anyRequest().permitAll()
                 )
@@ -36,6 +50,7 @@ public class SecurityConfig {
                         .ignoringRequestMatchers("/ai-test")
                 )
                 .formLogin(AbstractHttpConfigurer::disable) //jwt를 사용하기 때문에 form login 비활성화
+                .userDetailsService(customUserDetailsService)
                 .build();
     }
 
