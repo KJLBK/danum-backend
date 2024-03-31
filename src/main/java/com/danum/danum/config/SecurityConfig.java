@@ -14,8 +14,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
-@Configuration // 애플리케이션 컨텍스트의 구성을 포함한다는 걸 알려줌
-@EnableWebSecurity // 웹 보안 구성 클래스임을 알려줌
+@Configuration
+@EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
@@ -34,6 +34,7 @@ public class SecurityConfig {
                         .ignoringRequestMatchers("/member/join")
                         .ignoringRequestMatchers("/member/update")
                         .ignoringRequestMatchers("/ai-test")
+                        .ignoringRequestMatchers("/board/NewQuestion")
                 )
                 .formLogin(AbstractHttpConfigurer::disable) //jwt를 사용하기 때문에 form login 비활성화
                 .build();
