@@ -41,11 +41,10 @@ jobs:
     - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@v0.1.4
       with:
-        key: ${{ secrets.SECRET_KEY }}
         host: ${{ secrets.HOST }}
-        username: ${{ secrets.USER }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SECRET_KEY }}
         port: ${{ secrets.PORT }}
-        passphrase: ${{ secrets.PASSPHRASE }}
         script: |
           whoami
           ls -al
