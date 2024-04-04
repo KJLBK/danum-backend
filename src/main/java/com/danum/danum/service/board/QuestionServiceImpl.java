@@ -1,15 +1,13 @@
 package com.danum.danum.service.board;
 
-import com.danum.danum.domain.board.QuestionFindDto;
-import com.danum.danum.domain.board.QuestionNewDto;
-import com.danum.danum.domain.board.Question;
-import com.danum.danum.domain.board.QuestionMapper;
+import com.danum.danum.domain.board.*;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.MemberException;
 import com.danum.danum.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -49,6 +47,11 @@ public class QuestionServiceImpl implements QuestionService {
 
         Question question = check.get();
         question.checkState(true);
+    }
+
+    @Override
+    public List<QuestionList> seauch() {
+        return questionRepository.findAllBy();
     }
 
 }
