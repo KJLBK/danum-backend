@@ -34,24 +34,17 @@ public class QuestionServiceImpl implements QuestionService {
         }
 
         Question question = check.get();
-        question.checkState(false);
-    }
-
-    @Override
-    public void solved(QuestionFindDto questionFindDto) {
-        Optional<Question> check = questionRepository.findById(String.valueOf(questionFindDto.getId()));
-
-        if(check.isEmpty()){
-            throw new MemberException(ErrorCode.NULLBOARD_EXCEPTION);
-        }
-
-        Question question = check.get();
         question.checkState(true);
     }
 
     @Override
     public List<Question> search() {
         return questionRepository.findAll();
+    }
+
+    @Override
+    public Question like(QuestionFindDto questionFindDto) {
+        return null;
     }
 
 }

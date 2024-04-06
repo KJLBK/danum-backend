@@ -14,8 +14,8 @@ public interface QuestionService {
 
     public void reSolved(QuestionFindDto questionFindDto);
 
-    public void solved(QuestionFindDto questionFindDto);
-
     public List<Question> search();
+
+    public Question like(QuestionFindDto questionFindDto);
 
 }
