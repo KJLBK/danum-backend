@@ -26,7 +26,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public void stop(QuestionFindDto questionFindDto) {
+    public void reSolved(QuestionFindDto questionFindDto) {
         Optional<Question> check = questionRepository.findById(String.valueOf(questionFindDto.getId()));
 
         if(check.isEmpty()){
@@ -38,7 +38,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public void start(QuestionFindDto questionFindDto) {
+    public void solved(QuestionFindDto questionFindDto) {
         Optional<Question> check = questionRepository.findById(String.valueOf(questionFindDto.getId()));
 
         if(check.isEmpty()){
@@ -50,8 +50,8 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<QuestionList> seauch() {
-        return questionRepository.findAllBy();
+    public List<Question> search() {
+        return questionRepository.findAll();
     }
 
 }
