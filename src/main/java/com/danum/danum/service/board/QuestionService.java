@@ -12,7 +12,7 @@ public interface QuestionService {
 
     public Question created(QuestionNewDto newQuestionDto);
 
-    public void reSolved(QuestionFindDto questionFindDto);
+    public void resolved(QuestionFindDto questionFindDto);
 
     public List<Question> search();
 

@@ -26,7 +26,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public void reSolved(QuestionFindDto questionFindDto) {
+    public void resolved(QuestionFindDto questionFindDto) {
         Optional<Question> check = questionRepository.findById(String.valueOf(questionFindDto.getId()));
 
         if(check.isEmpty()){
@@ -34,7 +34,7 @@ public class QuestionServiceImpl implements QuestionService {
         }
 
         Question question = check.get();
-        question.checkState(true);
+        question.checkState();
     }
 
     @Override
