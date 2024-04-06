@@ -13,7 +13,7 @@ public class QuestionMapper {
                 .created_at(LocalDateTime.now())
                 .like(0)
                 .count(0)
-                .check(true)
+                .check(false)
                 .build();
 
     }
