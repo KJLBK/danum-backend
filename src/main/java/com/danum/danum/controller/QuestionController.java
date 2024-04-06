@@ -20,13 +20,12 @@ public class QuestionController {
 
     @PostMapping("/board/newQuestion")
     public ResponseEntity<?> created(@RequestBody QuestionNewDto questionNewDto){
-        Question question = questionService.created(questionNewDto);
-        return ResponseEntity.ok(question);
+        return ResponseEntity.ok(questionService.created(questionNewDto));
     }
 
     @GetMapping("/board/serachQuestion")
-    public ResponseEntity<?> serach(){
-        return ResponseEntity.ok(questionService.seauch());
+    public ResponseEntity<?> search(){
+        return ResponseEntity.ok(questionService.search());
     }
 
 }
