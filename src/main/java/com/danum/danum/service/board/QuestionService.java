@@ -5,13 +5,17 @@ import com.danum.danum.domain.board.QuestionNewDto;
 import com.danum.danum.domain.board.Question;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface QuestionService {
 
     public Question created(QuestionNewDto newQuestionDto);
 
-    public void stop(QuestionFindDto questionFindDto);
+    public void resolved(QuestionFindDto questionFindDto);
 
-    public void start(QuestionFindDto questionFindDto);
+    public List<Question> search();
+
+    public Question like(QuestionFindDto questionFindDto);
 
 }

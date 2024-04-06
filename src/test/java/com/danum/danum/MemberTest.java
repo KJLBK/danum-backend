@@ -1,7 +1,6 @@
 package com.danum.danum;
 
 import com.danum.danum.domain.member.LoginDto;
-import com.danum.danum.domain.member.Member;
 import com.danum.danum.domain.member.RegisterDto;
 import com.danum.danum.service.member.MemberService;
 import org.junit.jupiter.api.Test;

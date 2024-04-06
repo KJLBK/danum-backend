@@ -24,14 +24,4 @@ public class QuestionTest {
 
     }
 
-    @Test
-    public void 공개(){
-        questionService.stop(new QuestionFindDto(2));
-    }
-
-    @Test
-    public void 비공개(){
-        questionService.start(new QuestionFindDto(2));
-    }
-
 }

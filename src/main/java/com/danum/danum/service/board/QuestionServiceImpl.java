@@ -1,15 +1,13 @@
 package com.danum.danum.service.board;
 
-import com.danum.danum.domain.board.QuestionFindDto;
-import com.danum.danum.domain.board.QuestionNewDto;
-import com.danum.danum.domain.board.Question;
-import com.danum.danum.domain.board.QuestionMapper;
+import com.danum.danum.domain.board.*;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.MemberException;
 import com.danum.danum.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -28,7 +26,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public void stop(QuestionFindDto questionFindDto) {
+    public void resolved(QuestionFindDto questionFindDto) {
         Optional<Question> check = questionRepository.findById(String.valueOf(questionFindDto.getId()));
 
         if(check.isEmpty()){
@@ -36,19 +34,17 @@ public class QuestionServiceImpl implements QuestionService {
         }
 
         Question question = check.get();
-        question.checkState(false);
+        question.checkState();
     }
 
     @Override
-    public void start(QuestionFindDto questionFindDto) {
-        Optional<Question> check = questionRepository.findById(String.valueOf(questionFindDto.getId()));
+    public List<Question> search() {
+        return questionRepository.findAll();
+    }
 
-        if(check.isEmpty()){
-            throw new MemberException(ErrorCode.NULLBOARD_EXCEPTION);
-        }
-
-        Question question = check.get();
-        question.checkState(true);
+    @Override
+    public Question like(QuestionFindDto questionFindDto) {
+        return null;
     }
 
 }

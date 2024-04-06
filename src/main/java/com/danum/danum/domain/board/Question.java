@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
+@Table(name = "question")
 public class Question {
 
     @Id
@@ -41,8 +41,8 @@ public class Question {
     @Column(name = "question_check")
     private boolean check;
 
-    public void checkState(boolean check){
-        this.check = check;
+    public void checkState(){
+        this.check = true;
     }
 
 }

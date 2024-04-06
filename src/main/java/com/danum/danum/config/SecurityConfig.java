@@ -41,6 +41,7 @@ public class SecurityConfig {
                         .ignoringRequestMatchers("/member/update")
                         .ignoringRequestMatchers("/ai-test")
                         .ignoringRequestMatchers("/board/NewQuestion")
+                        .ignoringRequestMatchers("/board/serachQuestion")
                 )
                 .formLogin(AbstractHttpConfigurer::disable) //jwt를 사용하기 때문에 form login 비활성화
                 .userDetailsService(customUserDetailsService)
