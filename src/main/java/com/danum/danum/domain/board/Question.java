@@ -18,7 +18,7 @@ public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "question_id")
-    private int id;
+    private Long id;
 
     @Column(name = "question_email")
     private String email;
@@ -33,10 +33,10 @@ public class Question {
     private LocalDateTime created_at;
 
     @Column(name = "question_like")
-    private int like;
+    private Long like;
 
     @Column(name = "question_count")
-    private int count;
+    private Long count;
 
     @Column(name = "question_check")
     private boolean check;
