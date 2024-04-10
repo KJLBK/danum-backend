@@ -11,8 +11,8 @@ public class QuestionMapper {
                 .title(newQuestionDto.getTitle())
                 .content(newQuestionDto.getContent())
                 .created_at(LocalDateTime.now())
-                .like(0)
-                .count(0)
+                .like(0L)
+                .count(0L)
                 .check(false)
                 .build();
 

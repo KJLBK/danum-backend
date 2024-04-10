@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class QuestionFindDto {
 
-    private int id;
+    private Long id;
 
 }
