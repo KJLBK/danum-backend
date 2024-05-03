@@ -60,16 +60,13 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public Member delete(String id) {
+    public void delete(String id) {
         Optional<Member> optionalMember = memberRepository.findById(id);
         if (optionalMember.isEmpty()) {
             throw new IllegalArgumentException("존재하지 않는 회원입니다.");
         }
 
-        Member member = optionalMember.get();
-        memberRepository.delete(member);
-
-        return member;
+        memberRepository.delete(optionalMember.get());
     }
 
     @Override
@@ -103,6 +100,16 @@ public class MemberServiceImpl implements MemberService{
             }
         }
         throw new MemberException(ErrorCode.NULLID_EXCEPTION);
+    }
+
+    @Override
+    public Member exp() {
+        return null;
+    }
+
+    @Override
+    public Member contribution() {
+        return null;
     }
 
 }
