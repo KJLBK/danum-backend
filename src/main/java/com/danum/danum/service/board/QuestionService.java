@@ -11,7 +11,7 @@ import java.util.List;
 @Service
 public interface QuestionService {
 
-    public Question created(QuestionNewDto newQuestionDto);
+    public void created(QuestionNewDto newQuestionDto);
 
     public void resolved(QuestionFindDto questionFindDto);
 
