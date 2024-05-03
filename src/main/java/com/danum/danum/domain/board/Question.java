@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -19,6 +21,7 @@ public class Question {
     private Long id;
 
     @Column(name = "question_email")
+    @JoinColumn(name = "member_email")
     private String email;
 
     @Column(name = "question_title")

@@ -76,12 +76,11 @@ public class MemberServiceImpl implements MemberService{
 
         Member member = memberRepository.findById(updateDto.getEmail()).get();
 
-        member.updateUserPassword(updateDto.getPassword());
+        member.updateUserPassword(passwordEncoder.encode(updateDto.getPassword()));
         member.updateUserPhone(updateDto.getPhone());
         member.updateUserName(updateDto.getName());
 
         return memberRepository.save(member);
-
     }
 
     @Override

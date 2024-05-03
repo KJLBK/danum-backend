@@ -1,7 +1,10 @@
 package com.danum.danum.domain.member;
 
+import com.danum.danum.domain.board.Question;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,8 +12,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -47,6 +51,9 @@ public class Member {
 
     @Column(name = "member_join")
     private LocalDateTime joinDateTime;
+
+    @OneToMany(mappedBy = "email", cascade = CascadeType.REMOVE)
+    private List<Question> questions = new ArrayList<>();
 
     public void updateUserPassword(String password){
         this.password = password;
