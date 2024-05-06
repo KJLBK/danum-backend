@@ -22,6 +22,7 @@ public class Question {
     private Long id;
 
     @Column(name = "question_email")
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_email")
     private String email;
 
