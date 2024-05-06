@@ -3,9 +3,7 @@ package com.danum.danum.controller;
 import com.danum.danum.domain.board.QuestionNewDto;
 import com.danum.danum.service.board.QuestionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

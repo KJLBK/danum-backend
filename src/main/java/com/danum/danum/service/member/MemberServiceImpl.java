@@ -24,7 +24,7 @@ public class MemberServiceImpl implements MemberService{
         validatePassword(registerDto.getPassword());
         validateName(registerDto.getName());
 
-        registerDto.settingPassword(passwordEncoder.encode(registerDto.getPassword()));
+        registerDto.settingPassword(encodeP(registerDto.getPassword()));
 
         Member member = MemberMapper.toEntity(registerDto);
 
@@ -66,7 +66,9 @@ public class MemberServiceImpl implements MemberService{
             throw new IllegalArgumentException("존재하지 않는 회원입니다.");
         }
 
-        memberRepository.delete(optionalMember.get());
+        Member member = optionalMember.get();
+
+        memberRepository.delete(member);
     }
 
     @Override
@@ -76,11 +78,21 @@ public class MemberServiceImpl implements MemberService{
 
         Member member = memberRepository.findById(updateDto.getEmail()).get();
 
-        member.updateUserPassword(passwordEncoder.encode(updateDto.getPassword()));
-        member.updateUserPhone(updateDto.getPhone());
-        member.updateUserName(updateDto.getName());
+        if (!updateDto.getPassword().equals("")) {
+            member.updateUserPassword(encodeP(updateDto.getPassword()));
+        }
+        if (!updateDto.getPhone().equals("")) {
+            member.updateUserPhone(updateDto.getPhone());
+        }
+        if (!updateDto.getName().equals("")) {
+            member.updateUserName(updateDto.getName());
+        }
 
         return memberRepository.save(member);
+    }
+
+    public String encodeP(String password) {
+        return passwordEncoder.encode(password);
     }
 
     @Override
