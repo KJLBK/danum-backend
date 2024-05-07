@@ -1,11 +1,10 @@
 package com.danum.danum.service.board;
 
 import com.danum.danum.domain.board.Question;
-import com.danum.danum.domain.board.QuestionFindDto;
 import com.danum.danum.domain.board.QuestionMapper;
 import com.danum.danum.domain.board.QuestionNewDto;
 import com.danum.danum.exception.ErrorCode;
-import com.danum.danum.exception.MemberException;
+import com.danum.danum.exception.QuestionException;
 import com.danum.danum.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,13 +28,8 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public void resolved(QuestionFindDto questionFindDto) {
-        Optional<Question> check = questionRepository.findById(questionFindDto.getId());
-        if(check.isEmpty()){
-            throw new MemberException(ErrorCode.NULL_BOARD_EXCEPTION);
-        }
-
-        Question question = check.get();
+    public void resolved(Long id) {
+        Question question =  validateNullableId(id);
         question.checkState();
     }
 
@@ -46,8 +40,28 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Question like(QuestionFindDto questionFindDto) {
-        return null;
+    public Long incrementLikeCount(Long id) {
+        Question question = validateNullableId(id);
+        question.addLike();
+
+        questionRepository.save(question);
+
+        return question.getLike();
+    }
+
+    @Override
+    public Long incrementViewCount(Long id) {
+        Question question = validateNullableId(id);
+        question.addCount();
+
+        questionRepository.save(question);
+
+        return question.getCount();
+    }
+
+    private Question validateNullableId(Long id) {
+        return questionRepository.findById(id)
+                .orElseThrow(() -> new QuestionException(ErrorCode.NULL_BOARD_EXCEPTION));
     }
 
 }

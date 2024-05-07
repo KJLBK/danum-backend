@@ -48,4 +48,12 @@ public class Question {
         this.check = true;
     }
 
+    public void addLike() {
+        this.like += 1L;
+    }
+
+    public void addCount() {
+        this.count += 1L;
+    }
+
 }
