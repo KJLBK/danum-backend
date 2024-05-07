@@ -52,7 +52,7 @@ public class Member {
     @Column(name = "member_join")
     private LocalDateTime joinDateTime;
 
-    @OneToMany(mappedBy = "email", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "email", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Question> questions = new ArrayList<>();
 
     public void updateUserPassword(String password){
