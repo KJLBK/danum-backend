@@ -4,6 +4,7 @@ import com.danum.danum.domain.member.LoginDto;
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.domain.member.RegisterDto;
 import com.danum.danum.domain.member.UpdateDto;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,7 +16,7 @@ public interface MemberService {
 
     public Member update(UpdateDto updateDto);
 
-    public Member login(LoginDto loginDto);
+    public String login(LoginDto loginDto, HttpServletResponse response);
 
     public Member exp();
 
