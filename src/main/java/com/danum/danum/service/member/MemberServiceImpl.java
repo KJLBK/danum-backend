@@ -107,10 +107,10 @@ public class MemberServiceImpl implements MemberService{
             if (passwordEncoder.matches(loginDto.getPassword(), member.getPassword())) {
                 return member;
             } else {
-                throw new MemberException(ErrorCode.PASSWORD_NOTMATCH);
+                throw new MemberException(ErrorCode.PASSWORD_NOT_MATCH);
             }
         }
-        throw new MemberException(ErrorCode.NULLID_EXCEPTION);
+        throw new MemberException(ErrorCode.NULL_ID_EXCEPTION);
     }
 
     @Override

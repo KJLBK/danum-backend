@@ -32,7 +32,7 @@ public class QuestionServiceImpl implements QuestionService {
     public void resolved(QuestionFindDto questionFindDto) {
         Optional<Question> check = questionRepository.findById(questionFindDto.getId());
         if(check.isEmpty()){
-            throw new MemberException(ErrorCode.NULLBOARD_EXCEPTION);
+            throw new MemberException(ErrorCode.NULL_BOARD_EXCEPTION);
         }
 
         Question question = check.get();
@@ -42,7 +42,6 @@ public class QuestionServiceImpl implements QuestionService {
     @Override
     public Page<Question> search(int page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by("id").ascending());
-
         return questionRepository.findAll(pageable);
     }
 
