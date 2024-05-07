@@ -1,5 +1,6 @@
 package com.danum.danum.domain.board;
 
+import com.danum.danum.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +25,7 @@ public class Question {
     @Column(name = "question_email")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_email")
-    private String email;
+    private Member email;
 
     @Column(name = "question_title")
     private String title;
