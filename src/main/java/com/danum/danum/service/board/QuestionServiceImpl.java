@@ -22,9 +22,11 @@ public class QuestionServiceImpl implements QuestionService {
 
     private final QuestionRepository questionRepository;
 
+    private final QuestionMapper questionMapper;
+
     @Override
     public void created(QuestionNewDto newQuestionDto) {
-        Question question = QuestionMapper.toEntity(newQuestionDto);
+        Question question = questionMapper.toEntity(newQuestionDto);
         questionRepository.save(question);
     }
 
