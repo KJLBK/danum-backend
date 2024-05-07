@@ -1,21 +1,21 @@
 package com.danum.danum.controller;
 
 
+import com.danum.danum.domain.member.DeleteDto;
 import com.danum.danum.domain.member.LoginDto;
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.domain.member.RegisterDto;
 import com.danum.danum.domain.member.UpdateDto;
 import com.danum.danum.service.member.MemberService;
-import com.danum.danum.service.member.MemberServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class MemberController {
 
@@ -37,11 +37,17 @@ public class MemberController {
 
     @PostMapping("/member/login")
     public ResponseEntity<?> login(@RequestBody LoginDto loginDto){
-
         Member member = memberService.login(loginDto);
 
         return ResponseEntity.ok(member);
 
+    }
+
+    @DeleteMapping("/member/delete")
+    public ResponseEntity<?> delete(@RequestBody DeleteDto deleteDto) {
+        memberService.delete(deleteDto.getEmail());
+
+        return ResponseEntity.ok("회원탈퇴에 성공하였습니다.");
     }
 
 }

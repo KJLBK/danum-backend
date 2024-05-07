@@ -11,10 +11,14 @@ public interface MemberService {
 
     public Member join(RegisterDto registerDto);
 
-    public Member delete(String id);
+    public void delete(String id);
 
     public Member update(UpdateDto updateDto);
 
     public Member login(LoginDto loginDto);
+
+    public Member exp();
+
+    public Member contribution();
 
 }
