@@ -22,7 +22,6 @@ public class Question {
     @Column(name = "question_id")
     private Long id;
 
-    @Column(name = "question_email")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_email")
     private Member email;
