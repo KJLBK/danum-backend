@@ -2,6 +2,7 @@ package com.danum.danum.domain.member;
 
 import com.danum.danum.domain.board.Question;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -25,34 +26,39 @@ import java.util.stream.Stream;
 @Table(name = "members")
 public class Member {
 
-    @Id
-    @Column(name = "member_email")
+    @Id @Email @NotEmpty @NotNull @NotBlank
+    @Column(name="member_email")
     private String email;
 
-    @Column(name = "member_password")
+    @Size(min=8, max=16) @NotEmpty @NotNull @NotBlank
+    @Column(name="member_password")
     private String password;
 
-    @Column(name = "member_phone")
+    @Positive(message="올바르지 않은 메세지")
+    @Column(name="member_phone")
     private String phone;
 
-    @Column(name = "member_name")
+    @NotNull @NotBlank @NotEmpty
+    @Column(name="member_name")
     private String name;
 
-    @Column(name = "member_exp")
+    @ColumnDefault("0")
+    @Column(name="member_exp")
     private int exp;
 
-    @Column(name = "member_contribution")
+    @Column(name="member_contribution")
     private int contribution;
 
     @Enumerated(EnumType.STRING)
-    @ColumnDefault("'USER'")
-    @Column(name = "member_role")
+    @ColumnDefault("USER")
+    @Column(name="member_role")
     private Role role;
 
-    @Column(name = "member_join")
+    @NotEmpty @NotBlank @NotNull
+    @Column(name="member_join")
     private LocalDateTime joinDateTime;
 
-    @OneToMany(mappedBy = "email", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy="email", fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
     private List<Question> questions = new ArrayList<>();
 
     public void updateUserPassword(String password){
