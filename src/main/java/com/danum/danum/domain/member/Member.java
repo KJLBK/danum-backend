@@ -61,15 +61,15 @@ public class Member {
     @OneToMany(mappedBy="email", fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
     private List<Question> questions = new ArrayList<>();
 
-    public void updateUserPassword(String password){
+    public void updateUserPassword(String password) {
         this.password = password;
     }
 
-    public void updateUserPhone(String phone){
+    public void updateUserPhone(String phone) {
         this.phone = phone;
     }
 
-    public void updateUserName(String username){
+    public void updateUserName(String username) {
         this.name = username;
     }
 
