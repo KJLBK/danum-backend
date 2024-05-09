@@ -8,16 +8,6 @@
 name: Java CI with Gradle
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-  workflow_call:
-    secrets:
-      access-token:
-        description: 'A token passed from the caller workflow'
-        required: false
-
   build:
     runs-on: ubuntu-latest
     permissions:
@@ -42,7 +32,7 @@ on:
       run: ./gradlew build
     
     - name: executing remote ssh commands using ssh key
-      uses: appleboy/ssh-action@v0.1.9
+      uses: appleboy/ssh-action@v0.1.10
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
