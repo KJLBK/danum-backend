@@ -10,8 +10,11 @@ name: Java CI with Gradle
 on:
   push:
     branches: [ "main" ]
-  pull_request:
+  pull_request_target: # pull_request 대신 pull_request_target 사용
     branches: [ "main" ]
+    paths:
+      - '**/*.gradle' # dependency-submission 작업을 위해 gradle 파일이 변경되었을 때만 실행
+      - '**/*.java'
   workflow_dispatch:
 
 jobs:
@@ -68,7 +71,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-
+      
+    if: github.event_name == 'pull_request_target' # pull_request_target 이벤트인 경우에만 실행
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 17
