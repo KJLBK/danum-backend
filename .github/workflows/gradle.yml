@@ -26,13 +26,13 @@ pass-secret-to-action:
       - name: Pass the received secret to an action
         uses: ./.github/actions/my-action
         with:
-          token: ${{ secrets.access-token }}
+          token: ${{ secrets.access_token }}
 
   # passing the secret to a nested reusable workflow
   pass-secret-to-workflow:
     uses: ./.github/workflows/my-workflow
     secrets:
-       token: ${{ secrets.access-token }}
+       token: ${{ secrets.access_token }}
        
   build:
     runs-on: ubuntu-latest
