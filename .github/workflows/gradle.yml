@@ -12,6 +12,7 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -46,7 +47,7 @@ jobs:
         key: ${{ secrets.SECRET_KEY }}
         port: ${{ secrets.PORT }}
         passphrase: ${{ secrets.PASSPHRASE }}
-        token: ${{ secrets.access_token }}
+        #token: ${{ secrets.access_token }} 아직 사용 x
         script: |
           whoami
           ls -al
