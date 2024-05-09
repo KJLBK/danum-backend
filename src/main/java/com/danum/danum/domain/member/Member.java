@@ -50,7 +50,7 @@ public class Member {
     private int contribution;
 
     @Enumerated(EnumType.STRING)
-    @ColumnDefault("USER")
+    @ColumnDefault("'USER'")
     @Column(name="member_role")
     private Role role;
 
