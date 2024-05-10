@@ -13,8 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class QuestionServiceImpl implements QuestionService {
@@ -42,23 +40,25 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Long incrementLikeCount(Long id) {
+    public Question oneSearch(Long id){
         Question question = validateNullableId(id);
-        question.addLike();
-
-        questionRepository.save(question);
-
-        return question.getLike();
+        return question;
     }
 
     @Override
-    public Long incrementViewCount(Long id) {
+    public Question incrementLikeCount(Long id) {
+        Question question = validateNullableId(id);
+        question.addLike();
+
+        return questionRepository.save(question);
+    }
+
+    @Override
+    public Question incrementViewCount(Long id) {
         Question question = validateNullableId(id);
         question.addCount();
 
-        questionRepository.save(question);
-
-        return question.getCount();
+        return questionRepository.save(question);
     }
 
     private Question validateNullableId(Long id) {

@@ -1,7 +1,9 @@
 package com.danum.danum.controller;
 
+import com.danum.danum.domain.board.Question;
 import com.danum.danum.domain.board.QuestionNewDto;
 import com.danum.danum.service.board.QuestionService;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +28,11 @@ public class QuestionController {
     @GetMapping("/board/searchQuestion/{id}")
     public ResponseEntity<?> search(@PathVariable("id") int page){
         return ResponseEntity.ok(questionService.search(page));
+    }
+
+    @GetMapping("/board/oneSearchQuestion/{id}")
+    public ResponseEntity<?> oneSearch(@PathVariable("id") Long id){
+        return ResponseEntity.ok(questionService.oneSearch(id));
     }
 
     @GetMapping("/board/Question/like/{id}")

@@ -15,8 +15,10 @@ public interface QuestionService {
 
     public Page<Question> search(int page);
 
-    public Long incrementLikeCount(Long id);
+    public Question oneSearch(Long id);
 
-    public Long incrementViewCount(Long id);
+    public Question incrementLikeCount(Long id);
+
+    public Question incrementViewCount(Long id);
 
 }
