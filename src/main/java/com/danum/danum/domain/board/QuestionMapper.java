@@ -1,13 +1,33 @@
 package com.danum.danum.domain.board;
 
-import java.time.LocalDateTime;
+import com.danum.danum.domain.member.Member;
+import com.danum.danum.exception.ErrorCode;
+import com.danum.danum.exception.MemberException;
+import com.danum.danum.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+@Component
+@RequiredArgsConstructor
 public class QuestionMapper {
 
-    public static Question toEntity(QuestionNewDto newQuestionDto){
+    private final MemberRepository memberRepository;
+
+    public Question toEntity(QuestionNewDto newQuestionDto){
+        String authorEmail = newQuestionDto.getEmail();
+        Optional<Member> optionalMember = memberRepository.findById(authorEmail);
+
+        if (optionalMember.isEmpty()) {
+            throw new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION);
+        }
+
+        Member member = optionalMember.get();
 
         return Question.builder()
-                .email(newQuestionDto.getEmail())
+                .email(member)
                 .title(newQuestionDto.getTitle())
                 .content(newQuestionDto.getContent())
                 .created_at(LocalDateTime.now())
@@ -15,7 +35,6 @@ public class QuestionMapper {
                 .count(0L)
                 .check(false)
                 .build();
-
     }
 
 }

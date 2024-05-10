@@ -7,6 +7,7 @@ import com.danum.danum.domain.member.Member;
 import com.danum.danum.domain.member.RegisterDto;
 import com.danum.danum.domain.member.UpdateDto;
 import com.danum.danum.service.member.MemberService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,11 +37,10 @@ public class MemberController {
     }
 
     @PostMapping("/member/login")
-    public ResponseEntity<?> login(@RequestBody LoginDto loginDto){
-        Member member = memberService.login(loginDto);
+    public ResponseEntity<?> login(@RequestBody LoginDto loginDto, HttpServletResponse response){
+        String accessToken = memberService.login(loginDto, response);
 
-        return ResponseEntity.ok(member);
-
+        return ResponseEntity.ok(accessToken);
     }
 
     @DeleteMapping("/member/delete")
