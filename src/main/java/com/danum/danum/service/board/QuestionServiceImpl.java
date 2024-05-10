@@ -46,19 +46,19 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Question incrementLikeCount(Long id) {
+    public Long incrementLikeCount(Long id) {
         Question question = validateNullableId(id);
         question.addLike();
 
-        return questionRepository.save(question);
+        return question.getLike();
     }
 
     @Override
-    public Question incrementViewCount(Long id) {
+    public Long incrementViewCount(Long id) {
         Question question = validateNullableId(id);
         question.addCount();
 
-        return questionRepository.save(question);
+        return question.getCount();
     }
 
     private Question validateNullableId(Long id) {

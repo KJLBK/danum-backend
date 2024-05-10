@@ -1,9 +1,7 @@
 package com.danum.danum.controller;
 
-import com.danum.danum.domain.board.Question;
 import com.danum.danum.domain.board.QuestionNewDto;
 import com.danum.danum.service.board.QuestionService;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

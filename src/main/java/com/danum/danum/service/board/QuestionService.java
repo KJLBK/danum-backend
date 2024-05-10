@@ -17,8 +17,8 @@ public interface QuestionService {
 
     public Question oneSearch(Long id);
 
-    public Question incrementLikeCount(Long id);
+    public Long incrementLikeCount(Long id);
 
-    public Question incrementViewCount(Long id);
+    public Long incrementViewCount(Long id);
 
 }
