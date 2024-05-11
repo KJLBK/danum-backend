@@ -37,6 +37,9 @@ jobs:
         pwd
         ls -al
 
+    - name: Grant execute permission for shell
+      run: chmod +x ./scripts/stop.sh
+
     - name: old server stop
       run: ./scripts/stop.sh
 
@@ -45,6 +48,9 @@ jobs:
 
     - name: Build with Gradle
       run: ./gradlew build
+
+    - name: Grant execute permission for shell
+      run: chmod +x ./scripts/start.sh
 
     - name: new server start
       run: ./scripts/start.sh
