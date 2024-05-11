@@ -28,4 +28,19 @@ public class QuestionController {
         return ResponseEntity.ok(questionService.search(page));
     }
 
+    @GetMapping("/board/oneSearchQuestion/{id}")
+    public ResponseEntity<?> oneSearch(@PathVariable("id") Long id){
+        return ResponseEntity.ok(questionService.oneSearch(id));
+    }
+
+    @GetMapping("/board/Question/like/{id}")
+    public ResponseEntity<?> like(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(questionService.incrementLikeCount(id));
+    }
+
+    @GetMapping("/board/Question/count/{id}")
+    public ResponseEntity<?> count(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(questionService.incrementViewCount(id));
+    }
+
 }
