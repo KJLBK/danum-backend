@@ -38,15 +38,6 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
 
-    - name: path to buildFile
-      run: /home/ubuntu/danum-backend/build/libs
-
-    - name: Remove the old process
-      run: kill %1
-
-    - name: Restarting the Server
-      run: nohup java -jar danum-0.0.1-SNAPSHOT.jar &
-
     - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@v0.1.10
       with:
