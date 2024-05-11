@@ -1,5 +1,6 @@
 package com.danum.danum.repository;
 
+import com.danum.danum.domain.board.Category;
 import com.danum.danum.domain.board.Question;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,5 +11,7 @@ import org.springframework.stereotype.Repository;
 public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     Page<Question> findByTitleContaining(String searchKeyword, Pageable pageable);
+
+    Page<Question> findByCategory(Category category, Pageable pageable);
 
 }

@@ -34,6 +34,7 @@ public class QuestionMapper {
                 .like(0L)
                 .count(0L)
                 .check(false)
+                .category(newQuestionDto.getCategory())
                 .build();
     }
 

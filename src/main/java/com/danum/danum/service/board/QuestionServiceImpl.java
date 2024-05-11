@@ -3,6 +3,8 @@ package com.danum.danum.service.board;
 import com.danum.danum.domain.board.Question;
 import com.danum.danum.domain.board.QuestionMapper;
 import com.danum.danum.domain.board.QuestionNewDto;
+import com.danum.danum.domain.board.QuestionSearch;
+import com.danum.danum.domain.board.QuestionView;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.QuestionException;
 import com.danum.danum.repository.QuestionRepository;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Service
 @RequiredArgsConstructor
@@ -34,13 +37,13 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Page<Question> search(int page) {
-        Pageable pageable = PageRequest.of(page, 10, Sort.by("id").ascending());
-        return questionRepository.findAll(pageable);
+    public Page<Question> boardViewList(QuestionView questionView) {
+        Pageable pageable = PageRequest.of(questionView.getPage(), 10, Sort.by("id").ascending());
+        return questionRepository.findByCategory(questionView.getCategory(), pageable);
     }
 
     @Override
-    public Question oneSearch(Long id){
+    public Question boardView(Long id){
         Question question = validateNullableId(id);
         return question;
     }
@@ -49,6 +52,7 @@ public class QuestionServiceImpl implements QuestionService {
     public Long incrementLikeCount(Long id) {
         Question question = validateNullableId(id);
         question.addLike();
+        questionRepository.save(question);
 
         return question.getLike();
     }
@@ -57,8 +61,15 @@ public class QuestionServiceImpl implements QuestionService {
     public Long incrementViewCount(Long id) {
         Question question = validateNullableId(id);
         question.addCount();
+        questionRepository.save(question);
 
         return question.getCount();
+    }
+
+    @Override
+    public Page<Question> boardSearchList(QuestionSearch questionSearch) {
+        Pageable pageable = PageRequest.of(questionSearch.getPage(), 10, Sort.by("id").ascending());
+        return questionRepository.findByTitleContaining(questionSearch.getKeyword(), pageable);
     }
 
     private Question validateNullableId(Long id) {

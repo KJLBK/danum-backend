@@ -3,6 +3,8 @@ package com.danum.danum.domain.board;
 import com.danum.danum.domain.member.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -52,16 +54,20 @@ public class Question {
     @Column(name = "question_check")
     private boolean check;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category")
+    private Category category;
+
     public void checkState(){
         this.check = true;
     }
 
     public void addLike() {
-        this.like += 1L;
+        this.like += 1;
     }
 
     public void addCount() {
-        this.count += 1L;
+        this.count += 1;
     }
 
 }

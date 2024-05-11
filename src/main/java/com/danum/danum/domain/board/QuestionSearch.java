@@ -3,18 +3,15 @@ package com.danum.danum.domain.board;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Pageable;
 
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class QuestionNewDto {
+@Getter
+public class QuestionSearch {
 
-    private String email;
+    private String keyword;
 
-    private String title;
-
-    private String content;
-
-    private Category category;
+    private int page;
 
 }
