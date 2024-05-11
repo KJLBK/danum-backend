@@ -37,18 +37,13 @@ jobs:
         pwd
         ls -al
 
-    - name: Stop old server
-      run: ./danum-backend/scripts/stop.sh
-
     - name: Grant execute permission for gradlew
       run: chmod +x ./gradlew
 
     - name: Build with Gradle
       run: ./gradlew build
 
-    - name: Run backend  
-      run: ./danum-backend/scripts/start.sh
-
+      
     - name: executing remote ssh commands using ssh key
       uses: appleboy/ssh-action@v0.1.10
       with:
