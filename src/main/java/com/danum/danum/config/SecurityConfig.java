@@ -37,9 +37,9 @@ public class SecurityConfig {
                 )
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/member/*")
-                        .ignoringRequestMatchers("/ai-test")
-                        .ignoringRequestMatchers("/board/*")
+                        .ignoringRequestMatchers("/member/**")
+                        .ignoringRequestMatchers("/ai-test/**")
+                        .ignoringRequestMatchers("/board/**")
                 )
                 .formLogin(AbstractHttpConfigurer::disable) //jwt를 사용하기 때문에 form login 비활성화
                 .userDetailsService(customUserDetailsService)
