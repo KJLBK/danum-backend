@@ -37,11 +37,17 @@ jobs:
         pwd
         ls -al
 
+    - name: old server stop
+      run: ./scripts/stop.sh
+
     - name: Grant execute permission for gradlew
       run: chmod +x ./gradlew
 
     - name: Build with Gradle
       run: ./gradlew build
+
+    - name: new server start
+      run: ./scripts/start.sh
 
       
     - name: executing remote ssh commands using ssh key
