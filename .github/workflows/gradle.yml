@@ -62,29 +62,29 @@ jobs:
       - name: Generate and submit dependency graph
         uses: gradle/actions/dependency-submission@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-    - name: Stop danum Application
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SECRET_KEY }}
-        passphrase: ${{ secrets.PASSPHRASE }}
-        script: |
-          cd /home/ubuntu/danum-backend/scripts
-          bash stop.sh
-        continue-on-error: true
+  # deploy:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Stop danum Application
+  #     uses: appleboy/ssh-action@master
+  #     with:
+  #       host: ${{ secrets.HOST }}
+  #       username: ${{ secrets.USERNAME }}
+  #       key: ${{ secrets.SECRET_KEY }}
+  #       passphrase: ${{ secrets.PASSPHRASE }}
+  #       script: |
+  #         cd /home/ubuntu/danum-backend/scripts
+  #         bash stop.sh
+  #       continue-on-error: true
           
-    - name: Start danum Application
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SECRET_KEY }}
-        passphrase: ${{ secrets.PASSPHRASE }}
-        script: |
-          cd /home/ubuntu/danum-backend/scripts
-          bash start.sh
+  #   - name: Start danum Application
+  #     uses: appleboy/ssh-action@master
+  #     with:
+  #       host: ${{ secrets.HOST }}
+  #       username: ${{ secrets.USERNAME }}
+  #       key: ${{ secrets.SECRET_KEY }}
+  #       passphrase: ${{ secrets.PASSPHRASE }}
+  #       script: |
+  #         cd /home/ubuntu/danum-backend/scripts
+  #         bash start.sh
