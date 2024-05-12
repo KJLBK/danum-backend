@@ -27,7 +27,6 @@ public class QuestionController {
 
     @GetMapping("/board/boardViewList")
     public ResponseEntity<?> boardViewList(@RequestBody QuestionView questionView){
-        System.out.println(questionView.getCategory());
         return ResponseEntity.ok(questionService.boardViewList(questionView));
     }
 
