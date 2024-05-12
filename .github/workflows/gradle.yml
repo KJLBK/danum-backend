@@ -74,7 +74,7 @@ jobs:
         key: ${{ secrets.SECRET_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
-          cd /home/ubuntu/danum-backend
+          cd /home/ubuntu/danum-backend/scripts
           bash stop.sh
           
     - name: Start danum Application
@@ -85,5 +85,5 @@ jobs:
         key: ${{ secrets.SECRET_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
         script: |
-          cd /home/ubuntu/danum-backend
+          cd /home/ubuntu/danum-backend/scripts
           bash start.sh
