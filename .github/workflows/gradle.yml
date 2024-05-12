@@ -71,16 +71,17 @@ jobs:
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
+        key: ${{ secrets.SECRET_KEY }}
         script: |
           cd /home/ubuntu/danum-backend
           bash stop.sh
+          
     - name: Start danum Application
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
+        key: ${{ secrets.SECRET_KEY }}
         script: |
           cd /home/ubuntu/danum-backend
           bash start.sh
