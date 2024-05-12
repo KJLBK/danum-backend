@@ -1,4 +1,4 @@
-name: Java CI with Gradle
+name: Java CI with Gradle and Deploy
 
 on:
   push:
@@ -29,7 +29,6 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
@@ -39,34 +38,17 @@ jobs:
           distribution: 'temurin'
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
-
       - name: List files
-        run: | 
+        run: |
           pwd
           ls -al
-
-      - name: Grant execute permission for shell
-        run: chmod 774 ./scripts/stop.sh
-
-      - name: old server stop
-        run: sh ./scripts/stop.sh
-
       - name: Grant execute permission for gradlew
         run: chmod 755 ./gradlew
-
       - name: Build with Gradle
         run: ./gradlew build
 
-      - name: Set permission for the JAR
-        run: chmod +x /home/ubuntu/danum-backend/build/libs/danum-0.0.1-SNAPSHOT.jar
-
-      - name: Grant execute permission for shell
-        run: chmod +x ./scripts/start.sh
-
-      - name: new server start
-        run: bash ./scripts/start.sh
-
   dependency-submission:
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -77,6 +59,28 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-
       - name: Generate and submit dependency graph
         uses: gradle/actions/dependency-submission@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Stop danum Application
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          cd /home/ubuntu/danum-backend
+          bash stop.sh
+    - name: Start danum Application
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        script: |
+          cd /home/ubuntu/danum-backend
+          bash start.sh
