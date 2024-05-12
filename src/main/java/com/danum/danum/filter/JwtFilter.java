@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor
@@ -31,6 +32,14 @@ public class JwtFilter extends OncePerRequestFilter {
 		validateToken(token);
 
 		filterChain.doFilter(request, response);
+	}
+
+	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) {
+		String[] excludePath = {"/test", "/member/join", "/member/login"};
+		String path = request.getRequestURI();
+		return Arrays.stream(excludePath)
+				.anyMatch(path::startsWith);
 	}
 
 	private void validateToken(String token) {
