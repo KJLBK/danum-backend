@@ -76,6 +76,7 @@ jobs:
         script: |
           cd /home/ubuntu/danum-backend/scripts
           bash stop.sh
+        continue-on-error: true
           
     - name: Start danum Application
       uses: appleboy/ssh-action@master
