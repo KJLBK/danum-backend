@@ -49,7 +49,7 @@ jobs:
         run: chmod 774 ./scripts/stop.sh
 
       - name: old server stop
-        run: ./scripts/stop.sh
+        run: sh ./scripts/stop.sh
 
       - name: Grant execute permission for gradlew
         run: chmod 755 ./gradlew
@@ -61,7 +61,7 @@ jobs:
         run: chmod +x ./scripts/start.sh
 
       - name: new server start
-        run: ./scripts/start.sh
+        run: sh ./scripts/start.sh
 
   dependency-submission:
     runs-on: ubuntu-latest
