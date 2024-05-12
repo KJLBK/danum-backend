@@ -21,7 +21,7 @@ jobs:
           script: |
             whoami
             ls -al
-            cd /home/ubuntu
+            cd /home/ubuntu/danum-backend
             git pull origin main
 
   build:
