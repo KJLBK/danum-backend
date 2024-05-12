@@ -7,6 +7,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
@@ -57,6 +58,7 @@ public class JwtUtil {
 				.setSubject(authentication.getName())
 				.claim("userName", authentication.getName())
 				.claim("auth", authentication.getAuthorities())
+				.signWith(key, SignatureAlgorithm.HS256)
 				.setExpiration(tokenExpiredTime)
 				.compact();
 	}
