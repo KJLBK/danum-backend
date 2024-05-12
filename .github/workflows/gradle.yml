@@ -61,7 +61,7 @@ jobs:
         run: chmod +x ./scripts/start.sh
 
       - name: new server start
-        run: sh ./scripts/start.sh
+        run: bash ./scripts/start.sh
 
   dependency-submission:
     runs-on: ubuntu-latest
