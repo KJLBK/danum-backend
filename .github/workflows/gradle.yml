@@ -72,6 +72,7 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SECRET_KEY }}
+        passphrase: ${{ secrets.PASSPHRASE }}
         script: |
           cd /home/ubuntu/danum-backend
           bash stop.sh
@@ -82,6 +83,7 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SECRET_KEY }}
+        passphrase: ${{ secrets.PASSPHRASE }}
         script: |
           cd /home/ubuntu/danum-backend
           bash start.sh
