@@ -57,6 +57,9 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
+      - name: Set permission for the JAR
+        run: chmod +x /home/ubuntu/danum-backend/build/libs/danum-0.0.1-SNAPSHOT.jar
+
       - name: Grant execute permission for shell
         run: chmod +x ./scripts/start.sh
 
