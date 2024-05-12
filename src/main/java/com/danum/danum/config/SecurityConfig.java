@@ -33,7 +33,9 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                 authorizationManagerRequestMatcherRegistry
-                        .anyRequest().permitAll()
+                        .requestMatchers("/member/login").permitAll()
+                        .requestMatchers("/member/join").permitAll()
+                        .requestMatchers("/test").permitAll()
                 )
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
