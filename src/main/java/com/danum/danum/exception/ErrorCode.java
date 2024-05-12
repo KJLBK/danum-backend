@@ -12,7 +12,8 @@ public enum ErrorCode {
     NICKNAME_EXCEPTION(HttpStatus.BAD_REQUEST, "M004", "이미 사용중인 닉네임입니다."),
     PASSWORD_NOT_MATCHED_EXCEPTION(HttpStatus.BAD_REQUEST, "M005", "패스워드가 틀렸습니다."),
     MEMBER_NOT_FOUND_EXCEPTION(HttpStatus.BAD_REQUEST, "M006", "존재하지 않는 회원 입니다."),
-    NULL_BOARD_EXCEPTION(HttpStatus.BAD_REQUEST, "B001", "존재하지 않는 게시판 입니다.");
+    NULL_BOARD_EXCEPTION(HttpStatus.BAD_REQUEST, "B001", "존재하지 않는 게시판 입니다."),
+    TOKEN_NOT_FOUND_EXCEPTION(HttpStatus.NOT_FOUND, "T001", "토큰이 존재하지 않습니다.");
 
     private final HttpStatus status;
 
