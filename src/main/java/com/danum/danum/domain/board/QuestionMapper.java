@@ -3,6 +3,7 @@ package com.danum.danum.domain.board;
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.MemberException;
+import com.danum.danum.exception.QuestionException;
 import com.danum.danum.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,7 @@ public class QuestionMapper {
         Optional<Member> optionalMember = memberRepository.findById(authorEmail);
 
         if (optionalMember.isEmpty()) {
-            throw new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION);
+            throw new QuestionException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION);
         }
 
         Member member = optionalMember.get();
