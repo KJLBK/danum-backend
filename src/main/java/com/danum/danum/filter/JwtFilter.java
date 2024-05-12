@@ -40,7 +40,7 @@ public class JwtFilter extends OncePerRequestFilter {
 	private String resolveToken(String tokenHeader) {
 		if (tokenHeader == null ||
 				tokenHeader.length() <= TOKEN_START_INDEX ||
-				StringUtils.hasText(tokenHeader) ||
+				!StringUtils.hasText(tokenHeader) ||
 				!tokenHeader.startsWith(PREFIX)) {
 			throw new JwtException(ErrorCode.TOKEN_NOT_FOUND_EXCEPTION.getMessage());
 		}
