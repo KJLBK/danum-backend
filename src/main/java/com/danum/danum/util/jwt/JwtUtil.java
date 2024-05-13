@@ -56,7 +56,6 @@ public class JwtUtil {
 	private String getNewToken(Date tokenExpiredTime, Authentication authentication) {
 		return Jwts.builder()
 				.setSubject(authentication.getName())
-				.claim("userName", authentication.getName())
 				.claim("auth", authentication.getAuthorities())
 				.signWith(key, SignatureAlgorithm.HS256)
 				.setExpiration(tokenExpiredTime)
