@@ -1,4 +1,4 @@
-package com.danum.danum.util.jwt;
+package com.danum.danum.util.member;
 
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.exception.ErrorCode;
