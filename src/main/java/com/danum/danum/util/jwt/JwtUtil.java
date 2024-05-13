@@ -3,6 +3,8 @@ package com.danum.danum.util.jwt;
 import com.danum.danum.domain.jwt.TokenBox;
 import com.danum.danum.domain.jwt.TokenDto;
 import com.danum.danum.domain.jwt.TokenType;
+import com.danum.danum.exception.CustomJwtException;
+import com.danum.danum.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -12,20 +14,24 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.util.Collection;
 import java.util.Date;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class JwtUtil {
 
-	private Key key;
+	private static final String ROLE_CLAIMS_NAME = "role";
+
+	private final Key key;
 
 	@Value("${jwt.expired-time.access-token}")
 	private Long accessTokenExpiredTime;
@@ -56,8 +62,7 @@ public class JwtUtil {
 	private String getNewToken(Date tokenExpiredTime, Authentication authentication) {
 		return Jwts.builder()
 				.setSubject(authentication.getName())
-				.claim("userName", authentication.getName())
-				.claim("auth", authentication.getAuthorities())
+				.claim(ROLE_CLAIMS_NAME, authentication.getAuthorities())
 				.signWith(key, SignatureAlgorithm.HS256)
 				.setExpiration(tokenExpiredTime)
 				.compact();
@@ -67,14 +72,14 @@ public class JwtUtil {
 		try {
 			log.info("JWT validate...");
 			Jws<Claims> claims = Jwts.parserBuilder()
-					.setSigningKey(this.key)
+					.setSigningKey(key)
 					.build()
 					.parseClaimsJws(token);
 
 			log.info("{}", claims.getBody()
 					.getExpiration());
 
-			if (!claims.getBody()
+			if (claims.getBody()
 					.getExpiration()
 					.before(new Date())) {
 				throw new JwtException("만료된 토큰입니다.");
@@ -82,6 +87,33 @@ public class JwtUtil {
 		} catch(Exception e) {
 			log.error("Token not available");
 		}
+	}
+
+	public Authentication getAuthentication(String token) {
+		Claims claims = Jwts.parserBuilder()
+				.setSigningKey(key)
+				.build()
+				.parseClaimsJws(token)
+				.getBody();
+
+		Object roleValue = claims.get(ROLE_CLAIMS_NAME);
+		if (!(roleValue instanceof Collection<?> roles)) {
+			throw new CustomJwtException(ErrorCode.TOKEN_ROLE_NOT_AVAILABLE_EXCEPTION);
+		}
+
+		Collection<GrantedAuthority> roleList = roles.stream()
+				.map(role -> {
+					if (!(role instanceof GrantedAuthority)) {
+						throw new CustomJwtException(ErrorCode.TOKEN_ROLE_NOT_AVAILABLE_EXCEPTION);
+					}
+
+					return (GrantedAuthority) role;
+				})
+				.toList();
+
+		UserDetails userDetails = new User(claims.getSubject(), "", roleList);
+
+		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
 	}
 
 }
