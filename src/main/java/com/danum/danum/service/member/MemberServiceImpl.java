@@ -37,9 +37,8 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public Member join(RegisterDto registerDto) {
-        validateId(registerDto.getEmail());
-        validatePassword(registerDto.getPassword());
-        validateName(registerDto.getName());
+        validateDuplicatedEmailId(registerDto.getEmail());
+        validateDuplicatedName(registerDto.getName());
 
         registerDto.settingPassword(
                 passwordEncoder.encode(
@@ -50,7 +49,7 @@ public class MemberServiceImpl implements MemberService{
         return memberRepository.save(member);
     }
 
-    private void validateId(String email) {
+    private void validateDuplicatedEmailId(String email) {
         Optional<Member> member = memberRepository.findById(email);
 
         if (member.isPresent()) {
@@ -58,19 +57,7 @@ public class MemberServiceImpl implements MemberService{
         }
     }
 
-    private void validatePassword(String password) {
-        int passwordLength = password.length();
-
-        if (passwordLength < 8) {
-            throw new MemberException(ErrorCode.PASSWORD_SHORT_EXCEPTION);
-        }
-
-        if (passwordLength > 16) {
-            throw new MemberException(ErrorCode.PASSWORD_LONG_EXCEPTION);
-        }
-    }
-
-    private void validateName(String name){
+    private void validateDuplicatedName(String name){
         Optional<Member> member = memberRepository.findByName(name);
 
         if(member.isPresent()){
@@ -91,8 +78,7 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public Member update(UpdateDto updateDto) {
-        validatePassword(updateDto.getPassword());
-        validateName(updateDto.getName());
+        validateDuplicatedName(updateDto.getName());
 
         String memberEmail = updateDto.getEmail();
         Optional<Member> optionalMember = memberRepository.findById(memberEmail);
