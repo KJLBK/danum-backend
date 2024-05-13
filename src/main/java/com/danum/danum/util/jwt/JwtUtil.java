@@ -24,7 +24,7 @@ public class JwtUtil {
 
 	private static final String ROLE_CLAIMS_NAME = "role";
 
-	private Key key;
+	private final Key key;
 
 	@Value("${jwt.expired-time.access-token}")
 	private Long accessTokenExpiredTime;
