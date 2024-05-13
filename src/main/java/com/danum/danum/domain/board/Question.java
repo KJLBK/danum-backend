@@ -63,11 +63,11 @@ public class Question {
     }
 
     public void addLike() {
-        this.like += 1;
+        this.like += 1L;
     }
 
     public void addCount() {
-        this.count += 1;
+        this.count += 1L;
     }
 
 }

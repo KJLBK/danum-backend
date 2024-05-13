@@ -18,35 +18,35 @@ public class QuestionController {
 
     private final QuestionService questionService;
 
-    @PostMapping("/board/newQuestion")
+    @PostMapping("/board/new")
     public ResponseEntity<?> created(@RequestBody QuestionNewDto questionNewDto){
         questionService.created(questionNewDto);
 
         return ResponseEntity.ok("게시판 생성 성공");
     }
 
-    @GetMapping("/board/boardViewList")
+    @GetMapping("/board/viewlist")
     public ResponseEntity<?> boardViewList(@RequestBody QuestionView questionView){
         return ResponseEntity.ok(questionService.boardViewList(questionView));
     }
 
-    @GetMapping("/board/boardView/{id}")
+    @GetMapping("/board/view/{id}")
     public ResponseEntity<?> boardView(@PathVariable("id") Long id){
         return ResponseEntity.ok(questionService.boardView(id));
     }
 
-    @GetMapping("/board/boardSearch")
+    @GetMapping("/board/search")
     public ResponseEntity<?> searchList(@RequestBody QuestionSearch questionSearch){
         return ResponseEntity.ok(questionService.boardSearchList(questionSearch));
     }
 
-    @PostMapping("/board/Question/like/{id}")
-    public ResponseEntity<?> like(@PathVariable("id") Long id) {
+    @PostMapping("/board/like/{id}")
+    public ResponseEntity<?> increaseLikes(@PathVariable("id") Long id) {
         return ResponseEntity.ok(questionService.incrementLikeCount(id));
     }
 
-    @PostMapping("/board/Question/count/{id}")
-    public ResponseEntity<?> count(@PathVariable("id") Long id) {
+    @PostMapping("/board/count/{id}")
+    public ResponseEntity<?> increaseViews(@PathVariable("id") Long id) {
         return ResponseEntity.ok(questionService.incrementViewCount(id));
     }
 
