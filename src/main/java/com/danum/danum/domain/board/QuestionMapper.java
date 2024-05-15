@@ -22,7 +22,7 @@ public class QuestionMapper {
         Optional<Member> optionalMember = memberRepository.findById(authorEmail);
 
         if (optionalMember.isEmpty()) {
-            throw new QuestionException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION);
+            throw new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION);
         }
 
         Member member = optionalMember.get();
