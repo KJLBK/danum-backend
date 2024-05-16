@@ -8,7 +8,6 @@ public class QuestionException extends RuntimeException{
 
     public QuestionException(ErrorCode errorCode) {
         super(errorCode.getMessage());
-        this.errorCode = errorCode;
     }
 
 }

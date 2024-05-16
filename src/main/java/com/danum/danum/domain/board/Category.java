@@ -1,5 +1,5 @@
 package com.danum.danum.domain.board;
 
-public enum Catecory {
+public enum Category {
     VILLAGE, QUESTION
 }

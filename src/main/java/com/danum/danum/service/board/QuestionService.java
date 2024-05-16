@@ -2,8 +2,9 @@ package com.danum.danum.service.board;
 
 import com.danum.danum.domain.board.Question;
 import com.danum.danum.domain.board.QuestionNewDto;
+import com.danum.danum.domain.board.QuestionSearch;
+import com.danum.danum.domain.board.QuestionView;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,12 +14,14 @@ public interface QuestionService {
 
     public void resolved(Long id);
 
-    public Page<Question> search(int page);
+    public Page<Question> boardViewList(QuestionView questionView);
 
-    public Question oneSearch(Long id);
+    public Question boardView(Long id);
 
     public Long incrementLikeCount(Long id);
 
     public Long incrementViewCount(Long id);
+
+    public Page<Question> boardSearchList(QuestionSearch questionSearch);
 
 }

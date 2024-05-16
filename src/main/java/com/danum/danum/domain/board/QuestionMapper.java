@@ -3,6 +3,7 @@ package com.danum.danum.domain.board;
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.MemberException;
+import com.danum.danum.exception.QuestionException;
 import com.danum.danum.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -34,6 +35,7 @@ public class QuestionMapper {
                 .like(0L)
                 .count(0L)
                 .check(false)
+                .category(newQuestionDto.getCategory())
                 .build();
     }
 
