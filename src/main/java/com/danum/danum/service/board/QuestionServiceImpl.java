@@ -3,8 +3,8 @@ package com.danum.danum.service.board;
 import com.danum.danum.domain.board.Question;
 import com.danum.danum.domain.board.QuestionMapper;
 import com.danum.danum.domain.board.QuestionNewDto;
-import com.danum.danum.domain.board.QuestionSearch;
-import com.danum.danum.domain.board.QuestionView;
+import com.danum.danum.domain.board.QuestionSearchDto;
+import com.danum.danum.domain.board.QuestionViewDto;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.QuestionException;
 import com.danum.danum.repository.QuestionRepository;
@@ -36,7 +36,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Page<Question> boardViewList(QuestionView questionView) {
+    public Page<Question> boardViewList(QuestionViewDto questionView) {
         Pageable pageable = PageRequest.of(questionView.getPage(), 10, Sort.by("id").ascending());
         return questionRepository.findByCategory(questionView.getCategory(), pageable);
     }
@@ -66,7 +66,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public Page<Question> boardSearchList(QuestionSearch questionSearch) {
+    public Page<Question> boardSearchList(QuestionSearchDto questionSearch) {
         Pageable pageable = PageRequest.of(questionSearch.getPage(), 10, Sort.by("id").ascending());
         return questionRepository.findByTitleContaining(questionSearch.getKeyword(), pageable);
     }
