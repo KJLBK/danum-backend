@@ -27,6 +27,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService{
 
+    private final static String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
+
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     private final MemberRepository memberRepository;
@@ -131,7 +133,7 @@ public class MemberServiceImpl implements MemberService{
         TokenDto accessToken = tokenBox.getAccessToken();
         TokenDto refreshToken = tokenBox.getRefreshToken();
 
-        Cookie cookie = new Cookie("token", refreshToken.getToken()); // 쿠키에 refresh 토큰 저장
+        Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken.getToken()); // 쿠키에 refresh 토큰 저장
         cookie.setHttpOnly(true); // Javascript 접근 방지
         cookie.setSecure(true); // HTTPS 전송만 허용
         cookie.setPath("/"); // 쿠키 사용 경로 설정
