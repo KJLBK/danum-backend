@@ -1,48 +1,64 @@
 package com.danum.danum.filter;
 
+import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.util.jwt.JwtUtil;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
+@Component
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
 	private static final String PREFIX = "Bearer";
 
-	private static final Integer SUBSTRING_INDEX = 7;
+	private static final Integer TOKEN_START_INDEX = 7;
 
 	private final JwtUtil jwtUtil;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-		String token = resolveToken(request);
-		if (token != null) {
-			validateToken(token);
-		}
+		String tokenHeader = request.getHeader("Authorization");
+		String token = resolveToken(tokenHeader);
+		validateToken(token);
+
+		Authentication auth = jwtUtil.getAuthentication(token);
+		SecurityContextHolder.getContext().setAuthentication(auth);
 
 		filterChain.doFilter(request, response);
+	}
+
+	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) {
+		String[] excludePath = {"/test", "/member/join", "/member/login"};
+		String path = request.getRequestURI();
+		return Arrays.stream(excludePath)
+				.anyMatch(path::startsWith);
 	}
 
 	private void validateToken(String token) {
 		jwtUtil.validate(token);
 	}
 
-	private String resolveToken(HttpServletRequest request) {
-		String token = request.getHeader("Authorization");
-		if (StringUtils.hasText(token) || !token.startsWith(PREFIX)) {
-			return null;
+	private String resolveToken(String tokenHeader) {
+		if (!StringUtils.hasText(tokenHeader) ||
+				tokenHeader.length() <= TOKEN_START_INDEX ||
+				!tokenHeader.startsWith(PREFIX)) {
+			throw new JwtException(ErrorCode.TOKEN_NOT_FOUND_EXCEPTION.getMessage());
 		}
 
-		return token.substring(SUBSTRING_INDEX);
+		return tokenHeader.substring(TOKEN_START_INDEX);
 	}
 
 }
