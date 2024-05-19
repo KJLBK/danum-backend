@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class QuestionView {
+public class QuestionSearchDto {
 
-    private Category category;
+    private String keyword;
 
     private int page;
 
