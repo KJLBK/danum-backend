@@ -1,8 +1,8 @@
 package com.danum.danum.controller;
 
 import com.danum.danum.domain.board.QuestionNewDto;
-import com.danum.danum.domain.board.QuestionSearch;
-import com.danum.danum.domain.board.QuestionView;
+import com.danum.danum.domain.board.QuestionSearchDto;
+import com.danum.danum.domain.board.QuestionViewDto;
 import com.danum.danum.service.board.QuestionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ public class QuestionController {
     }
 
     @GetMapping("/board/viewlist")
-    public ResponseEntity<?> boardViewList(@RequestBody QuestionView questionView){
+    public ResponseEntity<?> boardViewList(@RequestBody QuestionViewDto questionView){
         return ResponseEntity.ok(questionService.boardViewList(questionView));
     }
 
@@ -36,7 +36,7 @@ public class QuestionController {
     }
 
     @GetMapping("/board/search")
-    public ResponseEntity<?> searchList(@RequestBody QuestionSearch questionSearch){
+    public ResponseEntity<?> searchList(@RequestBody QuestionSearchDto questionSearch){
         return ResponseEntity.ok(questionService.boardSearchList(questionSearch));
     }
 
