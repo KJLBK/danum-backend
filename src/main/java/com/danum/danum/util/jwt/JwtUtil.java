@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -24,10 +25,14 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class JwtUtil {
+
+	private static final String ROLE_HEADER_NAME = "authority";
 
 	private static final String ROLE_CLAIMS_NAME = "role";
 
@@ -90,6 +95,7 @@ public class JwtUtil {
 	}
 
 	public Authentication getAuthentication(String token) {
+		System.out.println(token);
 		Claims claims = Jwts.parserBuilder()
 				.setSigningKey(key)
 				.build()
@@ -102,14 +108,17 @@ public class JwtUtil {
 		}
 
 		Collection<GrantedAuthority> roleList = roles.stream()
-				.map(role -> {
-					if (!(role instanceof GrantedAuthority)) {
+				.filter(role -> role instanceof Map)
+				.map(role -> (Map<?, ?>) role)
+				.map(roleMap -> {
+					Object role = roleMap.get(ROLE_HEADER_NAME);
+					if (!(role instanceof String)) {
 						throw new CustomJwtException(ErrorCode.TOKEN_ROLE_NOT_AVAILABLE_EXCEPTION);
 					}
 
-					return (GrantedAuthority) role;
+					return new SimpleGrantedAuthority((String) role);
 				})
-				.toList();
+				.collect(Collectors.toList());
 
 		UserDetails userDetails = new User(claims.getSubject(), "", roleList);
 
