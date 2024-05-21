@@ -18,6 +18,8 @@ public interface MemberService {
 
     public String login(LoginDto loginDto, HttpServletResponse response);
 
+    public void logout(HttpServletResponse response);
+
     public Member exp();
 
     public Member contribution();

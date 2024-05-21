@@ -6,17 +6,18 @@ import com.danum.danum.domain.jwt.TokenType;
 import com.danum.danum.exception.CustomJwtException;
 import com.danum.danum.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -24,10 +25,14 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class JwtUtil {
+
+	private static final String ROLE_HEADER_NAME = "authority";
 
 	private static final String ROLE_CLAIMS_NAME = "role";
 
@@ -70,26 +75,22 @@ public class JwtUtil {
 
 	public void validate(String token) {
 		try {
-			log.info("JWT validate...");
-			Jws<Claims> claims = Jwts.parserBuilder()
+			Claims claims = Jwts.parserBuilder()
 					.setSigningKey(key)
 					.build()
-					.parseClaimsJws(token);
-
-			log.info("{}", claims.getBody()
-					.getExpiration());
-
-			if (claims.getBody()
-					.getExpiration()
-					.before(new Date())) {
-				throw new JwtException("만료된 토큰입니다.");
-			}
-		} catch(Exception e) {
-			log.error("Token not available");
+					.parseClaimsJws(token)
+					.getBody();
+		} catch (ExpiredJwtException e) {
+			log.error("{} - 토큰 만료", token);
+			throw new CustomJwtException(ErrorCode.TOKEN_EXPIRED_EXCEPTION);
+		} catch (SignatureException e) {
+			log.error("{} - 토큰 확인 중 오류 발생", token);
+			throw new CustomJwtException(ErrorCode.TOKEN_SIGNATURE_EXCEPTION);
 		}
 	}
 
 	public Authentication getAuthentication(String token) {
+		System.out.println(token);
 		Claims claims = Jwts.parserBuilder()
 				.setSigningKey(key)
 				.build()
@@ -102,14 +103,17 @@ public class JwtUtil {
 		}
 
 		Collection<GrantedAuthority> roleList = roles.stream()
-				.map(role -> {
-					if (!(role instanceof GrantedAuthority)) {
+				.filter(role -> role instanceof Map)
+				.map(role -> (Map<?, ?>) role)
+				.map(roleMap -> {
+					Object role = roleMap.get(ROLE_HEADER_NAME);
+					if (!(role instanceof String)) {
 						throw new CustomJwtException(ErrorCode.TOKEN_ROLE_NOT_AVAILABLE_EXCEPTION);
 					}
 
-					return (GrantedAuthority) role;
+					return new SimpleGrantedAuthority((String) role);
 				})
-				.toList();
+				.collect(Collectors.toList());
 
 		UserDetails userDetails = new User(claims.getSubject(), "", roleList);
 

@@ -15,6 +15,8 @@ public enum ErrorCode {
     NULL_BOARD_EXCEPTION(HttpStatus.BAD_REQUEST, "B001", "존재하지 않는 게시판 입니다."),
     TOKEN_NOT_FOUND_EXCEPTION(HttpStatus.NOT_FOUND, "T001", "토큰이 존재하지 않습니다."),
     TOKEN_ROLE_NOT_AVAILABLE_EXCEPTION(HttpStatus.NOT_FOUND, "T002", "토큰 권한이 올바르지 않습니다."),
+    TOKEN_EXPIRED_EXCEPTION(HttpStatus.BAD_REQUEST, "T003", "만료된 토큰입니다."),
+    TOKEN_SIGNATURE_EXCEPTION(HttpStatus.BAD_REQUEST, "T004", "올바르지 않은 서명입니다."),
     NOT_COMMENT_EXCEPTION(HttpStatus.BAD_REQUEST, "C001", "댓글을 생성할 수 없습니다.");
 
     private final HttpStatus status;

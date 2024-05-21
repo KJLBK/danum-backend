@@ -144,6 +144,16 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
+    public void logout(HttpServletResponse response) {
+       Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, null);
+       cookie.setPath("/");
+       cookie.setHttpOnly(true);
+       cookie.setMaxAge(0);
+
+       response.addCookie(cookie);
+    }
+
+    @Override
     public Member exp() {
         return null;
     }
