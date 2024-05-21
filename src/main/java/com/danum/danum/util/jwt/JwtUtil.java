@@ -6,12 +6,12 @@ import com.danum.danum.domain.jwt.TokenType;
 import com.danum.danum.exception.CustomJwtException;
 import com.danum.danum.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -75,22 +75,17 @@ public class JwtUtil {
 
 	public void validate(String token) {
 		try {
-			log.info("JWT validate...");
-			Jws<Claims> claims = Jwts.parserBuilder()
+			Claims claims = Jwts.parserBuilder()
 					.setSigningKey(key)
 					.build()
-					.parseClaimsJws(token);
-
-			log.info("{}", claims.getBody()
-					.getExpiration());
-
-			if (claims.getBody()
-					.getExpiration()
-					.before(new Date())) {
-				throw new JwtException("만료된 토큰입니다.");
-			}
-		} catch(Exception e) {
-			log.error("Token not available");
+					.parseClaimsJws(token)
+					.getBody();
+		} catch (ExpiredJwtException e) {
+			log.error("{} - 토큰 만료", token);
+			throw new CustomJwtException(ErrorCode.TOKEN_EXPIRED_EXCEPTION);
+		} catch (SignatureException e) {
+			log.error("{} - 토큰 확인 중 오류 발생", token);
+			throw new CustomJwtException(ErrorCode.TOKEN_SIGNATURE_EXCEPTION);
 		}
 	}
 
