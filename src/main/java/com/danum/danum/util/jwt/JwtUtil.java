@@ -75,7 +75,7 @@ public class JwtUtil {
 
 	public void validate(String token) {
 		try {
-			Claims claims = Jwts.parserBuilder()
+			Jwts.parserBuilder()
 					.setSigningKey(key)
 					.build()
 					.parseClaimsJws(token)
@@ -90,7 +90,6 @@ public class JwtUtil {
 	}
 
 	public Authentication getAuthentication(String token) {
-		System.out.println(token);
 		Claims claims = Jwts.parserBuilder()
 				.setSigningKey(key)
 				.build()
