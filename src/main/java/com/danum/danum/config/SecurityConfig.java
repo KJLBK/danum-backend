@@ -40,6 +40,7 @@ public class SecurityConfig {
                         .requestMatchers("/member/login").permitAll()
                         .requestMatchers("/member/join").permitAll()
                         .requestMatchers("/test").permitAll()
+                        .anyRequest().authenticated()
                 )
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
