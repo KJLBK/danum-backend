@@ -1,6 +1,5 @@
 name: Java CI with Gradle and Deploy
 
-
 on:
   push:
     branches: [ "main" ]
