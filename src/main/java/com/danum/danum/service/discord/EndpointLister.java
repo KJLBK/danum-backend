@@ -1,21 +1,25 @@
 package com.danum.danum.service.discord;
 
 import lombok.RequiredArgsConstructor;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import java.awt.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -26,26 +30,50 @@ public class EndpointLister {
 
     private final RequestMappingHandlerMapping requestMappingHandlerMapping;
 
-    public String getEndpoints() {
+    public List<MessageEmbed> getEndpoints() {
         Map<RequestMappingInfo, HandlerMethod> map = requestMappingHandlerMapping.getHandlerMethods();
+        List<MessageEmbed> embeds = new ArrayList<>();
 
-        return map.entrySet().stream()
-                .map(entry -> {
-                    try {
-                        RequestMappingInfo mappingInfo = entry.getKey();
-                        if (!isMethodAllowed(entry.getValue().getMethod())) {
-                            return null;
-                        }
-                        String requestParams = getRequestParams(entry.getValue().getMethod());
+        StringBuilder contentBuilder = new StringBuilder();
+        contentBuilder.append("```");
 
-                        return String.format("```%s\n%s```",
-                                mappingInfo, requestParams);
-                    } catch (Exception e) {
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.joining("\n"));
+        int endpointCount = 0;
+        for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : map.entrySet()) {
+            RequestMappingInfo mappingInfo = entry.getKey();
+            HandlerMethod handlerMethod = entry.getValue();
+
+            if (isMethodAllowed(handlerMethod.getMethod())) {
+                String method = String.valueOf(mappingInfo.getMethodsCondition());
+                String url = String.valueOf(mappingInfo);
+                url = url.substring(url.indexOf("/"), url.indexOf("]"));
+                String requestParams = getRequestParams(handlerMethod.getMethod());
+
+                contentBuilder.append("URL : ").append(url).append("\n");
+                contentBuilder.append("METHOD : ").append(method).append("\n");
+                contentBuilder.append("Parameters : ").append(requestParams).append("\n\n");
+
+                endpointCount++;
+                if (endpointCount % 5 == 0) {
+                    contentBuilder.append("```");
+                    MessageEmbed embed = new EmbedBuilder()
+                            .setDescription(contentBuilder.toString())
+                            .setColor(Color.ORANGE)
+                            .build();
+                    embeds.add(embed);
+                    contentBuilder.setLength(0);
+                    contentBuilder.append("```");
+                }
+            }
+        }
+
+        contentBuilder.append("```");
+        MessageEmbed embed = new EmbedBuilder()
+                .setDescription(contentBuilder.toString())
+                .setColor(Color.GREEN)
+                .build();
+        embeds.add(embed);
+
+        return embeds;
     }
 
     private boolean isMethodAllowed(Method method) {

@@ -7,11 +7,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Long> {
 
-    Page<Question> findByTitleContaining(String searchKeyword, Pageable pageable);
+    List<Question>  findAllByTitleContaining(String searchKeyword);
 
-    Page<Question> findByCategory(Category category, Pageable pageable);
+    List<Question> findAllByCategory(Category category);
 
 }

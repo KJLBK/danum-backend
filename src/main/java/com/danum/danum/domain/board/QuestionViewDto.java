@@ -12,6 +12,4 @@ public class QuestionViewDto {
 
     private Category category;
 
-    private int page;
-
 }
