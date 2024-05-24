@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,12 +18,11 @@ import java.awt.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -30,57 +30,87 @@ public class EndpointLister {
 
     private final RequestMappingHandlerMapping requestMappingHandlerMapping;
 
-    public List<MessageEmbed> getEndpoints() {
-        Map<RequestMappingInfo, HandlerMethod> map = requestMappingHandlerMapping.getHandlerMethods();
-        List<MessageEmbed> embeds = new ArrayList<>();
+    public Map<Class<?>, List<MessageEmbed>> getEndpoints() {
+        Map<RequestMappingInfo, HandlerMethod> requestMappingInfoHandlerMethodMap = requestMappingHandlerMapping.getHandlerMethods();
+        Map<Class<?>, Map<RequestMappingInfo, HandlerMethod>> controllerPerRequest = new HashMap<>();
 
-        StringBuilder contentBuilder = new StringBuilder();
-        contentBuilder.append("```");
+        for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : requestMappingInfoHandlerMethodMap.entrySet()) {
+            Class<?> controllerClass = entry.getValue().getBeanType();
 
-        int endpointCount = 0;
-        for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : map.entrySet()) {
-            RequestMappingInfo mappingInfo = entry.getKey();
-            HandlerMethod handlerMethod = entry.getValue();
-
-            if (isMethodAllowed(handlerMethod.getMethod())) {
-                String method = String.valueOf(mappingInfo.getMethodsCondition());
-                String url = String.valueOf(mappingInfo);
-                url = url.substring(url.indexOf("/"), url.indexOf("]"));
-                String requestParams = getRequestParams(handlerMethod.getMethod());
-
-                contentBuilder.append("URL : ").append(url).append("\n");
-                contentBuilder.append("METHOD : ").append(method).append("\n");
-                contentBuilder.append("Parameters : ").append(requestParams).append("\n\n");
-
-                endpointCount++;
-                if (endpointCount % 5 == 0) {
-                    contentBuilder.append("```");
-                    MessageEmbed embed = new EmbedBuilder()
-                            .setDescription(contentBuilder.toString())
-                            .setColor(Color.ORANGE)
-                            .build();
-                    embeds.add(embed);
-                    contentBuilder.setLength(0);
-                    contentBuilder.append("```");
-                }
+            if (entry.getKey().equals("BasicErrorController")) {
+                continue;
             }
+
+            controllerPerRequest.computeIfAbsent(controllerClass, k -> new HashMap<>())
+                    .put(entry.getKey(), entry.getValue());
         }
 
-        contentBuilder.append("```");
-        MessageEmbed embed = new EmbedBuilder()
-                .setDescription(contentBuilder.toString())
-                .setColor(Color.GREEN)
-                .build();
-        embeds.add(embed);
+        Map<Class<?>, List<MessageEmbed>> result = new HashMap<>();
 
-        return embeds;
+        for (Class<?> key : controllerPerRequest.keySet()) {
+            Map<RequestMappingInfo, HandlerMethod> requestMappingMap = controllerPerRequest.get(key);
+
+            List<MessageEmbed> messageEmbedList = new ArrayList<>();
+
+            for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : requestMappingMap.entrySet()) {
+                RequestMappingInfo mappingInfo = entry.getKey();
+                HandlerMethod handlerMethod = entry.getValue();
+
+                Color color = getColor(handlerMethod.getMethod());
+                if (color == null) {
+                    continue;
+                }
+
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+
+                String method = mappingInfo.getMethodsCondition().toString();
+
+                String url = mappingInfo.getActivePatternsCondition()
+                        .toString();
+                url = url.substring(url.indexOf("/"), url.indexOf("]"));
+
+                Method requestParams = handlerMethod.getMethod();
+
+                embedBuilder.setDescription(requestParams.getName());
+                embedBuilder.setAuthor(method);
+                embedBuilder.setTitle(url);
+
+                embedBuilder.addField("파라미터", getRequestParams(requestParams), false);
+                embedBuilder.addField("반환 값", requestParams.getGenericReturnType() + "\n" + requestParams.getGenericReturnType().getTypeName(), false);
+
+                embedBuilder.setTimestamp(OffsetDateTime.now());
+                embedBuilder.setColor(color);
+                messageEmbedList.add(embedBuilder.build());
+            }
+
+            result.put(key, messageEmbedList);
+        }
+
+        return result;
     }
 
-    private boolean isMethodAllowed(Method method) {
-        return method.isAnnotationPresent(GetMapping.class) ||
-                method.isAnnotationPresent(PostMapping.class) ||
-                method.isAnnotationPresent(PutMapping.class) ||
-                method.isAnnotationPresent(DeleteMapping.class);
+    private Color getColor(Method method) {
+        if (method.isAnnotationPresent(GetMapping.class)) {
+            return new Color(60, 179, 113);
+        }
+
+        if (method.isAnnotationPresent(PostMapping.class)) {
+            return new Color(255, 165, 0);
+        }
+
+        if (method.isAnnotationPresent(PutMapping.class)) {
+            return new Color(75, 137, 220);
+        }
+
+        if (method.isAnnotationPresent(DeleteMapping.class)) {
+            return Color.RED;
+        }
+
+        if (method.isAnnotationPresent(PatchMapping.class)) {
+            return new Color(150, 123, 220);
+        }
+
+        return null;
     }
 
     private String getRequestParams(Method method) {
@@ -88,7 +118,10 @@ public class EndpointLister {
         StringBuilder paramsInfo = new StringBuilder();
         for (Parameter parameter : parameters) {
             if (parameter.isAnnotationPresent(RequestBody.class)) {
-                paramsInfo.append("RequestBody: ").append(parameter.getType().getSimpleName()).append("\n");
+                paramsInfo.append("RequestBody: ")
+                        .append(parameter.getType()
+                                .getSimpleName())
+                        .append("\n");
                 paramsInfo.append(getFieldInfo(parameter.getType()));
             }
         }
@@ -101,7 +134,12 @@ public class EndpointLister {
         Field[] fields = clazz.getDeclaredFields();
 
         for (Field field : fields) {
-            fieldInfo.append("  - ").append(field.getName()).append(": ").append(field.getType().getSimpleName()).append("\n");
+            fieldInfo.append("- ")
+                    .append(field.getName())
+                    .append(": ")
+                    .append(field.getType()
+                            .getSimpleName())
+                    .append("\n");
         }
 
         return fieldInfo.toString();
