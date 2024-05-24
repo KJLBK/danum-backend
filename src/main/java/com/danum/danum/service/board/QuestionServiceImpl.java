@@ -9,12 +9,10 @@ import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.QuestionException;
 import com.danum.danum.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -40,16 +38,14 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     @Transactional
-    public Page<Question> boardViewList(QuestionViewDto questionView) {
-        Pageable pageable = PageRequest.of(questionView.getPage(), 10, Sort.by("id").ascending());
-        return questionRepository.findByCategory(questionView.getCategory(), pageable);
+    public List<Question> boardViewList(QuestionViewDto questionView) {
+        return questionRepository.findAllByCategory(questionView.getCategory());
     }
 
     @Override
     @Transactional
     public Question boardView(Long id){
-        Question question = validateNullableId(id);
-        return question;
+        return validateNullableId(id);
     }
 
     @Override
@@ -74,9 +70,8 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     @Transactional
-    public Page<Question> boardSearchList(QuestionSearchDto questionSearch) {
-        Pageable pageable = PageRequest.of(questionSearch.getPage(), 10, Sort.by("id").ascending());
-        return questionRepository.findByTitleContaining(questionSearch.getKeyword(), pageable);
+    public List<Question> boardSearchList(QuestionSearchDto questionSearch) {
+        return questionRepository.findAllByTitleContaining(questionSearch.getKeyword());
     }
 
     private Question validateNullableId(Long id) {

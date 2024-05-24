@@ -11,6 +11,4 @@ public class QuestionSearchDto {
 
     private String keyword;
 
-    private int page;
-
 }
