@@ -3,7 +3,6 @@ package com.danum.danum.domain.board;
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.MemberException;
-import com.danum.danum.exception.QuestionException;
 import com.danum.danum.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -13,12 +12,12 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class QuestionMapper {
+public class BoardMapper {
 
     private final MemberRepository memberRepository;
 
-    public Question toEntity(QuestionNewDto newQuestionDto){
-        String authorEmail = newQuestionDto.getEmail();
+    public Board toEntity(BoardNewDto boardNewDto){
+        String authorEmail = boardNewDto.getEmail();
         Optional<Member> optionalMember = memberRepository.findById(authorEmail);
 
         if (optionalMember.isEmpty()) {
@@ -27,15 +26,15 @@ public class QuestionMapper {
 
         Member member = optionalMember.get();
 
-        return Question.builder()
+        return Board.builder()
                 .email(member)
-                .title(newQuestionDto.getTitle())
-                .content(newQuestionDto.getContent())
+                .title(boardNewDto.getTitle())
+                .content(boardNewDto.getContent())
                 .created_at(LocalDateTime.now())
                 .like(0L)
                 .count(0L)
                 .check(false)
-                .category(newQuestionDto.getCategory())
+                .category(boardNewDto.getCategory())
                 .build();
     }
 

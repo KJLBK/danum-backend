@@ -15,12 +15,12 @@ public class CommentMapper {
     private final CommentRepository commentRepository;
 
     public Comment toEntity(CommentNewDto commentNewDto){
-        if (commentNewDto.getMember_email() == null || commentNewDto.getQuestion_id() == null) {
+        if (commentNewDto.getMember_email() == null || commentNewDto.getBoard_id() == null) {
             throw new CommentException(ErrorCode.NOT_COMMENT_EXCEPTION);
         }
         CommentId commentId = CommentId.builder()
                 .member_email(commentNewDto.getMember_email())
-                .question_id(commentNewDto.getQuestion_id())
+                .board_id(commentNewDto.getBoard_id())
                 .build();
         return Comment.builder()
                 .commentId(commentId)

@@ -1,6 +1,6 @@
 package com.danum.danum.domain.member;
 
-import com.danum.danum.domain.board.Question;
+import com.danum.danum.domain.board.Board;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,7 +53,7 @@ public class Member {
     private LocalDateTime joinDateTime;
 
     @OneToMany(mappedBy = "email", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<Question> questions = new ArrayList<>();
+    private List<Board> questions = new ArrayList<>();
 
     public void updateUserPassword(String password){
         this.password = password;
