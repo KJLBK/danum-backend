@@ -19,33 +19,33 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class BoardController {
 
-    private final BoardService questionService;
+    private final BoardService boardService;
 
     @PostMapping("/board/new")
     public ResponseEntity<?> created(@RequestBody BoardNewDto boardNewDto){
-        questionService.created(boardNewDto);
+        boardService.created(boardNewDto);
 
         return ResponseEntity.ok("게시판 생성 성공");
     }
 
-    @GetMapping("/board/viewlist")
-    public ResponseEntity<?> boardViewList(@RequestParam("category") Category category){
-        return ResponseEntity.ok(questionService.boardViewList(category));
+    @GetMapping("/board/view/list/category/{id}")
+    public ResponseEntity<?> boardViewList(@PathVariable("id") int category){
+        return ResponseEntity.ok(boardService.boardViewList(category));
     }
 
     @GetMapping("/board/view/{id}")
     public ResponseEntity<?> boardView(@PathVariable("id") Long id){
-        return ResponseEntity.ok(questionService.boardView(id));
+        return ResponseEntity.ok(boardService.boardView(id));
     }
 
-    @GetMapping("/board/search")
+    @GetMapping("/board/search/keyword")
     public ResponseEntity<?> searchList(@RequestParam("keyword") String keyword){
-        return ResponseEntity.ok(questionService.boardSearchList(keyword));
+        return ResponseEntity.ok(boardService.boardSearchList(keyword));
     }
 
     @PatchMapping("/board/update")
     public ResponseEntity<?> updateBoard(@RequestBody BoardUpdateDto boardCountDto) {
-        questionService.updateBoard(boardCountDto);
+        boardService.updateBoard(boardCountDto);
 
         return ResponseEntity.ok("업데이트 성공");
     }

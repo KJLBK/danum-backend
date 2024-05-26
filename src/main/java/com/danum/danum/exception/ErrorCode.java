@@ -13,6 +13,7 @@ public enum ErrorCode {
     PASSWORD_NOT_MATCHED_EXCEPTION(HttpStatus.BAD_REQUEST, "M005", "패스워드가 틀렸습니다."),
     MEMBER_NOT_FOUND_EXCEPTION(HttpStatus.BAD_REQUEST, "M006", "존재하지 않는 회원 입니다."),
     NULL_BOARD_EXCEPTION(HttpStatus.BAD_REQUEST, "B001", "존재하지 않는 게시판 입니다."),
+    NOT_CATEGORY_EXCEPTION(HttpStatus.BAD_REQUEST, "B002", "카테고리가 없습니다"),
     TOKEN_NOT_FOUND_EXCEPTION(HttpStatus.NOT_FOUND, "T001", "토큰이 존재하지 않습니다."),
     TOKEN_ROLE_NOT_AVAILABLE_EXCEPTION(HttpStatus.NOT_FOUND, "T002", "토큰 권한이 올바르지 않습니다."),
     TOKEN_EXPIRED_EXCEPTION(HttpStatus.BAD_REQUEST, "T003", "만료된 토큰입니다."),

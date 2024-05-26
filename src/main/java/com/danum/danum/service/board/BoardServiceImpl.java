@@ -18,28 +18,28 @@ import java.util.List;
 @RequiredArgsConstructor
 public class BoardServiceImpl implements BoardService {
 
-    private final BoardRepository questionRepository;
+    private final BoardRepository boardRepository;
 
-    private final BoardMapper questionMapper;
+    private final BoardMapper boardMapper;
 
     @Override
     @Transactional
     public void created(BoardNewDto boardNewDto) {
-        Board question = questionMapper.toEntity(boardNewDto);
-        questionRepository.save(question);
+        if (boardNewDto.getCategory() == null) {
+            throw new BoardException(ErrorCode.NOT_CATEGORY_EXCEPTION);
+        }
+        Board question = boardMapper.toEntity(boardNewDto);
+        boardRepository.save(question);
     }
 
     @Override
     @Transactional
-    public void resolved(Long id) {
-        Board question =  validateNullableId(id);
-        question.checkState();
-    }
+    public List<Board> boardViewList(int category) {
+        if (category == 1) {
+            return boardRepository.findAllByCategory(Category.VILLAGE);
+        }
 
-    @Override
-    @Transactional
-    public List<Board> boardViewList(Category category) {
-        return questionRepository.findAllByCategory(category);
+        return boardRepository.findAllByCategory(Category.QUESTION);
     }
 
     @Override
@@ -50,29 +50,30 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional
-    public Long updateBoard(BoardUpdateDto boardUpdateDto) {
-        Board question = validateNullableId(boardUpdateDto.getId());
+    public void updateBoard(BoardUpdateDto boardUpdateDto) {
+        Board board = validateNullableId(boardUpdateDto.getId());
         switch (boardUpdateDto.getType()) {
             case LIKE :
-                question.addLike();
+                board.addLike();
                 break;
             case COUNT:
-                question.addCount();
+                board.addCount();
+                break;
+            case STOP:
+                board.checkState();
                 break;
         }
-        questionRepository.save(question);
-
-        return question.getLike();
+        boardRepository.save(board);
     }
 
     @Override
     @Transactional
     public List<Board> boardSearchList(String keyword) {
-        return questionRepository.findAllByTitleContaining(keyword);
+        return boardRepository.findAllByTitleContaining(keyword);
     }
 
     private Board validateNullableId(Long id) {
-        return questionRepository.findById(id)
+        return boardRepository.findById(id)
                 .orElseThrow(() -> new BoardException(ErrorCode.NULL_BOARD_EXCEPTION));
     }
 
