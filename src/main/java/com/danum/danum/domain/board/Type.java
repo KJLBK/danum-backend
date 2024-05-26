@@ -1,5 +1,5 @@
 package com.danum.danum.domain.board;
 
 public enum Type {
-    LIKE, COUNT
+    LIKE, COUNT, STOP
 }

@@ -29,5 +29,9 @@ public class BoardTest {
         boardService.updateBoard(update);
     }
 
-
+    @Test
+    public void 게시판조회(){
+        System.out.println(boardService.boardViewList(1));
+        System.out.println(boardService.boardViewList(2));
+    }
 }

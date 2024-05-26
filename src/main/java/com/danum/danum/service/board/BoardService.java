@@ -11,13 +11,11 @@ public interface BoardService {
 
     void created(BoardNewDto boardNewDtoDto);
 
-    void resolved(Long id);
-
-    List<Board> boardViewList(Category category);
+    List<Board> boardViewList(int category);
 
     Board boardView(Long id);
 
-    Long updateBoard(BoardUpdateDto boardUpdateDto);
+    void updateBoard(BoardUpdateDto boardUpdateDto);
 
     List<Board> boardSearchList(String keyword);
 
