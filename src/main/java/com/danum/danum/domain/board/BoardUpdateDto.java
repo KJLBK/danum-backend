@@ -3,13 +3,14 @@ package com.danum.danum.domain.board;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
-public class QuestionViewDto {
+public class BoardUpdateDto {
 
-    private Category category;
+    private Long id;
+
+    private Type type;
 
 }

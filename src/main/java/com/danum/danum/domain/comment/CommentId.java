@@ -17,7 +17,7 @@ public class CommentId implements Serializable {
 
     private Long comment_id;
 
-    private Long question_id;
+    private Long board_id;
 
     private String member_email;
 

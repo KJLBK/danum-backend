@@ -1,6 +1,6 @@
 package com.danum.danum.domain.comment;
 
-import com.danum.danum.domain.board.Question;
+import com.danum.danum.domain.board.Board;
 import com.danum.danum.domain.member.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
@@ -32,8 +32,8 @@ public class Comment {
     private Member member;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "question_id", insertable = false, updatable = false)
-    private Question question;
+    @JoinColumn(name = "board_id", insertable = false, updatable = false)
+    private Board board;
 
     @Column(name = "comment_content")
     private String content;

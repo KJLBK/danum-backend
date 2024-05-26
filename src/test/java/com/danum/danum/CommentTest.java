@@ -18,7 +18,7 @@ public class CommentTest {
 
     @Test
     public void createdComment(){
-        CommentNewDto commentNewDto = new CommentNewDto(1L, "test1@naver.com", "테스트 입니다.");
+        CommentNewDto commentNewDto = new CommentNewDto(1L, "test@naver.com", "테스트 입니다.");
         commentService.created(commentNewDto);
     }
 
@@ -29,13 +29,13 @@ public class CommentTest {
 
     @Test
     public void commentUpdate(){
-        CommentUpdateDto commentUpdateDto = new CommentUpdateDto(1L, 3L, "성공?");
+        CommentUpdateDto commentUpdateDto = new CommentUpdateDto(1L, 1L, "성공?");
         commentService.update(commentUpdateDto);
     }
 
     @Test
     public void commentDelete(){
-        CommentDeleteDto commentDeleteDto = new CommentDeleteDto(1L, 3L);
+        CommentDeleteDto commentDeleteDto = new CommentDeleteDto(1L, 1L);
         commentService.delete(commentDeleteDto);
     }
 

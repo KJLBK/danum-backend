@@ -24,34 +24,34 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Getter
-@Table(name = "question")
-public class Question {
+@Table(name = "board")
+public class Board {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "question_id")
+    @Column(name = "board_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_email")
     private Member email;
 
-    @Column(name = "question_title")
+    @Column(name = "board_title")
     private String title;
 
-    @Column(name = "question_content")
+    @Column(name = "board_content")
     private String content;
 
-    @Column(name = "question_created_at")
+    @Column(name = "board_created_at")
     private LocalDateTime created_at;
 
-    @Column(name = "question_like")
+    @Column(name = "board_like")
     private Long like;
 
-    @Column(name = "question_count")
+    @Column(name = "board_count")
     private Long count;
 
-    @Column(name = "question_check")
+    @Column(name = "board_check")
     private boolean check;
 
     @Enumerated(EnumType.STRING)

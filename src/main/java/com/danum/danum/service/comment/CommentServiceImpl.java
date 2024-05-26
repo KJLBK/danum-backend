@@ -33,7 +33,7 @@ public class CommentServiceImpl implements CommentService{
     @Override
     @Transactional
     public List<CommentViewDto> commentView(Long id) {
-        return commentRepository.findByQuestionId(id).stream()
+        return commentRepository.findByBoardId(id).stream()
                 .map(comment -> new CommentViewDto(
                         comment.getCommentId().getComment_id(),
                         comment.getCommentId().getMember_email(),
@@ -44,14 +44,14 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     public void update(CommentUpdateDto commentUpdateDto) {
-        List<Comment> comments = commentRepository.findByQuestionId(commentUpdateDto.getQuestion_id());
+        List<Comment> comments = commentRepository.findByBoardId(commentUpdateDto.getBoard_id());
         for (int i = 0; i < comments.size(); i++) {
             if (comments.get(i).getCommentId().equals(commentUpdateDto.getComment_id())) {
                 Comment comment = comments.get(i);
                 Comment newComment = new Comment(
                         comment.getCommentId()
                         ,comment.getMember()
-                        ,comment.getQuestion()
+                        ,comment.getBoard()
                         ,commentUpdateDto.getContent()
                         ,comment.getCreated_at()
                 );
@@ -63,7 +63,7 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     public void delete(CommentDeleteDto commentDeleteDto) {
-        List<Comment> comments = commentRepository.findByQuestionId(commentDeleteDto.getQuestion_id());
+        List<Comment> comments = commentRepository.findByBoardId(commentDeleteDto.getBoard_id());
         for (int i = 0; i < comments.size(); i++) {
             if (comments.get(i).getCommentId().equals(commentDeleteDto.getComment_id())) {
                 Comment comment = comments.get(i);
