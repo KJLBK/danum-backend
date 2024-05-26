@@ -1,4 +1,4 @@
-package com.danum.danum.controller;
+package com.danum.danum.controller.board;
 
 import com.danum.danum.domain.comment.CommentDeleteDto;
 import com.danum.danum.domain.comment.CommentNewDto;
