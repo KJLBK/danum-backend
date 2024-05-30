@@ -1,6 +1,7 @@
 package com.danum.danum.config;
 
 import com.danum.danum.filter.JwtFilter;
+import com.danum.danum.handler.JwtLogoutHandler;
 import com.danum.danum.service.member.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -42,6 +43,11 @@ public class SecurityConfig {
                         .requestMatchers("/test").permitAll()
                         .anyRequest().authenticated()
                 )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login")
+                        .addLogoutHandler(new JwtLogoutHandler())
+                        .deleteCookies())
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable) //jwt를 사용하기 때문에 form login 비활성화
