@@ -1,11 +1,18 @@
 package com.danum.danum.exception;
 
-public class CommentException extends RuntimeException{
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.http.HttpStatus;
 
-    private ErrorCode errorCode;
+@Getter
+@Setter
+public class CommentException extends CustomException {
 
-    public CommentException(ErrorCode errorCode){
-        super(errorCode.getMessage());
+    private HttpStatus httpStatus;
+
+    public CommentException(final ErrorCode errorCode){
+        super(errorCode);
+        this.httpStatus = errorCode.getStatus();
     }
 
 }
