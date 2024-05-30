@@ -41,6 +41,7 @@ public class SecurityConfig {
                         .requestMatchers("/member/login").permitAll()
                         .requestMatchers("/member/join").permitAll()
                         .requestMatchers("/test").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()
                 )
                 .logout(logout -> logout
@@ -48,6 +49,7 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/login")
                         .addLogoutHandler(new JwtLogoutHandler())
                         .deleteCookies())
+                .sessionManagement(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable) //jwt를 사용하기 때문에 form login 비활성화
