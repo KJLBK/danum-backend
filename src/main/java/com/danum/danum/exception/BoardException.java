@@ -1,11 +1,18 @@
 package com.danum.danum.exception;
 
-public class BoardException extends RuntimeException{
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.http.HttpStatus;
 
-    private ErrorCode errorCode;
+@Getter
+@Setter
+public class BoardException extends CustomException {
 
-    public BoardException(ErrorCode errorCode) {
-        super(errorCode.getMessage());
+    private HttpStatus httpStatus;
+
+    public BoardException(final ErrorCode errorCode) {
+        super(errorCode);
+        this.httpStatus = errorCode.getStatus();
     }
 
 }
