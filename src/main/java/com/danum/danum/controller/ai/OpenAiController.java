@@ -1,7 +1,7 @@
 package com.danum.danum.controller.ai;
 
 import com.danum.danum.domain.openai.OpenAiResult;
-import com.danum.danum.service.ai.AiService;
+import com.danum.danum.service.ai.OpenAiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AiController {
 
-	private final AiService aiService;
+	private final OpenAiService openAiService;
 
 //	@GetMapping("/ai-test")
 //	public Map aiTest() {
