@@ -1,9 +1,18 @@
 package com.danum.danum.exception;
 
-public class DiscordException extends RuntimeException {
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.http.HttpStatus;
 
-	public DiscordException(ErrorCode errorCode) {
-		super(errorCode.getMessage());
+@Getter
+@Setter
+public class DiscordException extends CustomException {
+
+	private HttpStatus httpStatus;
+
+	public DiscordException(final ErrorCode errorCode) {
+		super(errorCode);
+		this.httpStatus = errorCode.getStatus();
 	}
 
 }

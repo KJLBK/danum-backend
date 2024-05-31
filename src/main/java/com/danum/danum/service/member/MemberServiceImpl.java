@@ -120,7 +120,7 @@ public class MemberServiceImpl implements MemberService{
         Member member = optionalMember.get();
 
         if (!passwordEncoder.matches(loginDto.getPassword(), member.getPassword())) {
-            throw new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION);
+            throw new MemberException(ErrorCode.PASSWORD_NOT_MATCHED_EXCEPTION);
         }
 
         UsernamePasswordAuthenticationToken authenticationToken =

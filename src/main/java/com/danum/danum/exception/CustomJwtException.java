@@ -1,11 +1,18 @@
 package com.danum.danum.exception;
 
-import io.jsonwebtoken.JwtException;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.http.HttpStatus;
 
-public class CustomJwtException extends RuntimeException {
+@Getter
+@Setter
+public class CustomJwtException extends CustomException {
 
-	public CustomJwtException(ErrorCode errorCode) {
-		super(errorCode.getMessage());
+	private HttpStatus httpStatus;
+
+	public CustomJwtException(final ErrorCode errorCode) {
+		super(errorCode);
+		this.httpStatus = errorCode.getStatus();
 	}
 
 }

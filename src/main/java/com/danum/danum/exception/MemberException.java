@@ -1,10 +1,18 @@
 package com.danum.danum.exception;
 
-import com.danum.danum.exception.ErrorCode;
-public class MemberException extends RuntimeException{
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.http.HttpStatus;
 
-    public MemberException(ErrorCode errorCode) {
-        super(errorCode.getMessage());
+@Getter
+@Setter
+public class MemberException extends CustomException {
+
+    private HttpStatus httpStatus;
+
+    public MemberException(final ErrorCode errorCode) {
+        super(errorCode);
+        this.httpStatus = errorCode.getStatus();
     }
 
 }
