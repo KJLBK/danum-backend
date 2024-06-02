@@ -1,9 +1,11 @@
 package com.danum.danum.controller.ai;
 
+import com.danum.danum.domain.openai.OpenAiRequest;
 import com.danum.danum.domain.openai.OpenAiResult;
 import com.danum.danum.service.ai.OpenAiService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -20,8 +22,9 @@ public class OpenAiController {
 //		return result;
 //	}
 
-	@GetMapping("/open-ai/generate")
-	public OpenAiResult generate(String question) {
-		return new OpenAiResult(question);
+	@PostMapping("/open-ai/generate")
+	public OpenAiResult generate(@RequestBody OpenAiRequest question) {
+		return new OpenAiResult(question.getAnswer());
 	}
+
 }
