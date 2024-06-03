@@ -13,12 +13,12 @@ import java.util.List;
 public class ChatController {
     private final ChatService chatService;
 
-    @PostMapping
+    @PostMapping("/createroom")
     public ChatRoom createRoom(@RequestBody String name) {
         return chatService.createRoom(name);
     }
 
-    @GetMapping
+    @GetMapping("/roomlist")
     public List<ChatRoom> findAllRoom() {
         return chatService.findAllRoom();
     }
