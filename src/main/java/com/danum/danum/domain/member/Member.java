@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,6 +33,7 @@ public class Member {
     @Column(name = "member_email")
     private String email;
 
+    @Getter
     @Column(name = "member_password")
     private String password;
 
@@ -65,10 +67,6 @@ public class Member {
 
     public void updateUserName(String username){
         this.name = username;
-    }
-
-    public String getPassword() {
-        return this.password;
     }
 
     public UserDetails mappingUserDetails() {
