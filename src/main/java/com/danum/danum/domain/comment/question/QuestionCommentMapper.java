@@ -1,0 +1,37 @@
+package com.danum.danum.domain.comment.question;
+
+import com.danum.danum.domain.board.question.Question;
+import com.danum.danum.domain.member.Member;
+import com.danum.danum.exception.BoardException;
+import com.danum.danum.exception.ErrorCode;
+import com.danum.danum.exception.MemberException;
+import com.danum.danum.repository.MemberRepository;
+import com.danum.danum.repository.QuestionRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+
+@Component
+@RequiredArgsConstructor
+public class QuestionCommentMapper {
+
+    private final QuestionRepository questionRepository;
+
+    private final MemberRepository memberRepository;
+
+    public QuestionComment toEntity(QuestionCommentNewDto questionCommentNewDto) {
+        Member member = memberRepository.findById(questionCommentNewDto.getMember_email())
+                .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION));
+        Question question = questionRepository.findById(questionCommentNewDto.getQuestion_id())
+                .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
+        QuestionCommentId questionCommentId = QuestionCommentId.builder()
+                .questionId(questionCommentNewDto.getQuestion_id())
+                .memberEmail(questionCommentNewDto.getMember_email()).build();
+        return QuestionComment.builder()
+                .questionCommentId(questionCommentId)
+                .content(questionCommentNewDto.getContent())
+                .created_at(LocalDateTime.now()).build();
+    }
+
+}

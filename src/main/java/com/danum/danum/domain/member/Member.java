@@ -1,7 +1,12 @@
 package com.danum.danum.domain.member;
 
-import com.danum.danum.domain.board.Board;
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,9 +18,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -53,9 +56,6 @@ public class Member {
 
     @Column(name = "member_join")
     private LocalDateTime joinDateTime;
-
-    @OneToMany(mappedBy = "email", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<Board> questions = new ArrayList<>();
 
     public void updateUserPassword(String password){
         this.password = password;
