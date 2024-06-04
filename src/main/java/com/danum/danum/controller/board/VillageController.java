@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,12 +29,12 @@ public class VillageController {
         return ResponseEntity.ok(villageService.viewList());
     }
 
-    @PostMapping("/board/village/view/{id}")
+    @GetMapping("/board/village/view/{id}")
     public ResponseEntity<?> view(@PathVariable("id") Long id){
         return ResponseEntity.ok(villageService.view(id));
     }
 
-    @PostMapping("/board/village/{id}/like")
+    @PutMapping("/board/village/{id}/like")
     public ResponseEntity<?> like(@PathVariable("id") Long id) {
         boolean check = villageService.updateLike(id);
         if (check) {
