@@ -1,25 +1,23 @@
 package com.danum.danum.controller.chat;
 
-import com.danum.danum.domain.chat.ChatRoom;
-import com.danum.danum.service.chat.ChatService;
+import com.danum.danum.domain.chat.ChatMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.stereotype.Controller;
 
-import java.util.List;
+// import 생략...
 
 @RequiredArgsConstructor
-@RestController
-@RequestMapping("/chat")
+@Controller
 public class ChatController {
-    private final ChatService chatService;
 
-    @PostMapping("/createroom")
-    public ChatRoom createRoom(@RequestBody String name) {
-        return chatService.createRoom(name);
-    }
-
-    @GetMapping("/roomlist")
-    public List<ChatRoom> findAllRoom() {
-        return chatService.findAllRoom();
+    private final SimpMessageSendingOperations sendingOperations;
+    @MessageMapping("/chat/message")
+    public void enter(ChatMessage message) {
+        if (ChatMessage.MessageType.ENTER.equals(message.getType())) {
+            message.setMessage(message.getSender()+"님이 입장하였습니다.");
+        }
+        sendingOperations.convertAndSend("/topic/chat/room/"+message.getRoomId(),message);
     }
 }
