@@ -9,32 +9,34 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/board/question")
 public class QuestionController {
 
     private final QuestionService questionService;
 
-    @PostMapping("/board/question/new")
+    @PostMapping("/new")
     public ResponseEntity<?> created(@RequestBody QuestionNewDto questionNewDto){
         questionService.created(questionNewDto);
 
         return ResponseEntity.ok("게시판 생성 성공");
     }
 
-    @GetMapping("/board/question/view/list")
+    @GetMapping("/show")
     public ResponseEntity<?> viewList(){
         return ResponseEntity.ok(questionService.viewList());
     }
 
-    @GetMapping("/board/question/view/{id}")
+    @GetMapping("/show/{id}")
     public ResponseEntity<?> view(@PathVariable("id") Long id){
         return ResponseEntity.ok(questionService.view(id));
     }
 
-    @PutMapping("/board/question/{id}/like")
+    @PutMapping("/like/{id}")
     public ResponseEntity<?> like(@PathVariable("id") Long id) {
         boolean check = questionService.updateLike(id);
         if (check) {
