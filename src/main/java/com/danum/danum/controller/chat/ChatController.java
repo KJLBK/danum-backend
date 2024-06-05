@@ -6,18 +6,18 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
 
-// import 생략...
+
 
 @RequiredArgsConstructor
 @Controller
 public class ChatController {
 
-    private final SimpMessageSendingOperations sendingOperations;
+    private final SimpMessageSendingOperations messagingTemplate;
+
     @MessageMapping("/chat/message")
-    public void enter(ChatMessage message) {
-        if (ChatMessage.MessageType.ENTER.equals(message.getType())) {
-            message.setMessage(message.getSender()+"님이 입장하였습니다.");
-        }
-        sendingOperations.convertAndSend("/topic/chat/room/"+message.getRoomId(),message);
+    public void message(ChatMessage message) {
+        if (ChatMessage.MessageType.ENTER.equals(message.getType()))
+            message.setMessage(message.getSender() + "님이 입장하셨습니다.");
+        messagingTemplate.convertAndSend("/sub/chat/room/" + message.getRoomId(), message);
     }
 }
