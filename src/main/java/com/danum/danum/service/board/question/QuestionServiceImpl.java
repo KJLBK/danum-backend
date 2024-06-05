@@ -53,13 +53,15 @@ public class QuestionServiceImpl implements QuestionService{
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
         Member member = question.getEmail();
-        QuestionView questionView = questionViewMapper.toEntity(question, member);
-        Optional<QuestionView> optionalQuestionView = questionViewRepository.findByQuestionAndMember(question, member);
-        if (optionalQuestionView.isEmpty()) {
+        Optional<QuestionView> optionalQuestionViews = questionViewRepository.findByQuestionAndMember(question, member);
+        if (optionalQuestionViews.isEmpty()) {
+            QuestionView questionView = questionViewMapper.toEntity(question, member);
+            questionViewRepository.save(questionView);
             question.addView();
+            return questionRepository.save(question);
         }
-        questionViewRepository.save(questionView);
-        return questionRepository.save(question);
+
+        return question;
     }
 
     @Override
