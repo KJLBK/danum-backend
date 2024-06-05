@@ -1,18 +1,20 @@
+// ChatRoomController.java
 package com.danum.danum.controller.chat;
 
 import com.danum.danum.domain.chat.ChatRoom;
-import com.danum.danum.service.chat.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-@Controller
+
 @RequiredArgsConstructor
+@Controller
 @RequestMapping("/chat")
 public class ChatRoomController {
-    private final ChatService chatService;
+
+    private final com.danum.danum.repository.ChatRoomRepository chatRoomRepository;
 
     // 채팅 리스트 화면
     @GetMapping("/room")
@@ -23,16 +25,16 @@ public class ChatRoomController {
     @GetMapping("/rooms")
     @ResponseBody
     public List<ChatRoom> room() {
-        return chatService.findAllRoom();
+        return chatRoomRepository.findAllRoom();
     }
     // 채팅방 생성
     @PostMapping("/room")
     @ResponseBody
-    public ChatRoom chatRoom(@RequestParam(value = "name", required = false, defaultValue = "Guest") String name) {
-        return chatService.createRoom(name);
+    public ChatRoom createRoom(@RequestParam String name) {
+        return chatRoomRepository.createChatRoom(name);
     }
     // 채팅방 입장 화면
-    @GetMapping("/room/enter/{roomId}")
+    @GetMapping("chat/room/enter/{roomId}")
     public String roomDetail(Model model, @PathVariable String roomId) {
         model.addAttribute("roomId", roomId);
         return "/chat/roomdetail";
@@ -41,6 +43,6 @@ public class ChatRoomController {
     @GetMapping("/room/{roomId}")
     @ResponseBody
     public ChatRoom roomInfo(@PathVariable String roomId) {
-        return chatService.findById(roomId);
+        return chatRoomRepository.findRoomById(roomId);
     }
 }
