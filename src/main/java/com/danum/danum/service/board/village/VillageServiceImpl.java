@@ -53,13 +53,15 @@ public class VillageServiceImpl implements VillageService{
         Village village = villageRepository.findById(id)
                 .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
         Member member = village.getEmail();
-        VillageView villageView = villageViewMapper.toEntity(village, member);
         Optional<VillageView> optionalVillageView = villageViewRepository.findByVillageAndMember(village, member);
         if (optionalVillageView.isEmpty()) {
+            VillageView villageView = villageViewMapper.toEntity(village, member);
+            villageViewRepository.save(villageView);
             village.addView();
+            return villageRepository.save(village);
         }
-        villageViewRepository.save(villageView);
-        return villageRepository.save(village);
+
+        return village;
     }
 
     @Override
