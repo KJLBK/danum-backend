@@ -36,7 +36,7 @@ public class QuestionController {
         return ResponseEntity.ok(questionService.view(id));
     }
 
-    @PutMapping("/like/{id}")
+    @GetMapping("/like/{id}")
     public ResponseEntity<?> like(@PathVariable("id") Long id) {
         return ResponseEntity.ok(questionService.updateLike(id));
     }

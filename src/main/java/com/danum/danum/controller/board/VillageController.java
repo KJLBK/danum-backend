@@ -36,7 +36,7 @@ public class VillageController {
         return ResponseEntity.ok(villageService.view(id));
     }
 
-    @PutMapping("/like/{id}")
+    @GetMapping("/like/{id}")
     public ResponseEntity<?> like(@PathVariable("id") Long id) {
         return ResponseEntity.ok(villageService.updateLike(id));
     }
