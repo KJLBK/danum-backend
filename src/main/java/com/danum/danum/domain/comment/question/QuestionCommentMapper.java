@@ -25,13 +25,12 @@ public class QuestionCommentMapper {
                 .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION));
         Question question = questionRepository.findById(questionCommentNewDto.getQuestion_id())
                 .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
-        QuestionCommentId questionCommentId = QuestionCommentId.builder()
-                .questionId(questionCommentNewDto.getQuestion_id())
-                .memberEmail(questionCommentNewDto.getMember_email()).build();
         return QuestionComment.builder()
-                .questionCommentId(questionCommentId)
+                .member(member)
+                .question(question)
                 .content(questionCommentNewDto.getContent())
-                .created_at(LocalDateTime.now()).build();
+                .created_at(LocalDateTime.now())
+                .build();
     }
 
 }
