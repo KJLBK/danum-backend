@@ -38,12 +38,7 @@ public class VillageController {
 
     @PutMapping("/like/{id}")
     public ResponseEntity<?> like(@PathVariable("id") Long id) {
-        boolean check = villageService.updateLike(id);
-        if (check) {
-            return ResponseEntity.ok("좋아요 성공");
-        }
-
-        return ResponseEntity.ok("좋아요 취소");
+        return ResponseEntity.ok(villageService.updateLike(id));
     }
 
 }

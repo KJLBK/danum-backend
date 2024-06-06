@@ -38,9 +38,9 @@ public class QuestionCommentServiceImpl implements QuestionCommentService {
     @Override
     @Transactional
     public void update(QuestionCommentUpdateDto questionCommentUpdateDto) {
-        QuestionComment questionComment = questionCommentRepository.findByQuestionCommentId_CommentId(questionCommentUpdateDto.getId())
+        QuestionComment questionComment = questionCommentRepository.findById(questionCommentUpdateDto.getId())
                 .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
-        questionComment = questionComment.updateContent(questionCommentUpdateDto.getContent());
+        questionComment.updateContent(questionCommentUpdateDto.getContent());
 
         questionCommentRepository.save(questionComment);
     }
@@ -48,7 +48,7 @@ public class QuestionCommentServiceImpl implements QuestionCommentService {
     @Override
     @Transactional
     public void delete(Long id) {
-        QuestionComment questionComment = questionCommentRepository.findByQuestionCommentId_CommentId(id)
+        QuestionComment questionComment = questionCommentRepository.findById(id)
                         .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
         questionCommentRepository.delete(questionComment);
     }

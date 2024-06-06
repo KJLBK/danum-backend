@@ -66,7 +66,7 @@ public class VillageServiceImpl implements VillageService{
 
     @Override
     @Transactional
-    public boolean updateLike(Long id) {
+    public Long updateLike(Long id) {
         Village village = villageRepository.findById(id)
                 .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
         Member member = village.getEmail();
@@ -77,10 +77,11 @@ public class VillageServiceImpl implements VillageService{
         if (villageView.isLiked()) {
             village.addLike();
             villageRepository.save(village);
-            return true;
+            return village.getLike();
         }
+
         village.subLike();
         villageRepository.save(village);
-        return false;
+        return village.getLike();
     }
 }

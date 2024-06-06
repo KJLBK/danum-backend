@@ -53,6 +53,7 @@ public class QuestionServiceImpl implements QuestionService{
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
         Member member = question.getEmail();
+
         Optional<QuestionView> optionalQuestionViews = questionViewRepository.findByQuestionAndMember(question, member);
         if (optionalQuestionViews.isEmpty()) {
             QuestionView questionView = questionViewMapper.toEntity(question, member);
@@ -66,7 +67,7 @@ public class QuestionServiceImpl implements QuestionService{
 
     @Override
     @Transactional
-    public boolean updateLike(Long id) {
+    public Long updateLike(Long id) {
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
         Member member = question.getEmail();
@@ -77,11 +78,13 @@ public class QuestionServiceImpl implements QuestionService{
         if (questionView.isLiked()) {
             question.addLike();
             questionRepository.save(question);
-            return true;
+            return question.getLike();
         }
+
+
         question.subLike();
         questionRepository.save(question);
-        return false;
+        return question.getLike();
     }
 
 }
