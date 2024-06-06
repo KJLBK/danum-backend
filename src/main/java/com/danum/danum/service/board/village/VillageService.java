@@ -13,6 +13,6 @@ public interface VillageService {
 
     Village view(Long id);
 
-    boolean updateLike(Long id);
+    Long updateLike(Long id);
 
 }

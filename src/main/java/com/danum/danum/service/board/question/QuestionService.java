@@ -13,6 +13,6 @@ public interface QuestionService {
 
     Question view(Long id);
 
-    boolean updateLike(Long id);
+    Long updateLike(Long id);
 
 }
