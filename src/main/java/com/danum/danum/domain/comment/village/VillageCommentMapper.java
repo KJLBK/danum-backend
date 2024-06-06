@@ -25,13 +25,13 @@ public class VillageCommentMapper {
                 .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION));
         Village village = villageRepository.findById(villageCommentNewDto.getVillage_id())
                 .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
-        VillageCommentId villageCommentId = VillageCommentId.builder()
-                .questionId(villageCommentNewDto.getVillage_id())
-                .memberEmail(villageCommentNewDto.getMember_email()).build();
+
         return VillageComment.builder()
-                .villageCommentId(villageCommentId)
+                .member(member)
+                .village(village)
                 .content(villageCommentNewDto.getContent())
-                .created_at(LocalDateTime.now()).build();
+                .created_at(LocalDateTime.now())
+                .build();
     }
 
 }

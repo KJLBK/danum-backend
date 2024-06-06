@@ -38,7 +38,7 @@ public class VillageCommentServiceImpl implements VillageCommentService {
     @Override
     @Transactional
     public void update(VillageCommentUpdateDto villageCommentUpdateDto) {
-        VillageComment villageComment = villageCommentRepository.findByVillageCommentId_CommentId(villageCommentUpdateDto.getId())
+        VillageComment villageComment = villageCommentRepository.findById(villageCommentUpdateDto.getId())
                 .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
         villageComment = villageComment.updateContent(villageCommentUpdateDto.getContent());
 
@@ -48,7 +48,7 @@ public class VillageCommentServiceImpl implements VillageCommentService {
     @Override
     @Transactional
     public void delete(Long id) {
-        VillageComment villageComment = villageCommentRepository.findByVillageCommentId_CommentId(id)
+        VillageComment villageComment = villageCommentRepository.findById(id)
                 .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
         villageCommentRepository.delete(villageComment);
     }
