@@ -2,6 +2,7 @@ package com.danum.danum.domain.chat;
 
 import lombok.Getter;
 import lombok.Setter;
+
 import java.util.UUID;
 
 @Getter
