@@ -26,15 +26,4 @@ public class VillageTest {
         System.out.println(villageService.viewList());
     }
 
-    @Test
-    public void 질문게시판조회및조회수() {
-        System.out.println(villageService.view(1L));
-    }
-
-    @Test
-    public void 질문게시판좋아요() {
-        System.out.println(villageService.view(1L));
-        System.out.println(villageService.updateLike(1L));
-    }
-
 }
