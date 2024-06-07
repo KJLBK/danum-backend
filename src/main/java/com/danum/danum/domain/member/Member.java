@@ -30,6 +30,7 @@ import java.util.stream.Stream;
 public class Member {
 
     @Id
+    @Getter
     @Column(name = "member_email")
     private String email;
 
