@@ -32,7 +32,7 @@ public class Village {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_email")
-    private Member email;
+    private Member member;
 
     @Column(name = "village_title")
     private String title;
