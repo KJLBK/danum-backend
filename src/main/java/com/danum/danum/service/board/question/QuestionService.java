@@ -1,7 +1,7 @@
 package com.danum.danum.service.board.question;
 
-import com.danum.danum.domain.board.question.Question;
 import com.danum.danum.domain.board.question.QuestionNewDto;
+import com.danum.danum.domain.board.question.QuestionViewDto;
 
 import java.util.List;
 
@@ -9,10 +9,8 @@ public interface QuestionService {
 
     void created(QuestionNewDto questionNewDto);
 
-    List<Question> viewList();
+    List<QuestionViewDto> viewList();
 
-    Question view(Long id);
-
-    Long updateLike(Long id);
+    QuestionViewDto view(Long id);
 
 }

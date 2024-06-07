@@ -27,7 +27,7 @@ public class QuestionMapper {
         Member member = optionalMember.get();
 
         return Question.builder()
-                .email(member)
+                .member(member)
                 .title(questionNewDto.getTitle())
                 .content(questionNewDto.getContent())
                 .created_at(LocalDateTime.now())
