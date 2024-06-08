@@ -1,8 +1,8 @@
 package com.danum.danum.filter;
 
+import com.danum.danum.exception.CustomJwtException;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.util.jwt.JwtUtil;
-import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -57,7 +57,7 @@ public class JwtFilter extends OncePerRequestFilter {
 		if (!StringUtils.hasText(tokenHeader) ||
 				tokenHeader.length() <= TOKEN_START_INDEX ||
 				!tokenHeader.startsWith(PREFIX)) {
-			throw new JwtException(ErrorCode.TOKEN_NOT_FOUND_EXCEPTION.getMessage());
+			throw new CustomJwtException(ErrorCode.TOKEN_NOT_FOUND_EXCEPTION);
 		}
 
 		return tokenHeader.substring(TOKEN_START_INDEX);
