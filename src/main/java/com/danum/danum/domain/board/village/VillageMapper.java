@@ -27,7 +27,7 @@ public class VillageMapper {
         Member member = optionalMember.get();
 
         return Village.builder()
-                .email(member)
+                .member(member)
                 .title(villageNewDto.getTitle())
                 .content(villageNewDto.getContent())
                 .created_at(LocalDateTime.now())
