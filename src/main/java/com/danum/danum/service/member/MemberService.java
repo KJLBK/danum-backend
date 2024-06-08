@@ -20,6 +20,8 @@ public interface MemberService {
 
     public void logout(HttpServletResponse response);
 
+    Member getMemberByAuthentication();
+
     public Member exp();
 
     public Member contribution();
