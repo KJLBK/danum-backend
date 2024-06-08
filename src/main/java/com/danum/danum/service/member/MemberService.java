@@ -10,20 +10,20 @@ import org.springframework.stereotype.Service;
 @Service
 public interface MemberService {
 
-    public Member join(RegisterDto registerDto);
+    Member join(RegisterDto registerDto);
 
-    public void delete(String id);
+    void delete(String id);
 
-    public Member update(UpdateDto updateDto);
+    Member update(UpdateDto updateDto);
 
-    public String login(LoginDto loginDto, HttpServletResponse response);
+    String login(LoginDto loginDto, HttpServletResponse response);
 
-    public void logout(HttpServletResponse response);
+    void logout(HttpServletResponse response);
 
     Member getMemberByAuthentication();
 
-    public Member exp();
+    Member exp();
 
-    public Member contribution();
+    Member contribution();
 
 }
