@@ -12,6 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
 @Table(name = "question_comment")
 public class QuestionComment {
 
@@ -42,13 +44,8 @@ public class QuestionComment {
     @Column(name = "comment_created_at")
     private LocalDateTime created_at;
 
-    public QuestionComment updateContent(String newContent) {
-        return QuestionComment.builder()
-                .member(this.member)
-                .question(this.question)
-                .content(newContent)
-                .created_at(this.created_at)
-                .build();
+    public void updateContent(String newContent) {
+        this.content = newContent;
     }
 
 }
