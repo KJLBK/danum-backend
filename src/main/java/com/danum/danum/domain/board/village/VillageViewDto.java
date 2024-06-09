@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class VillageViewDto {
 
-    private Long question_id;
+    private Long village_id;
 
     private String email;
 
@@ -26,7 +26,7 @@ public class VillageViewDto {
 
     public VillageViewDto toEntity(Village village) {
         return VillageViewDto.builder()
-                .question_id(village.getId())
+                .village_id(village.getId())
                 .email(village.getMember().getEmail())
                 .title(village.getTitle())
                 .content(village.getContent())
