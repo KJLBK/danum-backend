@@ -1,5 +1,6 @@
 package com.danum.danum.config;
 
+import com.danum.danum.domain.member.Role;
 import com.danum.danum.filter.JwtFilter;
 import com.danum.danum.handler.JwtLogoutHandler;
 import com.danum.danum.service.member.CustomUserDetailsService;
@@ -31,6 +32,12 @@ public class SecurityConfig {
     @Value("${authentication.path.all}")
     private String[] allowedPaths;
 
+    @Value("${authentication.path.user}")
+    private String[] userAllowedPaths;
+
+    @Value("${authentication.path.admin}")
+    private String[] adminAllowedPaths;
+
     @Value("${authentication.origins}")
     private String[] allowedOrigins;
 
@@ -47,6 +54,8 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         authorizationManagerRequestMatcherRegistry
+                                .requestMatchers(adminAllowedPaths).hasRole(Role.ADMIN.name())
+                                .requestMatchers(userAllowedPaths).hasRole(Role.USER.name())
                                 .requestMatchers(allowedPaths).permitAll()
                                 .anyRequest().authenticated()
                 )
