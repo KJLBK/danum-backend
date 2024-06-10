@@ -1,4 +1,4 @@
-package com.danum.danum.config;
+package com.danum.danum.config.security;
 
 import com.danum.danum.domain.member.Role;
 import com.danum.danum.filter.JwtFilter;
