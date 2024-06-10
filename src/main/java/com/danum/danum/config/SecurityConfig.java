@@ -1,9 +1,12 @@
 package com.danum.danum.config;
 
+import com.danum.danum.domain.member.Role;
 import com.danum.danum.filter.JwtFilter;
 import com.danum.danum.handler.JwtLogoutHandler;
 import com.danum.danum.service.member.CustomUserDetailsService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,8 +20,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -28,8 +29,23 @@ public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
 
+    @Value("${authentication.path.all}")
+    private String[] allowedPaths;
+
+    @Value("${authentication.path.user}")
+    private String[] userAllowedPaths;
+
+    @Value("${authentication.path.admin}")
+    private String[] adminAllowedPaths;
+
+    @Value("${authentication.origins}")
+    private String[] allowedOrigins;
+
+    @Value("${authentication.method}")
+    private String[] allowedMethod;
+
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -38,18 +54,15 @@ public class SecurityConfig {
         return http
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                         authorizationManagerRequestMatcherRegistry
-                                .requestMatchers("/member/login").permitAll()
-                                .requestMatchers("/member/join").permitAll()
-                                .requestMatchers("/test").permitAll()
-                                .requestMatchers("/error").permitAll()
+                                .requestMatchers(adminAllowedPaths).hasRole(Role.ADMIN.name())
+                                .requestMatchers(userAllowedPaths).hasRole(Role.USER.name())
+                                .requestMatchers(allowedPaths).permitAll()
                                 .anyRequest().authenticated()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login")
                         .addLogoutHandler(new JwtLogoutHandler())
                         .deleteCookies())
-                .sessionManagement(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable) //jwt를 사용하기 때문에 form login 비활성화
@@ -63,8 +76,8 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:3000", "http://*:5137"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        config.setAllowedOrigins(List.of(allowedOrigins));
+        config.setAllowedMethods(List.of(allowedMethod));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("*"));
 

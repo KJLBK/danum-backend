@@ -13,19 +13,19 @@ import com.danum.danum.repository.MemberRepository;
 import com.danum.danum.util.jwt.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
-public class MemberServiceImpl implements MemberService{
+public class MemberServiceImpl implements MemberService {
 
     private final static String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
 
@@ -59,10 +59,10 @@ public class MemberServiceImpl implements MemberService{
         }
     }
 
-    private void validateDuplicatedName(String name){
+    private void validateDuplicatedName(String name) {
         Optional<Member> member = memberRepository.findByName(name);
 
-        if(member.isPresent()){
+        if (member.isPresent()) {
             throw new MemberException(ErrorCode.NICKNAME_EXCEPTION);
         }
     }
@@ -145,12 +145,26 @@ public class MemberServiceImpl implements MemberService{
 
     @Override
     public void logout(HttpServletResponse response) {
-       Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, null);
-       cookie.setPath("/");
-       cookie.setHttpOnly(true);
-       cookie.setMaxAge(0);
+        Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, null);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setMaxAge(0);
 
-       response.addCookie(cookie);
+        response.addCookie(cookie);
+    }
+
+    @Override
+    public Member getMemberByAuthentication() {
+        String id = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        Optional<Member> optionalMember = memberRepository.findById(id);
+        if (optionalMember.isEmpty()) {
+            throw new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION);
+        }
+
+        return optionalMember.get();
     }
 
     @Override

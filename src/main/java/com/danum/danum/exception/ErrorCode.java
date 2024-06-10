@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ErrorCode {
-    
+
     PASSWORD_SHORT_EXCEPTION(HttpStatus.BAD_REQUEST, "M001", "비밀번호가 8자보다 적습니다."),
     PASSWORD_LONG_EXCEPTION(HttpStatus.BAD_REQUEST, "M002", "비밀번호가 16자를 초과합니다."),
     DUPLICATION_EXCEPTION(HttpStatus.BAD_REQUEST, "M003", "이미 사용되는 아이디입니다."),
@@ -18,7 +18,10 @@ public enum ErrorCode {
     TOKEN_ROLE_NOT_AVAILABLE_EXCEPTION(HttpStatus.NOT_FOUND, "T002", "토큰 권한이 올바르지 않습니다."),
     TOKEN_EXPIRED_EXCEPTION(HttpStatus.BAD_REQUEST, "T003", "만료된 토큰입니다."),
     TOKEN_SIGNATURE_EXCEPTION(HttpStatus.BAD_REQUEST, "T004", "올바르지 않은 서명입니다."),
-    DISCORD_CHANNEL_NOT_FOUND(HttpStatus.BAD_REQUEST, "D001", "올바른 채널이 아닙니다.");
+    DISCORD_CHANNEL_NOT_FOUND(HttpStatus.BAD_REQUEST, "D001", "올바른 채널이 아닙니다."),
+    NO_SUCH_CONVERSATION_EXCEPTION(HttpStatus.BAD_REQUEST, "OA001", "Open Ai 대화를 찾을 수 없습니다."),
+    MESSAGE_TYPE_NOT_SUPPORTED_EXCEPTION(HttpStatus.NOT_FOUND, "OA002", "지원되지 않는 메시지 타입입니다."),
+    MULTIPLE_PROCESSING_MESSAGE_EXCEPTION(HttpStatus.BAD_REQUEST, "OA003", "진행중인 메시지가 하나보다 많습니다.");
 
     private final HttpStatus status;
 
