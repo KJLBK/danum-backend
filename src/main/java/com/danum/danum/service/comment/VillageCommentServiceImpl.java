@@ -4,6 +4,7 @@ import com.danum.danum.domain.comment.village.VillageComment;
 import com.danum.danum.domain.comment.village.VillageCommentMapper;
 import com.danum.danum.domain.comment.village.VillageCommentNewDto;
 import com.danum.danum.domain.comment.village.VillageCommentUpdateDto;
+import com.danum.danum.domain.comment.village.VillageCommentViewDto;
 import com.danum.danum.exception.CommentException;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.repository.VillageCommentRepository;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -31,16 +33,22 @@ public class VillageCommentServiceImpl implements VillageCommentService {
 
     @Override
     @Transactional
-    public List<VillageComment> viewList(Long id) {
-        return villageCommentRepository.findAllByVillageId(id);
+    public List<VillageCommentViewDto> viewList(Long id) {
+        List<VillageComment> villageCommentList =  villageCommentRepository.findAllByVillageId(id);
+        List<VillageCommentViewDto> villageViewList = new ArrayList<>();
+        for (VillageComment villageComment : villageCommentList) {
+            villageViewList.add(new VillageCommentViewDto().toEntity(villageComment));
+        }
+
+        return villageViewList;
     }
 
     @Override
     @Transactional
     public void update(VillageCommentUpdateDto villageCommentUpdateDto) {
-        VillageComment villageComment = villageCommentRepository.findByVillageCommentId_CommentId(villageCommentUpdateDto.getId())
+        VillageComment villageComment = villageCommentRepository.findById(villageCommentUpdateDto.getId())
                 .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
-        villageComment = villageComment.updateContent(villageCommentUpdateDto.getContent());
+        villageComment.updateContent(villageCommentUpdateDto.getContent());
 
         villageCommentRepository.save(villageComment);
     }
@@ -48,7 +56,7 @@ public class VillageCommentServiceImpl implements VillageCommentService {
     @Override
     @Transactional
     public void delete(Long id) {
-        VillageComment villageComment = villageCommentRepository.findByVillageCommentId_CommentId(id)
+        VillageComment villageComment = villageCommentRepository.findById(id)
                 .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
         villageCommentRepository.delete(villageComment);
     }

@@ -32,7 +32,7 @@ public class Question {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_email")
-    private Member email;
+    private Member member;
 
     @Column(name = "question_title")
     private String title;
@@ -49,16 +49,5 @@ public class Question {
     @Column(name = "question_count")
     private Long count;
 
-    public void addView() {
-        this.count += 1L;
-    }
-
-    public void addLike() {
-        this.like += 1;
-    }
-
-    public void subLike() {
-        this.like -= 1;
-    }
 
 }

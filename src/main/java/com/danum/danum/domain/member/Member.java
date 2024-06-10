@@ -28,6 +28,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 public class Member {
 
     @Id
+    @Getter
     @Column(name = "member_email")
     private String email;
 

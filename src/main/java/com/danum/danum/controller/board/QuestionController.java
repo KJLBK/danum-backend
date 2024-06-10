@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,16 +33,6 @@ public class QuestionController {
     @GetMapping("/show/{id}")
     public ResponseEntity<?> view(@PathVariable("id") Long id){
         return ResponseEntity.ok(questionService.view(id));
-    }
-
-    @PutMapping("/like/{id}")
-    public ResponseEntity<?> like(@PathVariable("id") Long id) {
-        boolean check = questionService.updateLike(id);
-        if (check) {
-            return ResponseEntity.ok("좋아요 성공");
-        }
-
-        return ResponseEntity.ok("좋아요 취소");
     }
 
 }
