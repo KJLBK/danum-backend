@@ -1,4 +1,4 @@
-package com.danum.danum.filter;
+package com.danum.danum.handler;
 
 import com.danum.danum.util.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;

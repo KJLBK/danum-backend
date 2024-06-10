@@ -18,7 +18,7 @@ public class ChatRoomController {
 
     private final com.danum.danum.repository.ChatRoomRepository chatRoomRepository;
 
-//     채팅 리스트 화면
+    //     채팅 리스트 화면
     @GetMapping("/room")
     public String rooms(Model model) {
         return "/chat/room";
@@ -34,7 +34,7 @@ public class ChatRoomController {
     // 채팅방 생성
     @PostMapping("/room")
     @ResponseBody
-    public ChatRoom createRoom(@RequestParam String name) {
+    public ChatRoom createRoom(@RequestBody String name) {
         return chatRoomRepository.createChatRoom(name);
     }
 
