@@ -37,12 +37,12 @@ public class SecurityConfig {
     protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
-                authorizationManagerRequestMatcherRegistry
-                        .requestMatchers("/member/login").permitAll()
-                        .requestMatchers("/member/join").permitAll()
-                        .requestMatchers("/test").permitAll()
-                        .requestMatchers("/error").permitAll()
-                        .anyRequest().authenticated()
+                        authorizationManagerRequestMatcherRegistry
+                                .requestMatchers("/member/login").permitAll()
+                                .requestMatchers("/member/join").permitAll()
+                                .requestMatchers("/test").permitAll()
+                                .requestMatchers("/error").permitAll()
+                                .anyRequest().authenticated()
                 )
                 .logout(logout -> logout
                         .logoutUrl("/logout")

@@ -1,6 +1,6 @@
 package com.danum.danum.config;
 
-import com.danum.danum.filter.ChatPreHandler;
+import com.danum.danum.handler.ChatPreHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.ChannelRegistration;
