@@ -21,7 +21,8 @@ public enum ErrorCode {
     DISCORD_CHANNEL_NOT_FOUND(HttpStatus.BAD_REQUEST, "D001", "올바른 채널이 아닙니다."),
     NO_SUCH_CONVERSATION_EXCEPTION(HttpStatus.BAD_REQUEST, "OA001", "Open Ai 대화를 찾을 수 없습니다."),
     MESSAGE_TYPE_NOT_SUPPORTED_EXCEPTION(HttpStatus.NOT_FOUND, "OA002", "지원되지 않는 메시지 타입입니다."),
-    MULTIPLE_PROCESSING_MESSAGE_EXCEPTION(HttpStatus.BAD_REQUEST, "OA003", "진행중인 메시지가 하나보다 많습니다.");
+    MULTIPLE_PROCESSING_MESSAGE_EXCEPTION(HttpStatus.BAD_REQUEST, "OA003", "진행중인 메시지가 하나보다 많습니다."),
+    ALREADY_CLOSED_AI_CONVERSATION_EXCEPTION(HttpStatus.BAD_REQUEST, "OA004", "이미 닫힌 대화입니다.");
 
     private final HttpStatus status;
 

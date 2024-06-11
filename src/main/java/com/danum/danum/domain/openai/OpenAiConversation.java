@@ -26,6 +26,10 @@ public class OpenAiConversation {
 
 	private OpenAiConversationStatus status;
 
+	public boolean isClosed() {
+		return status == OpenAiConversationStatus.CLOSED;
+	}
+
 	public void conversationClose() {
 		this.status = OpenAiConversationStatus.CLOSED;
 	}

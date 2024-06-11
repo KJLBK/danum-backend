@@ -7,7 +7,6 @@ import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.OpenAiException;
 import com.danum.danum.repository.OpenAiConversationRepository;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,12 +36,13 @@ public class OpenAiConversationServiceImpl implements OpenAiConversationService 
     @Override
     @Transactional
     public void conversationClosed(final Long conversationId) {
-        Optional<OpenAiConversation> optionalConversation = openAiConversationRepository.findById(conversationId);
-        if (optionalConversation.isEmpty()) {
-            throw new OpenAiException(ErrorCode.NO_SUCH_CONVERSATION_EXCEPTION);
+        OpenAiConversation conversation = openAiConversationRepository.findById(conversationId)
+                .orElseThrow(() -> new OpenAiException(ErrorCode.NO_SUCH_CONVERSATION_EXCEPTION));
+
+        if (conversation.isClosed()) {
+            throw new OpenAiException(ErrorCode.ALREADY_CLOSED_AI_CONVERSATION_EXCEPTION);
         }
 
-        OpenAiConversation conversation = optionalConversation.get();
         conversation.conversationClose();
     }
 
