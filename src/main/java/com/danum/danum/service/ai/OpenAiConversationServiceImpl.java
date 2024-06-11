@@ -2,6 +2,7 @@ package com.danum.danum.service.ai;
 
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.domain.openai.OpenAiConversation;
+import com.danum.danum.domain.openai.OpenAiConversationSearchRequest;
 import com.danum.danum.domain.openai.OpenAiConversationStatus;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.OpenAiException;
@@ -16,6 +17,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class OpenAiConversationServiceImpl implements OpenAiConversationService {
 
     private final OpenAiConversationRepository openAiConversationRepository;
+
+    @Override
+    public OpenAiConversation loadConversation(final OpenAiConversationSearchRequest openAiConversationSearchRequest) {
+        return openAiConversationRepository.findById(openAiConversationSearchRequest.getId())
+                .orElseThrow(() -> new OpenAiException(ErrorCode.NO_SUCH_CONVERSATION_EXCEPTION));
+    }
 
     @Override
     public OpenAiConversation loadProgressingConversation(final Member member) {

@@ -29,6 +29,11 @@ public class OpenAiMessageServiceImpl implements OpenAiMessageService {
     }
 
     @Override
+    public List<OpenAiMessage> loadMessageByConversation(OpenAiConversation conversation) {
+        return openAiMessageRepository.findByOpenAiConversation(conversation);
+    }
+
+    @Override
     public List<OpenAiMessage> loadProgressingMessage(final OpenAiConversation conversation) {
         return openAiMessageRepository.findByOpenAiConversation(conversation);
     }

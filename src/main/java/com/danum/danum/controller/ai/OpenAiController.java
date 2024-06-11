@@ -2,6 +2,7 @@ package com.danum.danum.controller.ai;
 
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.domain.openai.OpenAiConversation;
+import com.danum.danum.domain.openai.OpenAiConversationSearchRequest;
 import com.danum.danum.domain.openai.OpenAiMessage;
 import com.danum.danum.domain.openai.OpenAiUserMessageDto;
 import com.danum.danum.service.ai.OpenAiConversationService;
@@ -39,7 +40,8 @@ public class OpenAiController {
         Member member = memberService.getMemberByAuthentication();
         OpenAiConversation conversation = openAiConversationService.loadProgressingConversation(member);
 
-        ChatResponse chatResponse = openAiService.sendMessage(message, openAiMessageService.loadProgressingMessage(conversation));
+        ChatResponse chatResponse = openAiService.sendMessage(message,
+                openAiMessageService.loadProgressingMessage(conversation));
 
         // 유저 메시지 저장
         openAiMessageService.saveMessage(message.getMessage(),
@@ -64,6 +66,15 @@ public class OpenAiController {
 
         return ResponseEntity.ok()
                 .body(openAiMessageService.loadProgressingMessage(conversation));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<OpenAiMessage>> loadMessage(
+            OpenAiConversationSearchRequest openAiConversationSearchRequest) {
+        return ResponseEntity.ok()
+                .body(openAiMessageService.loadMessageByConversation(
+                        openAiConversationService.loadConversation(openAiConversationSearchRequest)));
+
     }
 
     @PatchMapping("/{id}")
