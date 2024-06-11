@@ -8,7 +8,7 @@ import com.danum.danum.domain.member.MemberMapper;
 import com.danum.danum.domain.member.RegisterDto;
 import com.danum.danum.domain.member.UpdateDto;
 import com.danum.danum.exception.ErrorCode;
-import com.danum.danum.exception.MemberException;
+import com.danum.danum.exception.custom.MemberException;
 import com.danum.danum.repository.MemberRepository;
 import com.danum.danum.util.jwt.JwtUtil;
 import jakarta.servlet.http.Cookie;

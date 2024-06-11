@@ -5,7 +5,7 @@ import com.danum.danum.domain.comment.question.QuestionCommentMapper;
 import com.danum.danum.domain.comment.question.QuestionCommentNewDto;
 import com.danum.danum.domain.comment.question.QuestionCommentUpdateDto;
 import com.danum.danum.domain.comment.question.QuestionCommentViewDto;
-import com.danum.danum.exception.CommentException;
+import com.danum.danum.exception.custom.CommentException;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.repository.QuestionCommentRepository;
 import com.danum.danum.repository.QuestionRepository;

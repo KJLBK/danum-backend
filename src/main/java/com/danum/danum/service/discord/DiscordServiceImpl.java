@@ -1,6 +1,6 @@
 package com.danum.danum.service.discord;
 
-import com.danum.danum.exception.DiscordException;
+import com.danum.danum.exception.custom.DiscordException;
 import com.danum.danum.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import net.dv8tion.jda.api.JDA;

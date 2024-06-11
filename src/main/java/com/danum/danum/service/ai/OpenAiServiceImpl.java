@@ -3,7 +3,7 @@ package com.danum.danum.service.ai;
 import com.danum.danum.domain.openai.OpenAiMessage;
 import com.danum.danum.domain.openai.OpenAiUserMessageDto;
 import com.danum.danum.exception.ErrorCode;
-import com.danum.danum.exception.OpenAiException;
+import com.danum.danum.exception.custom.OpenAiException;
 import com.danum.danum.repository.OpenAiConversationRepository;
 import java.util.List;
 import java.util.stream.Collectors;

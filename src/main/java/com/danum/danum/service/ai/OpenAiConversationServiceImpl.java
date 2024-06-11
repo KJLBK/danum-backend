@@ -4,7 +4,7 @@ import com.danum.danum.domain.member.Member;
 import com.danum.danum.domain.openai.OpenAiConversation;
 import com.danum.danum.domain.openai.OpenAiConversationStatus;
 import com.danum.danum.exception.ErrorCode;
-import com.danum.danum.exception.OpenAiException;
+import com.danum.danum.exception.custom.OpenAiException;
 import com.danum.danum.repository.OpenAiConversationRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

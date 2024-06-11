@@ -2,7 +2,7 @@ package com.danum.danum.domain.board.village;
 
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.exception.ErrorCode;
-import com.danum.danum.exception.MemberException;
+import com.danum.danum.exception.custom.MemberException;
 import com.danum.danum.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

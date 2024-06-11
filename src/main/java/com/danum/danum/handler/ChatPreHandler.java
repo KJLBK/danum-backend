@@ -1,6 +1,6 @@
 package com.danum.danum.handler;
 
-import com.danum.danum.exception.CustomJwtException;
+import com.danum.danum.exception.custom.CustomJwtException;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.util.jwt.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;

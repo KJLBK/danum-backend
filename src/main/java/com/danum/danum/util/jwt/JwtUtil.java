@@ -3,7 +3,7 @@ package com.danum.danum.util.jwt;
 import com.danum.danum.domain.jwt.TokenBox;
 import com.danum.danum.domain.jwt.TokenDto;
 import com.danum.danum.domain.jwt.TokenType;
-import com.danum.danum.exception.CustomJwtException;
+import com.danum.danum.exception.custom.CustomJwtException;
 import com.danum.danum.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;

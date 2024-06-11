@@ -5,7 +5,7 @@ import com.danum.danum.domain.comment.village.VillageCommentMapper;
 import com.danum.danum.domain.comment.village.VillageCommentNewDto;
 import com.danum.danum.domain.comment.village.VillageCommentUpdateDto;
 import com.danum.danum.domain.comment.village.VillageCommentViewDto;
-import com.danum.danum.exception.CommentException;
+import com.danum.danum.exception.custom.CommentException;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.repository.VillageCommentRepository;
 import lombok.RequiredArgsConstructor;

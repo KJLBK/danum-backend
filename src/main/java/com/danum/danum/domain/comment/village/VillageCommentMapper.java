@@ -2,9 +2,9 @@ package com.danum.danum.domain.comment.village;
 
 import com.danum.danum.domain.board.village.Village;
 import com.danum.danum.domain.member.Member;
-import com.danum.danum.exception.BoardException;
+import com.danum.danum.exception.custom.BoardException;
 import com.danum.danum.exception.ErrorCode;
-import com.danum.danum.exception.MemberException;
+import com.danum.danum.exception.custom.MemberException;
 import com.danum.danum.repository.MemberRepository;
 import com.danum.danum.repository.VillageRepository;
 import lombok.RequiredArgsConstructor;
