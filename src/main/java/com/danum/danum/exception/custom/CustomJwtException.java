@@ -1,5 +1,7 @@
-package com.danum.danum.exception;
+package com.danum.danum.exception.custom;
 
+import com.danum.danum.exception.CustomException;
+import com.danum.danum.exception.ErrorCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
