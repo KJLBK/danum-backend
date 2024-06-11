@@ -20,7 +20,8 @@ public class OpenAiConversationServiceImpl implements OpenAiConversationService 
 
     @Override
     public OpenAiConversation loadProgressingConversation(final Member member) {
-        List<OpenAiConversation> conversationList = openAiConversationRepository.findByMemberAndStatus(member, OpenAiConversationStatus.PROCESSING);
+        List<OpenAiConversation> conversationList = openAiConversationRepository.findByMemberAndStatus(member,
+                OpenAiConversationStatus.PROCESSING);
 
         if (conversationList.isEmpty()) {
             return generateConversation(member);
@@ -36,12 +37,12 @@ public class OpenAiConversationServiceImpl implements OpenAiConversationService 
     @Override
     @Transactional
     public void conversationClosed(final Long conversationId) {
-        Optional<OpenAiConversation> OptionalConversation = openAiConversationRepository.findById(conversationId);
-        if (OptionalConversation.isEmpty()) {
+        Optional<OpenAiConversation> optionalConversation = openAiConversationRepository.findById(conversationId);
+        if (optionalConversation.isEmpty()) {
             throw new OpenAiException(ErrorCode.NO_SUCH_CONVERSATION_EXCEPTION);
         }
 
-        OpenAiConversation conversation = OptionalConversation.get();
+        OpenAiConversation conversation = optionalConversation.get();
         conversation.conversationClose();
     }
 
