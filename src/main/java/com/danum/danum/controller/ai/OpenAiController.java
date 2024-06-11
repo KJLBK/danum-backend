@@ -2,7 +2,6 @@ package com.danum.danum.controller.ai;
 
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.domain.openai.OpenAiConversation;
-import com.danum.danum.domain.openai.OpenAiConversationSearchRequest;
 import com.danum.danum.domain.openai.OpenAiMessage;
 import com.danum.danum.domain.openai.OpenAiUserMessageDto;
 import com.danum.danum.service.ai.OpenAiConversationService;
@@ -59,7 +58,7 @@ public class OpenAiController {
                 .body(chatResponse);
     }
 
-    @GetMapping
+    @GetMapping("/progressing")
     public ResponseEntity<List<OpenAiMessage>> loadProgressingMessage() {
         Member member = memberService.getMemberByAuthentication();
         OpenAiConversation conversation = openAiConversationService.loadProgressingConversation(member);
@@ -68,12 +67,11 @@ public class OpenAiController {
                 .body(openAiMessageService.loadProgressingMessage(conversation));
     }
 
-    @GetMapping
-    public ResponseEntity<List<OpenAiMessage>> loadMessage(
-            OpenAiConversationSearchRequest openAiConversationSearchRequest) {
+    @GetMapping("/{id}")
+    public ResponseEntity<List<OpenAiMessage>> loadMessage(@PathVariable Long id) {
         return ResponseEntity.ok()
                 .body(openAiMessageService.loadMessageByConversation(
-                        openAiConversationService.loadConversation(openAiConversationSearchRequest)));
+                        openAiConversationService.loadConversation(id)));
 
     }
 

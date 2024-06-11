@@ -2,7 +2,6 @@ package com.danum.danum.service.ai;
 
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.domain.openai.OpenAiConversation;
-import com.danum.danum.domain.openai.OpenAiConversationSearchRequest;
 import com.danum.danum.domain.openai.OpenAiConversationStatus;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.OpenAiException;
@@ -19,8 +18,8 @@ public class OpenAiConversationServiceImpl implements OpenAiConversationService 
     private final OpenAiConversationRepository openAiConversationRepository;
 
     @Override
-    public OpenAiConversation loadConversation(final OpenAiConversationSearchRequest openAiConversationSearchRequest) {
-        return openAiConversationRepository.findById(openAiConversationSearchRequest.getId())
+    public OpenAiConversation loadConversation(final Long id) {
+        return openAiConversationRepository.findById(id)
                 .orElseThrow(() -> new OpenAiException(ErrorCode.NO_SUCH_CONVERSATION_EXCEPTION));
     }
 
