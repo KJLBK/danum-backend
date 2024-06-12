@@ -1,6 +1,7 @@
 package com.danum.danum.domain.board.question;
 
 import com.danum.danum.domain.member.Member;
+import com.danum.danum.domain.openai.OpenAiConversation;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -10,12 +11,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -33,6 +33,9 @@ public class Question {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_email")
     private Member member;
+
+    @ManyToOne
+    private OpenAiConversation conversation;
 
     @Column(name = "question_title")
     private String title;

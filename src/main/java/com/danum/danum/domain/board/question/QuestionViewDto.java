@@ -1,5 +1,6 @@
 package com.danum.danum.domain.board.question;
 
+import com.danum.danum.domain.openai.OpenAiConversation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,13 +24,16 @@ public class QuestionViewDto {
 
     private LocalDateTime created_at;
 
-    public QuestionViewDto toEntity(Question question) {
+    private OpenAiConversation conversation;
+
+    public QuestionViewDto from(Question question) {
         return QuestionViewDto.builder()
                 .question_id(question.getId())
                 .email(question.getMember().getEmail())
                 .title(question.getTitle())
                 .content(question.getContent())
                 .created_at(question.getCreated_at())
+                .conversation(question.getConversation())
                 .build();
     }
 

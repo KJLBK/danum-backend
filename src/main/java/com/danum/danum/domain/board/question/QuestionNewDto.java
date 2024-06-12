@@ -15,4 +15,6 @@ public class QuestionNewDto {
 
     private String content;
 
+    private Long createId;
+
 }

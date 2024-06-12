@@ -41,7 +41,7 @@ public class QuestionServiceImpl implements QuestionService{
         List<Question> questionList = questionRepository.findAll();
         List<QuestionViewDto> questionViewDtoList = new ArrayList<>();
         for (Question question : questionList) {
-            questionViewDtoList.add(new QuestionViewDto().toEntity(question));
+            questionViewDtoList.add(new QuestionViewDto().from(question));
         }
 
         return questionViewDtoList;
@@ -52,7 +52,7 @@ public class QuestionServiceImpl implements QuestionService{
     public QuestionViewDto view(Long id) {
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
-        return new QuestionViewDto().toEntity(question);
+        return new QuestionViewDto().from(question);
     }
 
 }
