@@ -7,7 +7,7 @@ import lombok.Getter;
 @Builder
 public class OpenAiResponse {
 
-    private Long createdID;
+    private Long createdId;
 
     private String message;
 
