@@ -3,6 +3,7 @@ package com.danum.danum.controller.ai;
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.domain.openai.OpenAiConversation;
 import com.danum.danum.domain.openai.OpenAiMessage;
+import com.danum.danum.domain.openai.OpenAiResponse;
 import com.danum.danum.domain.openai.OpenAiUserMessageDto;
 import com.danum.danum.service.ai.OpenAiConversationService;
 import com.danum.danum.service.ai.OpenAiMessageService;
@@ -35,7 +36,7 @@ public class OpenAiController {
     private final MemberService memberService;
 
     @PostMapping("")
-    public ResponseEntity<ChatResponse> generate(@RequestBody OpenAiUserMessageDto message) {
+    public ResponseEntity<OpenAiResponse> generate(@RequestBody OpenAiUserMessageDto message) {
         Member member = memberService.getMemberByAuthentication();
         OpenAiConversation conversation = openAiConversationService.loadProgressingConversation(member);
 
@@ -48,17 +49,30 @@ public class OpenAiController {
                 MessageType.USER);
 
         // ai 메시지 저장
-        openAiMessageService.saveMessage(chatResponse.getResult()
-                        .getOutput()
-                        .getContent(),
+        String aiMessage = chatResponse.getResult()
+                .getOutput()
+                .getContent();
+
+        openAiMessageService.saveMessage(aiMessage,
                 conversation,
                 MessageType.ASSISTANT);
 
         return ResponseEntity.ok()
-                .body(chatResponse);
+                .body(OpenAiResponse.builder()
+                        .conversation(conversation)
+                        .message(aiMessage)
+                        .build());
     }
 
-    @GetMapping("/progressing")
+    @GetMapping("/progressing/conversation")
+    public ResponseEntity<OpenAiConversation> loadProgressingConversation() {
+        Member member = memberService.getMemberByAuthentication();
+
+        return ResponseEntity.ok()
+                .body(openAiConversationService.loadProgressingConversation(member));
+    }
+
+    @GetMapping("/progressing/message")
     public ResponseEntity<List<OpenAiMessage>> loadProgressingMessage() {
         Member member = memberService.getMemberByAuthentication();
         OpenAiConversation conversation = openAiConversationService.loadProgressingConversation(member);
