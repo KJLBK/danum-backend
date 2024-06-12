@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -17,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class OpenAiConversation {
 
 
-	@Id
+	@Id @Getter
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long createId;
 

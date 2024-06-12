@@ -59,7 +59,7 @@ public class OpenAiController {
 
         return ResponseEntity.ok()
                 .body(OpenAiResponse.builder()
-                        .conversation(conversation)
+                        .createdID(conversation.getCreateId())
                         .message(aiMessage)
                         .build());
     }
