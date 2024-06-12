@@ -16,7 +16,7 @@ public class QuestionTest {
 
     @Test
     public void 질문게시판생성() {
-        QuestionNewDto questionNewDto = new QuestionNewDto("test@naver.com","test", "test");
+        QuestionNewDto questionNewDto = new QuestionNewDto("test@naver.com","test", "test", null);
         questionService.created(questionNewDto);
     }
 
