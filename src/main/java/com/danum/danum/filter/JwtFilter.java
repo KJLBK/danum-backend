@@ -1,7 +1,7 @@
 package com.danum.danum.filter;
 
-import com.danum.danum.exception.custom.CustomJwtException;
 import com.danum.danum.exception.ErrorCode;
+import com.danum.danum.exception.custom.CustomJwtException;
 import com.danum.danum.util.jwt.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -26,6 +27,8 @@ public class JwtFilter extends OncePerRequestFilter {
 	private static final Integer TOKEN_START_INDEX = 7;
 
 	private final JwtUtil jwtUtil;
+
+	private final AntPathMatcher matcher = new AntPathMatcher();
 
 	@Value("${authentication.path.all}")
 	private String[] allowedPaths;
@@ -45,8 +48,9 @@ public class JwtFilter extends OncePerRequestFilter {
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) {
 		String path = request.getRequestURI();
+
 		return Arrays.stream(allowedPaths)
-				.anyMatch(path::startsWith);
+				.anyMatch(allowPath -> matcher.match(allowPath, path));
 	}
 
 	private void validateToken(String token) {
