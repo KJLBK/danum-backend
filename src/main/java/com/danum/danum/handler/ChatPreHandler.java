@@ -1,6 +1,6 @@
 package com.danum.danum.handler;
 
-import com.danum.danum.exception.custom.CustomJwtException;
+import com.danum.danum.exception.CustomException;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.util.jwt.JwtUtil;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -39,14 +39,14 @@ public class ChatPreHandler implements ChannelInterceptor {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 } catch (ExpiredJwtException e) {
                     log.error("JWT 토큰이 만료되었습니다: {}", token);
-                    throw new CustomJwtException(ErrorCode.TOKEN_EXPIRED_EXCEPTION);
+                    throw new CustomException(ErrorCode.TOKEN_EXPIRED_EXCEPTION);
                 } catch (SignatureException e) {
                     log.error("JWT 토큰 서명 확인 중 오류가 발생했습니다: {}", token);
-                    throw new CustomJwtException(ErrorCode.TOKEN_SIGNATURE_EXCEPTION);
+                    throw new CustomException(ErrorCode.TOKEN_SIGNATURE_EXCEPTION);
                 }
             } else {
                 log.info("JWT 토큰이 없거나 잘못된 형식입니다.");
-                throw new CustomJwtException(ErrorCode.TOKEN_NOT_FOUND_EXCEPTION);
+                throw new CustomException(ErrorCode.TOKEN_NOT_FOUND_EXCEPTION);
             }
         }
 

@@ -30,7 +30,6 @@ public class ChatRoomController {
     public List<ChatRoom> room() {
         return chatRoomRepository.findAllRoom();
     }
-
     // 채팅방 생성
     @PostMapping("/room")
     @ResponseBody

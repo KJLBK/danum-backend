@@ -3,23 +3,23 @@ package com.danum.danum.controller.chat;
 import com.danum.danum.domain.chat.ChatMessage;
 import com.danum.danum.repository.ChatRoomRepository;
 import com.danum.danum.service.chat.RedisPublisher;
-import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@RequiredArgsConstructor
 @Controller
 public class ChatController {
 
-    private final RedisPublisher redisPublisher;
-    private final ChatRoomRepository chatRoomRepository;
+    @Autowired
+    private RedisPublisher redisPublisher;
 
-    /**
-     * websocket "/pub/chat/message"로 들어오는 메시징을 처리한다.
-     */
+    @Autowired
+    private ChatRoomRepository chatRoomRepository;
+
     @MessageMapping("/chat/message")
-    public void message(ChatMessage message) {
+    public void message(@Payload ChatMessage message) {
         if (ChatMessage.MessageType.ENTER.equals(message.getType())) {
             chatRoomRepository.enterChatRoom(message.getRoomId());
             message.setMessage(message.getSender() + "님이 입장하셨습니다.");
