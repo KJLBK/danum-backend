@@ -20,14 +20,12 @@ public class RedisSubscriber implements MessageListener {
     private final StringRedisTemplate redisTemplate;
     private final SimpMessageSendingOperations messagingTemplate;
 
-    /**
-     * Redis에서 메시지가 발행(publish)되면 대기하고 있던 onMessage가 해당 메시지를 받아 처리한다.
-     */
     @Override
     public void onMessage(Message message, byte[] pattern) {
         try {
             // redis에서 발행된 데이터를 받아 deserialize
             String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
+            log.info("Received message: " + publishMessage);
 
             // ChatMessage 객채로 맵핑
             ChatMessage roomMessage = objectMapper.readValue(publishMessage, ChatMessage.class);
