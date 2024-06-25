@@ -25,7 +25,7 @@ public class VillageServiceImpl implements VillageService{
 
     @Override
     @Transactional
-    public void created(VillageNewDto villageNewDto) {
+    public void create(VillageNewDto villageNewDto) {
         if (villageNewDto.getEmail().isEmpty()) {
             throw new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION);
         }

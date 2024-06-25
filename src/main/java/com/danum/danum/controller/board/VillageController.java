@@ -20,7 +20,7 @@ public class VillageController {
 
     @PostMapping("/new")
     public ResponseEntity<?> createVillageBoard(@RequestBody VillageNewDto villageNewDto){
-        villageService.created(villageNewDto);
+        villageService.create(villageNewDto);
 
         return ResponseEntity.ok("게시판 생성 성공");
     }

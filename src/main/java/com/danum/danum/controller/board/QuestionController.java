@@ -20,7 +20,7 @@ public class QuestionController {
 
     @PostMapping("/new")
     public ResponseEntity<?> createQuestionBoard(@RequestBody QuestionNewDto questionNewDto){
-        questionService.created(questionNewDto);
+        questionService.create(questionNewDto);
 
         return ResponseEntity.ok("게시판 생성 성공");
     }
