@@ -18,7 +18,7 @@ public class VillageCommentTest {
     @Test
     public void 게시판댓글생성() {
         VillageCommentNewDto villageCommentNewDto = new VillageCommentNewDto(1L, "test@naver.com", "test");
-        villageCommentService.created(villageCommentNewDto);
+        villageCommentService.create(villageCommentNewDto);
     }
 
     @Test

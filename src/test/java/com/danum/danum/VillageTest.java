@@ -18,7 +18,7 @@ public class VillageTest {
     @Test
     public void 질문게시판생성() {
         VillageNewDto villageNewDto = new VillageNewDto("test@naver.com","test", "test");
-        villageService.created(villageNewDto);
+        villageService.create(villageNewDto);
     }
 
     @Test
