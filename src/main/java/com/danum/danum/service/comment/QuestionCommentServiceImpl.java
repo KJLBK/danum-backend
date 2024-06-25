@@ -28,7 +28,7 @@ public class QuestionCommentServiceImpl implements QuestionCommentService {
 
     @Override
     @Transactional
-    public void created(QuestionCommentNewDto questionCommentNewDto) {
+    public void create(QuestionCommentNewDto questionCommentNewDto) {
         QuestionComment questionComment = questionCommentMapper.toEntity(questionCommentNewDto);
 
         questionCommentRepository.save(questionComment);
