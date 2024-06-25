@@ -23,26 +23,26 @@ public class VillageCommentController {
     private final VillageCommentService villageCommentService;
 
     @PostMapping("/new")
-    public ResponseEntity<?> created(@RequestBody VillageCommentNewDto villageCommentNewDto) {
+    public ResponseEntity<?> createVillageBoardComment(@RequestBody VillageCommentNewDto villageCommentNewDto) {
         villageCommentService.created(villageCommentNewDto);
 
         return ResponseEntity.ok("댓글 생성 성공");
     }
 
     @GetMapping("/show/{id}")
-    public ResponseEntity<?> viewList(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getVillageBoardForCommentList(@PathVariable("id") Long id) {
         return ResponseEntity.ok(villageCommentService.viewList(id));
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> update(@RequestBody VillageCommentUpdateDto villageCommentUpdateDto) {
+    public ResponseEntity<?> updateVillageBoardComment(@RequestBody VillageCommentUpdateDto villageCommentUpdateDto) {
         villageCommentService.update(villageCommentUpdateDto);
 
         return ResponseEntity.ok("댓글 수정 성공");
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+    public ResponseEntity<?> deleteVillageBoardComment(@PathVariable("id") Long id) {
         villageCommentService.delete(id);
 
         return ResponseEntity.ok("댓글 삭제 성공");
