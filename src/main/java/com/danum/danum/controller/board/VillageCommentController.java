@@ -24,7 +24,7 @@ public class VillageCommentController {
 
     @PostMapping("/new")
     public ResponseEntity<?> createVillageBoardComment(@RequestBody VillageCommentNewDto villageCommentNewDto) {
-        villageCommentService.created(villageCommentNewDto);
+        villageCommentService.create(villageCommentNewDto);
 
         return ResponseEntity.ok("댓글 생성 성공");
     }
