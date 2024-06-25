@@ -19,19 +19,19 @@ public class VillageController {
     private final VillageService villageService;
 
     @PostMapping("/new")
-    public ResponseEntity<?> created(@RequestBody VillageNewDto villageNewDto){
+    public ResponseEntity<?> createVillageBoard(@RequestBody VillageNewDto villageNewDto){
         villageService.created(villageNewDto);
 
         return ResponseEntity.ok("게시판 생성 성공");
     }
 
     @GetMapping("/show")
-    public ResponseEntity<?> viewList(){
+    public ResponseEntity<?> getVillageBoardList(){
         return ResponseEntity.ok(villageService.viewList());
     }
 
     @GetMapping("/show/{id}")
-    public ResponseEntity<?> view(@PathVariable("id") Long id){
+    public ResponseEntity<?> getVillageBoardById(@PathVariable("id") Long id){
         return ResponseEntity.ok(villageService.view(id));
     }
 
