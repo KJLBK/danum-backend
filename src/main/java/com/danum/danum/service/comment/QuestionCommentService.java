@@ -13,8 +13,8 @@ public interface QuestionCommentService {
 
     List<QuestionCommentViewDto> viewList(Long id);
 
-    void update(QuestionCommentUpdateDto questionCommentUpdateDto);
+    void update(QuestionCommentUpdateDto questionCommentUpdateDto, String loginUser);
 
-    void delete(Long id);
+    void delete(Long id, String loginUser);
 
 }

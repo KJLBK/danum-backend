@@ -5,8 +5,8 @@ import com.danum.danum.domain.comment.question.QuestionCommentMapper;
 import com.danum.danum.domain.comment.question.QuestionCommentNewDto;
 import com.danum.danum.domain.comment.question.QuestionCommentUpdateDto;
 import com.danum.danum.domain.comment.question.QuestionCommentViewDto;
-import com.danum.danum.exception.custom.CommentException;
 import com.danum.danum.exception.ErrorCode;
+import com.danum.danum.exception.custom.CommentException;
 import com.danum.danum.repository.QuestionCommentRepository;
 import com.danum.danum.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
@@ -52,9 +52,10 @@ public class QuestionCommentServiceImpl implements QuestionCommentService {
 
     @Override
     @Transactional
-    public void update(QuestionCommentUpdateDto questionCommentUpdateDto) {
+    public void update(QuestionCommentUpdateDto questionCommentUpdateDto, String loginUser) {
         QuestionComment questionComment = questionCommentRepository.findById(questionCommentUpdateDto.getId())
                 .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
+        userCheck(questionComment.getMember().getEmail(), loginUser);
         questionComment.updateContent(questionCommentUpdateDto.getContent());
 
         questionCommentRepository.save(questionComment);
@@ -62,10 +63,18 @@ public class QuestionCommentServiceImpl implements QuestionCommentService {
 
     @Override
     @Transactional
-    public void delete(Long id) {
+    public void delete(Long id, String loginUser) {
         QuestionComment questionComment = questionCommentRepository.findById(id)
                         .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
+        userCheck(questionComment.getMember().getEmail(), loginUser);
+
         questionCommentRepository.delete(questionComment);
+    }
+
+    public void userCheck(String author, String loginUser) {
+        if (author.equals(loginUser)) {
+            throw new CommentException(ErrorCode.COMMENT_NOT_AUTHOR_EXCEPTION);
+        }
     }
 
 }

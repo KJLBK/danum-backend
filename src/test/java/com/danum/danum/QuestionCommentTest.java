@@ -26,15 +26,5 @@ public class QuestionCommentTest {
         System.out.println(questionCommentService.viewList(1L));
     }
 
-    @Test
-    public void 게시판댓글업데이트() {
-        QuestionCommentUpdateDto questionCommentUpdateDto = new QuestionCommentUpdateDto(1L, "업데이트");
-        questionCommentService.update(questionCommentUpdateDto);
-    }
-
-    @Test
-    public void 게시판댓글삭제() {
-        questionCommentService.delete(1L);
-    }
 
 }

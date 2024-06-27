@@ -17,6 +17,7 @@ public enum ErrorCode {
 
     COMMENT_NOT_FOUND_EXCEPTION(HttpStatus.BAD_REQUEST, "C001", "존재하지 않는 댓글 입니다."),
     COMMENT_NOT_CONTENTS_EXCEPTION(HttpStatus.BAD_REQUEST, "C002", "댓글 내용이 없습니다."),
+    COMMENT_NOT_AUTHOR_EXCEPTION(HttpStatus.BAD_REQUEST, "C003", "작성자가 아닙니다."),
 
     TOKEN_NOT_FOUND_EXCEPTION(HttpStatus.NOT_FOUND, "T001", "토큰이 존재하지 않습니다."),
     TOKEN_ROLE_NOT_AVAILABLE_EXCEPTION(HttpStatus.NOT_FOUND, "T002", "토큰 권한이 올바르지 않습니다."),

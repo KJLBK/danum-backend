@@ -13,8 +13,8 @@ public interface VillageCommentService {
 
     List<VillageCommentViewDto> viewList(Long id);
 
-    void update(VillageCommentUpdateDto villageCommentUpdateDto);
+    void update(VillageCommentUpdateDto villageCommentUpdateDto, String loginUser);
 
-    void delete(Long id);
+    void delete(Long id, String loginUser);
 
 }
