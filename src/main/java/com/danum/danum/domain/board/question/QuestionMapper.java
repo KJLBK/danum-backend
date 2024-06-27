@@ -31,23 +31,22 @@ public class QuestionMapper {
 
         Member member = optionalMember.get();
 
-        OpenAiConversation conversation;
-
-        if (questionNewDto.getCreateId() == 0) {
-            conversation = null;
-        } else {
-            conversation = conversationRepository.findById(questionNewDto.getCreateId())
-                    .orElseThrow(() -> new OpenAiException(ErrorCode.NO_SUCH_CONVERSATION_EXCEPTION));
-        }
-
-        return Question.builder()
+        Question.QuestionBuilder count = Question.builder()
                 .member(member)
-                .conversation(conversation)
                 .title(questionNewDto.getTitle())
                 .content(questionNewDto.getContent())
                 .created_at(LocalDateTime.now())
                 .like(0L)
-                .count(0L).build();
+                .count(0L);
+
+        if(questionNewDto.getCreateId() != null) {
+            OpenAiConversation conversation = conversationRepository.findById(questionNewDto.getCreateId())
+                    .orElseThrow(() -> new OpenAiException(ErrorCode.NO_SUCH_CONVERSATION_EXCEPTION));
+
+            count.conversation(conversation);
+        }
+
+        return count.build();
     }
 
 }
