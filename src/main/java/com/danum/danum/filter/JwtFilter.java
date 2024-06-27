@@ -60,7 +60,7 @@ public class JwtFilter extends OncePerRequestFilter {
 		jwtUtil.validate(token);
 	}
 
-	public String resolveToken(String tokenHeader) {
+	private String resolveToken(String tokenHeader) {
 		if (!StringUtils.hasText(tokenHeader) ||
 				tokenHeader.length() <= TOKEN_START_INDEX ||
 				!tokenHeader.startsWith(PREFIX)) {
