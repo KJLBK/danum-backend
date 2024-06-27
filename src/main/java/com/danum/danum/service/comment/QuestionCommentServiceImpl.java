@@ -31,6 +31,10 @@ public class QuestionCommentServiceImpl implements QuestionCommentService {
     public void create(QuestionCommentNewDto questionCommentNewDto) {
         QuestionComment questionComment = questionCommentMapper.toEntity(questionCommentNewDto);
 
+        if (questionCommentNewDto.getContent().isEmpty()) {
+            throw new CommentException(ErrorCode.COMMENT_NOT_CONTENTS_EXCEPTION);
+        }
+
         questionCommentRepository.save(questionComment);
     }
 
