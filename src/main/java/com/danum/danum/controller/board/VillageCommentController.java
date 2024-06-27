@@ -5,6 +5,8 @@ import com.danum.danum.domain.comment.village.VillageCommentUpdateDto;
 import com.danum.danum.service.comment.VillageCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -36,14 +38,16 @@ public class VillageCommentController {
 
     @PutMapping("/update")
     public ResponseEntity<?> updateVillageBoardComment(@RequestBody VillageCommentUpdateDto villageCommentUpdateDto) {
-        villageCommentService.update(villageCommentUpdateDto);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        villageCommentService.update(villageCommentUpdateDto, authentication.getName());
 
         return ResponseEntity.ok("댓글 수정 성공");
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteVillageBoardComment(@PathVariable("id") Long id) {
-        villageCommentService.delete(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        villageCommentService.delete(id, authentication.getName());
 
         return ResponseEntity.ok("댓글 삭제 성공");
     }

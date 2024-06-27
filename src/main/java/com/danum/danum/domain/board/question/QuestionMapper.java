@@ -31,8 +31,14 @@ public class QuestionMapper {
 
         Member member = optionalMember.get();
 
-        OpenAiConversation conversation = conversationRepository.findById(questionNewDto.getCreateId())
-                .orElseThrow(() -> new OpenAiException(ErrorCode.NO_SUCH_CONVERSATION_EXCEPTION));
+        OpenAiConversation conversation;
+
+        if (questionNewDto.getCreateId() == 0) {
+            conversation = null;
+        } else {
+            conversation = conversationRepository.findById(questionNewDto.getCreateId())
+                    .orElseThrow(() -> new OpenAiException(ErrorCode.NO_SUCH_CONVERSATION_EXCEPTION));
+        }
 
         return Question.builder()
                 .member(member)

@@ -9,6 +9,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -57,7 +60,7 @@ public class JwtFilter extends OncePerRequestFilter {
 		jwtUtil.validate(token);
 	}
 
-	private String resolveToken(String tokenHeader) {
+	public String resolveToken(String tokenHeader) {
 		if (!StringUtils.hasText(tokenHeader) ||
 				tokenHeader.length() <= TOKEN_START_INDEX ||
 				!tokenHeader.startsWith(PREFIX)) {

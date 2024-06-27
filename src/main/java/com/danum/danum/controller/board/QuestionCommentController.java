@@ -5,6 +5,8 @@ import com.danum.danum.domain.comment.question.QuestionCommentUpdateDto;
 import com.danum.danum.service.comment.QuestionCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,14 +39,16 @@ public class QuestionCommentController {
 
     @PutMapping("/update")
     public ResponseEntity<?> updateQuestionBoardComment(@RequestBody QuestionCommentUpdateDto questionCommentUpdateDto) {
-        questionCommentService.update(questionCommentUpdateDto);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        questionCommentService.update(questionCommentUpdateDto, authentication.getName());
 
         return ResponseEntity.ok("댓글 수정 성공");
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteQuestionBoardComment(@PathVariable("id") Long id) {
-        questionCommentService.delete(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        questionCommentService.delete(id, authentication.getName());
 
         return ResponseEntity.ok("댓글 삭제 성공");
     }

@@ -45,9 +45,12 @@ public class VillageCommentServiceImpl implements VillageCommentService {
 
     @Override
     @Transactional
-    public void update(VillageCommentUpdateDto villageCommentUpdateDto) {
+    public void update(VillageCommentUpdateDto villageCommentUpdateDto, String loginUser) {
         VillageComment villageComment = villageCommentRepository.findById(villageCommentUpdateDto.getId())
                 .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
+        if (villageComment.getMember().equals(loginUser)) {
+            throw new CommentException(ErrorCode.COMMENT_NOT_AUTHOR_EXCEPTION);
+        }
         villageComment.updateContent(villageCommentUpdateDto.getContent());
 
         villageCommentRepository.save(villageComment);
@@ -55,9 +58,12 @@ public class VillageCommentServiceImpl implements VillageCommentService {
 
     @Override
     @Transactional
-    public void delete(Long id) {
+    public void delete(Long id, String loginUser) {
         VillageComment villageComment = villageCommentRepository.findById(id)
                 .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
+        if (villageComment.getMember().equals(loginUser)) {
+            throw new CommentException(ErrorCode.COMMENT_NOT_AUTHOR_EXCEPTION);
+        }
         villageCommentRepository.delete(villageComment);
     }
 

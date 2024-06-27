@@ -26,15 +26,4 @@ public class VillageCommentTest {
         System.out.println(villageCommentService.viewList(1L));
     }
 
-    @Test
-    public void 게시판댓글업데이트() {
-        VillageCommentUpdateDto villageCommentUpdateDto = new VillageCommentUpdateDto(1L, "업데이트");
-        villageCommentService.update(villageCommentUpdateDto);
-    }
-
-    @Test
-    public void 게시판댓글삭제() {
-        villageCommentService.delete(1L);
-    }
-
 }

@@ -7,8 +7,10 @@ import com.danum.danum.domain.comment.question.QuestionCommentUpdateDto;
 import com.danum.danum.domain.comment.question.QuestionCommentViewDto;
 import com.danum.danum.exception.custom.CommentException;
 import com.danum.danum.exception.ErrorCode;
+import com.danum.danum.filter.JwtFilter;
 import com.danum.danum.repository.QuestionCommentRepository;
 import com.danum.danum.repository.QuestionRepository;
+import io.jsonwebtoken.Jwt;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,9 +54,12 @@ public class QuestionCommentServiceImpl implements QuestionCommentService {
 
     @Override
     @Transactional
-    public void update(QuestionCommentUpdateDto questionCommentUpdateDto) {
+    public void update(QuestionCommentUpdateDto questionCommentUpdateDto, String loginUser) {
         QuestionComment questionComment = questionCommentRepository.findById(questionCommentUpdateDto.getId())
                 .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
+        if (questionComment.getMember().equals(loginUser)) {
+            throw new CommentException(ErrorCode.COMMENT_NOT_AUTHOR_EXCEPTION);
+        }
         questionComment.updateContent(questionCommentUpdateDto.getContent());
 
         questionCommentRepository.save(questionComment);
@@ -62,9 +67,12 @@ public class QuestionCommentServiceImpl implements QuestionCommentService {
 
     @Override
     @Transactional
-    public void delete(Long id) {
+    public void delete(Long id, String loginUser) {
         QuestionComment questionComment = questionCommentRepository.findById(id)
                         .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
+        if (questionComment.getMember().equals(loginUser)) {
+            throw new CommentException(ErrorCode.COMMENT_NOT_AUTHOR_EXCEPTION);
+        }
         questionCommentRepository.delete(questionComment);
     }
 
