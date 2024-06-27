@@ -1,10 +1,6 @@
 package com.danum.danum;
 
-import com.danum.danum.domain.member.LoginDto;
-import com.danum.danum.domain.member.RegisterDto;
 import com.danum.danum.service.member.MemberService;
-import jakarta.servlet.http.HttpServletResponse;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;

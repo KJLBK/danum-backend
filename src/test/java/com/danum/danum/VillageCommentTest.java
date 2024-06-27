@@ -1,7 +1,6 @@
 package com.danum.danum;
 
 import com.danum.danum.domain.comment.village.VillageCommentNewDto;
-import com.danum.danum.domain.comment.village.VillageCommentUpdateDto;
 import com.danum.danum.service.comment.VillageCommentService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
