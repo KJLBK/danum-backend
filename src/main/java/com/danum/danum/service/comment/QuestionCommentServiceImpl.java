@@ -57,9 +57,7 @@ public class QuestionCommentServiceImpl implements QuestionCommentService {
     public void update(QuestionCommentUpdateDto questionCommentUpdateDto, String loginUser) {
         QuestionComment questionComment = questionCommentRepository.findById(questionCommentUpdateDto.getId())
                 .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
-        if (questionComment.getMember().equals(loginUser)) {
-            throw new CommentException(ErrorCode.COMMENT_NOT_AUTHOR_EXCEPTION);
-        }
+        userCheck(questionComment.getMember().getEmail(), loginUser);
         questionComment.updateContent(questionCommentUpdateDto.getContent());
 
         questionCommentRepository.save(questionComment);
@@ -70,10 +68,15 @@ public class QuestionCommentServiceImpl implements QuestionCommentService {
     public void delete(Long id, String loginUser) {
         QuestionComment questionComment = questionCommentRepository.findById(id)
                         .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
-        if (questionComment.getMember().equals(loginUser)) {
+        userCheck(questionComment.getMember().getEmail(), loginUser);
+
+        questionCommentRepository.delete(questionComment);
+    }
+
+    public void userCheck(String author, String loginUser) {
+        if (author.equals(loginUser)) {
             throw new CommentException(ErrorCode.COMMENT_NOT_AUTHOR_EXCEPTION);
         }
-        questionCommentRepository.delete(questionComment);
     }
 
 }

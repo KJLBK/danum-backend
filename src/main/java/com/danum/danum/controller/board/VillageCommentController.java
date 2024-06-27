@@ -38,18 +38,22 @@ public class VillageCommentController {
 
     @PutMapping("/update")
     public ResponseEntity<?> updateVillageBoardComment(@RequestBody VillageCommentUpdateDto villageCommentUpdateDto) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        villageCommentService.update(villageCommentUpdateDto, authentication.getName());
+        villageCommentService.update(villageCommentUpdateDto, getLoginUser());
 
         return ResponseEntity.ok("댓글 수정 성공");
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteVillageBoardComment(@PathVariable("id") Long id) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        villageCommentService.delete(id, authentication.getName());
+        villageCommentService.delete(id, getLoginUser());
 
         return ResponseEntity.ok("댓글 삭제 성공");
+    }
+
+    private String getLoginUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        return authentication.getName();
     }
 
 }

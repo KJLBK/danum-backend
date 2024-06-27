@@ -48,9 +48,7 @@ public class VillageCommentServiceImpl implements VillageCommentService {
     public void update(VillageCommentUpdateDto villageCommentUpdateDto, String loginUser) {
         VillageComment villageComment = villageCommentRepository.findById(villageCommentUpdateDto.getId())
                 .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
-        if (villageComment.getMember().equals(loginUser)) {
-            throw new CommentException(ErrorCode.COMMENT_NOT_AUTHOR_EXCEPTION);
-        }
+        userCheck(villageComment.getMember().getEmail(), loginUser);
         villageComment.updateContent(villageCommentUpdateDto.getContent());
 
         villageCommentRepository.save(villageComment);
@@ -61,10 +59,14 @@ public class VillageCommentServiceImpl implements VillageCommentService {
     public void delete(Long id, String loginUser) {
         VillageComment villageComment = villageCommentRepository.findById(id)
                 .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
-        if (villageComment.getMember().equals(loginUser)) {
+        userCheck(villageComment.getMember().getEmail(), loginUser);
+        villageCommentRepository.delete(villageComment);
+    }
+
+    public void userCheck(String author, String loginUser) {
+        if (author.equals(loginUser)) {
             throw new CommentException(ErrorCode.COMMENT_NOT_AUTHOR_EXCEPTION);
         }
-        villageCommentRepository.delete(villageComment);
     }
 
 }

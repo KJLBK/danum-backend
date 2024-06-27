@@ -39,18 +39,23 @@ public class QuestionCommentController {
 
     @PutMapping("/update")
     public ResponseEntity<?> updateQuestionBoardComment(@RequestBody QuestionCommentUpdateDto questionCommentUpdateDto) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        questionCommentService.update(questionCommentUpdateDto, authentication.getName());
+
+        questionCommentService.update(questionCommentUpdateDto, getLoginUser());
 
         return ResponseEntity.ok("댓글 수정 성공");
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteQuestionBoardComment(@PathVariable("id") Long id) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        questionCommentService.delete(id, authentication.getName());
+        questionCommentService.delete(id, getLoginUser());
 
         return ResponseEntity.ok("댓글 삭제 성공");
+    }
+
+    private String getLoginUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        return authentication.getName();
     }
 
 }
