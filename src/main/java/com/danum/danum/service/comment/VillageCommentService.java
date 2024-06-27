@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface VillageCommentService {
 
-    void created(VillageCommentNewDto villageCommentNewDto);
+    void create(VillageCommentNewDto villageCommentNewDto);
 
     List<VillageCommentViewDto> viewList(Long id);
 

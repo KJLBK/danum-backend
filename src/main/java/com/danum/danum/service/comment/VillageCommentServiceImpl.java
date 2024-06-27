@@ -25,7 +25,7 @@ public class VillageCommentServiceImpl implements VillageCommentService {
 
     @Override
     @Transactional
-    public void created(VillageCommentNewDto villageCommentNewDto) {
+    public void create(VillageCommentNewDto villageCommentNewDto) {
         VillageComment villageComment = villageCommentMapper.toEntity(villageCommentNewDto);
 
         villageCommentRepository.save(villageComment);

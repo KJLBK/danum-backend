@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface VillageService {
 
-    void created(VillageNewDto villageNewDto);
+    void create(VillageNewDto villageNewDto);
 
     List<VillageViewDto> viewList();
 

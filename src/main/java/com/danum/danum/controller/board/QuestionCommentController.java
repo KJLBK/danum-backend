@@ -23,26 +23,26 @@ public class QuestionCommentController {
     private final QuestionCommentService questionCommentService;
 
     @PostMapping("/new")
-    public ResponseEntity<?> created(@RequestBody QuestionCommentNewDto questionCommentNewDto) {
-        questionCommentService.created(questionCommentNewDto);
+    public ResponseEntity<?> createQuestionBoardComment(@RequestBody QuestionCommentNewDto questionCommentNewDto) {
+        questionCommentService.create(questionCommentNewDto);
 
         return ResponseEntity.ok("댓글 생성 성공");
     }
 
     @GetMapping("/show/{id}")
-    public ResponseEntity<?> viewList(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getQuestionBoardForCommentList(@PathVariable("id") Long id) {
         return ResponseEntity.ok(questionCommentService.viewList(id));
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> update(@RequestBody QuestionCommentUpdateDto questionCommentUpdateDto) {
+    public ResponseEntity<?> updateQuestionBoardComment(@RequestBody QuestionCommentUpdateDto questionCommentUpdateDto) {
         questionCommentService.update(questionCommentUpdateDto);
 
         return ResponseEntity.ok("댓글 수정 성공");
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+    public ResponseEntity<?> deleteQuestionBoardComment(@PathVariable("id") Long id) {
         questionCommentService.delete(id);
 
         return ResponseEntity.ok("댓글 삭제 성공");

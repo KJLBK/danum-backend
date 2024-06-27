@@ -26,7 +26,7 @@ public class QuestionServiceImpl implements QuestionService{
 
     @Override
     @Transactional
-    public void created(QuestionNewDto questionNewDto) {
+    public void create(QuestionNewDto questionNewDto) {
         if (questionNewDto.getEmail().isEmpty()) {
             throw new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION);
         }

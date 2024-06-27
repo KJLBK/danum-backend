@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface QuestionService {
 
-    void created(QuestionNewDto questionNewDto);
+    void create(QuestionNewDto questionNewDto);
 
     List<QuestionViewDto> viewList();
 

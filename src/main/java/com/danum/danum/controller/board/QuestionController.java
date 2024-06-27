@@ -19,19 +19,19 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @PostMapping("/new")
-    public ResponseEntity<?> created(@RequestBody QuestionNewDto questionNewDto){
-        questionService.created(questionNewDto);
+    public ResponseEntity<?> createQuestionBoard(@RequestBody QuestionNewDto questionNewDto){
+        questionService.create(questionNewDto);
 
         return ResponseEntity.ok("게시판 생성 성공");
     }
 
     @GetMapping("/show")
-    public ResponseEntity<?> viewList(){
+    public ResponseEntity<?> getQuestionBoardList(){
         return ResponseEntity.ok(questionService.viewList());
     }
 
     @GetMapping("/show/{id}")
-    public ResponseEntity<?> view(@PathVariable("id") Long id){
+    public ResponseEntity<?> getQuestionBoardById(@PathVariable("id") Long id){
         return ResponseEntity.ok(questionService.view(id));
     }
 
