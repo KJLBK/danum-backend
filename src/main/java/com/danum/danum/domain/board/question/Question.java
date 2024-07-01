@@ -54,5 +54,8 @@ public class Question {
     @Column(name = "question_count")
     private Long count;
 
+    public void addCount() {
+        this.count++;
+    }
 
 }
