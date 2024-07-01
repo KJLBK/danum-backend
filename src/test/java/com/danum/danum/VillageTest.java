@@ -1,6 +1,5 @@
 package com.danum.danum;
 
-import com.danum.danum.domain.board.question.QuestionNewDto;
 import com.danum.danum.domain.board.village.VillageNewDto;
 import com.danum.danum.service.board.village.VillageService;
 import org.junit.jupiter.api.Test;

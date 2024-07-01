@@ -11,6 +11,6 @@ public interface QuestionService {
 
     List<QuestionViewDto> viewList();
 
-    QuestionViewDto view(Long id);
+    QuestionViewDto view(Long id, String email);
 
 }

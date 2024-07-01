@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -31,8 +32,8 @@ public class QuestionController {
     }
 
     @GetMapping("/show/{id}")
-    public ResponseEntity<?> getQuestionBoardById(@PathVariable("id") Long id){
-        return ResponseEntity.ok(questionService.view(id));
+    public ResponseEntity<?> getQuestionBoardById(@PathVariable("id") Long id, @RequestParam(value = "email", required = true) String email){
+        return ResponseEntity.ok(questionService.view(id, email));
     }
 
 }

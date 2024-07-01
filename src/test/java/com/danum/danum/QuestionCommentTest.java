@@ -1,7 +1,6 @@
 package com.danum.danum;
 
 import com.danum.danum.domain.comment.question.QuestionCommentNewDto;
-import com.danum.danum.domain.comment.question.QuestionCommentUpdateDto;
 import com.danum.danum.service.comment.QuestionCommentService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

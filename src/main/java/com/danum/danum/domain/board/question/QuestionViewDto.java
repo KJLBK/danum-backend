@@ -26,7 +26,7 @@ public class QuestionViewDto {
 
     private OpenAiConversation conversation;
 
-    public QuestionViewDto from(Question question) {
+    public static QuestionViewDto from(Question question) {
         return QuestionViewDto.builder()
                 .question_id(question.getId())
                 .email(question.getMember().getEmail())
