@@ -4,6 +4,8 @@ import com.danum.danum.domain.board.question.QuestionNewDto;
 import com.danum.danum.service.board.question.QuestionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,8 +34,14 @@ public class QuestionController {
     }
 
     @GetMapping("/show/{id}")
-    public ResponseEntity<?> getQuestionBoardById(@PathVariable("id") Long id, @RequestParam(value = "email", required = true) String email){
-        return ResponseEntity.ok(questionService.view(id, email));
+    public ResponseEntity<?> getQuestionBoardById(@PathVariable("id") Long id){
+        return ResponseEntity.ok(questionService.view(id, getLoginUser()));
+    }
+
+    private String getLoginUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        return authentication.getName();
     }
 
 }
