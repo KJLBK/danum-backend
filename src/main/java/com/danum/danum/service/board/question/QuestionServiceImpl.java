@@ -5,6 +5,7 @@ import com.danum.danum.domain.board.question.QuestionEmailToken;
 import com.danum.danum.domain.board.question.QuestionMapper;
 import com.danum.danum.domain.board.question.QuestionNewDto;
 import com.danum.danum.domain.board.question.QuestionViewDto;
+import com.danum.danum.domain.board.village.VillageEmailToken;
 import com.danum.danum.exception.custom.BoardException;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.custom.MemberException;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -61,11 +63,13 @@ public class QuestionServiceImpl implements QuestionService{
     }
 
     private void viewCheck(Question question, String email) {
-        if (questionEmailRepository.existsById(email)) {
+        Optional<QuestionEmailToken> optionalQuestionEmailToken = questionEmailRepository.findById(question.getId());
+        if (optionalQuestionEmailToken.isPresent() && optionalQuestionEmailToken.get().getEmail().equals(email)) {
             return;
         }
+        
         QuestionEmailToken token = QuestionEmailToken.builder()
-                .id(email)
+                .id(question.getId())
                 .email(email)
                 .build();
         question.increasedViews();

@@ -16,7 +16,7 @@ import org.springframework.data.redis.core.index.Indexed;
 public class VillageEmailToken {
 
     @Id
-    private String id;
+    private Long id;
 
     @Indexed
     private String email;

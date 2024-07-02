@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -63,11 +64,13 @@ public class VillageServiceImpl implements VillageService{
     }
 
     private void viewCheck(Village village, String email) {
-        if (villageEmailRepository.existsById(email)) {
+        Optional<VillageEmailToken> optionalVillageEmailToken = villageEmailRepository.findById(village.getId());
+        if (optionalVillageEmailToken.isPresent() && optionalVillageEmailToken.get().getEmail().equals(email)) {
             return;
         }
+
         VillageEmailToken token = VillageEmailToken.builder()
-                .id(email)
+                .id(village.getId())
                 .email(email)
                 .build();
         village.increasedViews();
