@@ -12,6 +12,6 @@ public interface VillageService {
 
     List<VillageViewDto> viewList();
 
-    VillageViewDto view(Long id);
+    VillageViewDto view(Long id, String email);
 
 }
