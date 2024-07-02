@@ -1,6 +1,5 @@
 package com.danum.danum.domain.board.village;
 
-import com.danum.danum.domain.board.question.Question;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

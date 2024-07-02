@@ -1,6 +1,5 @@
 package com.danum.danum.service.comment;
 
-import com.danum.danum.domain.comment.village.VillageComment;
 import com.danum.danum.domain.comment.village.VillageCommentNewDto;
 import com.danum.danum.domain.comment.village.VillageCommentUpdateDto;
 import com.danum.danum.domain.comment.village.VillageCommentViewDto;
