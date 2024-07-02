@@ -68,7 +68,7 @@ public class QuestionServiceImpl implements QuestionService{
                 .id(email)
                 .email(email)
                 .build();
-        question.addCount();
+        question.increasedViews();
 
         questionRepository.save(question);
         questionEmailRepository.save(token);

@@ -52,10 +52,10 @@ public class Question {
     private Long like;
 
     @Column(name = "question_count")
-    private Long count;
+    private Long view_count;
 
-    public void addCount() {
-        this.count++;
+    public void increasedViews() {
+        this.view_count++;
     }
 
 }
