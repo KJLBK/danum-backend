@@ -47,18 +47,10 @@ public class Village {
     private Long like;
 
     @Column(name = "village_count")
-    private Long count;
+    private Long view_count;
 
-    public void addView() {
-        this.count += 1L;
-    }
-
-    public void addLike() {
-        this.like += 1;
-    }
-
-    public void subLike() {
-        this.like -= 1;
+    public void increasedViews() {
+        this.view_count++;
     }
 
 }

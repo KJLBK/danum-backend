@@ -1,4 +1,4 @@
-package com.danum.danum.domain.board.question;
+package com.danum.danum.domain.board.village;
 
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -9,11 +9,11 @@ import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
 
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@RedisHash(value = "questionEmail", timeToLive = 86400)
-public class QuestionEmailToken {
+@RedisHash(value = "villageEmail", timeToLive = 86400)
+public class VillageEmailToken {
 
     @Id
     private Long id;

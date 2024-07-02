@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface QuestionEmailRepository extends CrudRepository<QuestionEmailToken, String> {
+public interface QuestionEmailRepository extends CrudRepository<QuestionEmailToken, Long> {
 }

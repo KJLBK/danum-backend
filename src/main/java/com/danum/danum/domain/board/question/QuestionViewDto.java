@@ -26,6 +26,8 @@ public class QuestionViewDto {
 
     private OpenAiConversation conversation;
 
+    private Long view_count;
+
     public static QuestionViewDto from(Question question) {
         return QuestionViewDto.builder()
                 .question_id(question.getId())
@@ -34,6 +36,7 @@ public class QuestionViewDto {
                 .content(question.getContent())
                 .created_at(question.getCreated_at())
                 .conversation(question.getConversation())
+                .view_count(question.getView_count())
                 .build();
     }
 

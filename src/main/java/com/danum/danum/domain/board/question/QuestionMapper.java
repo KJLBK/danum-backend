@@ -37,7 +37,7 @@ public class QuestionMapper {
                 .content(questionNewDto.getContent())
                 .created_at(LocalDateTime.now())
                 .like(0L)
-                .count(0L);
+                .view_count(0L);
 
         if(questionNewDto.getCreateId() != null) {
             OpenAiConversation conversation = conversationRepository.findById(questionNewDto.getCreateId())

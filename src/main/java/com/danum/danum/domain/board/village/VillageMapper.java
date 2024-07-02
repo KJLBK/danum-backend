@@ -32,7 +32,7 @@ public class VillageMapper {
                 .content(villageNewDto.getContent())
                 .created_at(LocalDateTime.now())
                 .like(0L)
-                .count(0L).build();
+                .view_count(0L).build();
     }
 
 }
