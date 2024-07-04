@@ -1,6 +1,6 @@
 package com.danum.danum.repository;
 
-import com.danum.danum.config.EmbeddedRedisConfig;
+
 import com.danum.danum.domain.board.question.QuestionEmailToken;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
