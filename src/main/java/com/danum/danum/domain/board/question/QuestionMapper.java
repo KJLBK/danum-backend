@@ -36,7 +36,6 @@ public class QuestionMapper {
                 .title(questionNewDto.getTitle())
                 .content(questionNewDto.getContent())
                 .created_at(LocalDateTime.now())
-                .like(0L)
                 .view_count(0L);
 
         if(questionNewDto.getCreateId() != null) {
