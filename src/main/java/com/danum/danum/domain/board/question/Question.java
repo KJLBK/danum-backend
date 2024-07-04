@@ -48,9 +48,6 @@ public class Question {
     @Column(name = "question_created_at")
     private LocalDateTime created_at;
 
-    @Column(name = "question_like")
-    private Long like;
-
     @Column(name = "question_count")
     private Long view_count;
 

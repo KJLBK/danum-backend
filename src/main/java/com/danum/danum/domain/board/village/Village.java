@@ -43,9 +43,6 @@ public class Village {
     @Column(name = "village_created_at")
     private LocalDateTime created_at;
 
-    @Column(name = "village_like")
-    private Long like;
-
     @Column(name = "village_count")
     private Long view_count;
 
