@@ -1,7 +1,5 @@
 package com.danum.danum.service.board.village;
 
-import com.danum.danum.domain.board.question.Question;
-import com.danum.danum.domain.board.question.QuestionEmailToken;
 import com.danum.danum.domain.board.village.Village;
 import com.danum.danum.domain.board.village.VillageEmailToken;
 import com.danum.danum.domain.board.village.VillageMapper;
@@ -10,8 +8,8 @@ import com.danum.danum.domain.board.village.VillageViewDto;
 import com.danum.danum.exception.custom.BoardException;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.custom.MemberException;
-import com.danum.danum.repository.VillageEmailRepository;
-import com.danum.danum.repository.VillageRepository;
+import com.danum.danum.repository.board.VillageEmailRepository;
+import com.danum.danum.repository.board.VillageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

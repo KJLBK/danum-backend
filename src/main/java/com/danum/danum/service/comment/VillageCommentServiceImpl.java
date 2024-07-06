@@ -7,7 +7,7 @@ import com.danum.danum.domain.comment.village.VillageCommentUpdateDto;
 import com.danum.danum.domain.comment.village.VillageCommentViewDto;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.custom.CommentException;
-import com.danum.danum.repository.VillageCommentRepository;
+import com.danum.danum.repository.comment.VillageCommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

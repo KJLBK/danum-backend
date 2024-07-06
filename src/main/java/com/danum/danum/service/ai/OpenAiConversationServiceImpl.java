@@ -5,7 +5,7 @@ import com.danum.danum.domain.openai.OpenAiConversation;
 import com.danum.danum.domain.openai.OpenAiConversationStatus;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.custom.OpenAiException;
-import com.danum.danum.repository.OpenAiConversationRepository;
+import com.danum.danum.repository.ai.OpenAiConversationRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

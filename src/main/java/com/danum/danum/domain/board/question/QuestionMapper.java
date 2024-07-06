@@ -6,7 +6,7 @@ import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.custom.MemberException;
 import com.danum.danum.exception.custom.OpenAiException;
 import com.danum.danum.repository.MemberRepository;
-import com.danum.danum.repository.OpenAiConversationRepository;
+import com.danum.danum.repository.ai.OpenAiConversationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +36,8 @@ public class QuestionMapper {
                 .title(questionNewDto.getTitle())
                 .content(questionNewDto.getContent())
                 .created_at(LocalDateTime.now())
-                .view_count(0L);
+                .view_count(0L)
+                .like(0L);
 
         if(questionNewDto.getCreateId() != null) {
             OpenAiConversation conversation = conversationRepository.findById(questionNewDto.getCreateId())

@@ -13,4 +13,6 @@ public interface QuestionService {
 
     QuestionViewDto view(Long id, String email);
 
+    void likeStatus(Long id, String email);
+
 }

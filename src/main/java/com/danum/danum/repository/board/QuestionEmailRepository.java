@@ -1,4 +1,4 @@
-package com.danum.danum.repository;
+package com.danum.danum.repository.board;
 
 import com.danum.danum.domain.board.question.QuestionEmailToken;
 import org.springframework.data.repository.CrudRepository;

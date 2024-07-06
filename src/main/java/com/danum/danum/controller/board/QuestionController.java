@@ -37,6 +37,13 @@ public class QuestionController {
         return ResponseEntity.ok(questionService.view(id, getLoginUser()));
     }
 
+    @PostMapping("/{id}/like")
+    public ResponseEntity<?> likeStatus(@PathVariable("id") Long id) {
+        questionService.likeStatus(id, getLoginUser());
+
+        return ResponseEntity.ok("좋아요 관련 성공");
+    }
+
     private String getLoginUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
