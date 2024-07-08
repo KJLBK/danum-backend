@@ -62,7 +62,7 @@ public class Question {
         this.like++;
     }
 
-    public void minLike() {
+    public void subLike() {
         this.like--;
     }
 

@@ -97,7 +97,7 @@ public class QuestionServiceImpl implements QuestionService{
         Optional<QuestionLike> optionalQuestionLike = questionLikeRepository.findByQuestionIdAndMemberEmail(question, member);
 
         if (optionalQuestionLike.isPresent()) {
-            question.minLike();
+            question.subLike();
             questionLikeRepository.delete(optionalQuestionLike.get());
             questionRepository.save(question);
             return;
