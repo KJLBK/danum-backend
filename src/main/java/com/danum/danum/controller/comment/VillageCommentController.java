@@ -1,8 +1,8 @@
-package com.danum.danum.controller.board;
+package com.danum.danum.controller.comment;
 
-import com.danum.danum.domain.comment.question.QuestionCommentNewDto;
-import com.danum.danum.domain.comment.question.QuestionCommentUpdateDto;
-import com.danum.danum.service.comment.QuestionCommentService;
+import com.danum.danum.domain.comment.village.VillageCommentNewDto;
+import com.danum.danum.domain.comment.village.VillageCommentUpdateDto;
+import com.danum.danum.service.comment.VillageCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,34 +18,33 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/board/question/comment")
-public class QuestionCommentController {
+@RequestMapping("/board/village/comment")
+public class VillageCommentController {
 
-    private final QuestionCommentService questionCommentService;
+    private final VillageCommentService villageCommentService;
 
     @PostMapping("/new")
-    public ResponseEntity<?> createQuestionBoardComment(@RequestBody QuestionCommentNewDto questionCommentNewDto) {
-        questionCommentService.create(questionCommentNewDto);
+    public ResponseEntity<?> createVillageBoardComment(@RequestBody VillageCommentNewDto villageCommentNewDto) {
+        villageCommentService.create(villageCommentNewDto);
 
         return ResponseEntity.ok("댓글 생성 성공");
     }
 
     @GetMapping("/show/{id}")
-    public ResponseEntity<?> getQuestionBoardForCommentList(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(questionCommentService.viewList(id));
+    public ResponseEntity<?> getVillageBoardForCommentList(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(villageCommentService.viewList(id));
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> updateQuestionBoardComment(@RequestBody QuestionCommentUpdateDto questionCommentUpdateDto) {
-
-        questionCommentService.update(questionCommentUpdateDto, getLoginUser());
+    public ResponseEntity<?> updateVillageBoardComment(@RequestBody VillageCommentUpdateDto villageCommentUpdateDto) {
+        villageCommentService.update(villageCommentUpdateDto, getLoginUser());
 
         return ResponseEntity.ok("댓글 수정 성공");
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteQuestionBoardComment(@PathVariable("id") Long id) {
-        questionCommentService.delete(id, getLoginUser());
+    public ResponseEntity<?> deleteVillageBoardComment(@PathVariable("id") Long id) {
+        villageCommentService.delete(id, getLoginUser());
 
         return ResponseEntity.ok("댓글 삭제 성공");
     }

@@ -1,4 +1,4 @@
-package com.danum.danum.repository;
+package com.danum.danum.repository.comment;
 
 import com.danum.danum.domain.comment.question.QuestionComment;
 import org.springframework.data.jpa.repository.JpaRepository;

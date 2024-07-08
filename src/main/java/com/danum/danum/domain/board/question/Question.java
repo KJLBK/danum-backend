@@ -51,8 +51,19 @@ public class Question {
     @Column(name = "question_count")
     private Long view_count;
 
+    @Column(name = "question_like")
+    private Long like;
+
     public void increasedViews() {
         this.view_count++;
+    }
+
+    public void addLike() {
+        this.like++;
+    }
+
+    public void subLike() {
+        this.like--;
     }
 
 }

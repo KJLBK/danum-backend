@@ -2,7 +2,7 @@ package com.danum.danum.service.ai;
 
 import com.danum.danum.domain.openai.OpenAiConversation;
 import com.danum.danum.domain.openai.OpenAiMessage;
-import com.danum.danum.repository.OpenAiMessageRepository;
+import com.danum.danum.repository.ai.OpenAiMessageRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

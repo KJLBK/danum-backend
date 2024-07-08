@@ -1,4 +1,4 @@
-package com.danum.danum.repository;
+package com.danum.danum.repository.ai;
 
 import com.danum.danum.domain.openai.OpenAiConversation;
 import com.danum.danum.domain.openai.OpenAiMessage;
