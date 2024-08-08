@@ -18,7 +18,7 @@ public class RedisPublisher {
     // Redis Topic에서 메시지 발생. 메시지 발행 후, 대기 중이던 Redis 구독서비스
     public void publish(ChannelTopic topic, ChatMessage message) {
         //Redis에 메시지 저장
-        chatRoomRepository.saveChatMessage(message.getRoomId(), message);
+        chatRoomRepository.saveChatMessage(message);
 
         log.info("Publishing message: " + message);
         redisTemplate.convertAndSend(topic.getTopic(), message);
