@@ -14,4 +14,6 @@ public interface VillageService {
 
     VillageViewDto view(Long id, String email);
 
+    void likeStatus(Long id, String email);
+
 }

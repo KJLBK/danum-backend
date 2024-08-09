@@ -15,6 +15,9 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +26,7 @@ import java.util.Map;
 public class DiscordServiceImpl implements DiscordService {
 
     private static final Integer TEXT_DELETED_LIMIT = 99;
+    private static final Long MAX_MESSAGE_AGE_DAYS = 14L; // 메시지 최대 나이 (일수 기준)
 
     private final EndpointLister endpointLister;
 
@@ -30,7 +34,9 @@ public class DiscordServiceImpl implements DiscordService {
     private String botToken;
 
     @Value("${discord.channel.api.id}")
-    private Long messageId;
+    private String channelId; // 채널 ID
+
+    private String currentMessageId; // 현재 메시지 ID
 
     @EventListener(ApplicationReadyEvent.class)
     @Transactional
@@ -38,33 +44,51 @@ public class DiscordServiceImpl implements DiscordService {
         JDA jda = JDABuilder.createDefault(botToken)
                 .build()
                 .awaitReady();
-        TextChannel channel = jda.getTextChannelById(messageId);
+
+        TextChannel channel = jda.getTextChannelById(channelId);
 
         if (channel == null) {
             throw new DiscordException(ErrorCode.DISCORD_CHANNEL_NOT_FOUND);
         }
 
-        MessageHistory history = new MessageHistory(channel);
+        // 오래된 메시지 삭제
+        deleteOldMessages(channel);
 
+        // 새 메시지 작성
+        sendNewMessages(channel);
+    }
+
+    private void deleteOldMessages(TextChannel channel) {
+        MessageHistory history = new MessageHistory(channel);
         List<Message> messageList;
 
         do {
-            messageList = history.retrievePast(TEXT_DELETED_LIMIT)
-                    .complete();
+            messageList = history.retrievePast(TEXT_DELETED_LIMIT).complete();
+            Instant now = Instant.now();
+            for (Message message : messageList) {
+                Instant messageTime = message.getTimeCreated().toInstant(); // 메시지 생성 시간
+                if (messageTime.isBefore(now.minus(MAX_MESSAGE_AGE_DAYS, ChronoUnit.DAYS))) {
+                    message.delete().queue();
+                }
+            }
+        } while (messageList.size() == TEXT_DELETED_LIMIT); // 모든 오래된 메시지가 삭제될 때까지 반복
+    }
 
-            deleteMessage(channel, messageList);
-        } while (messageList.size() == TEXT_DELETED_LIMIT);
-
+    private void sendNewMessages(TextChannel channel) {
         Map<Class<?>, List<MessageEmbed>> messageEmbedMap = endpointLister.getEndpoints();
 
-        for (Map.Entry<Class<?>, List<MessageEmbed>> requestMessageMap : messageEmbedMap.entrySet()) {
-            channel.sendMessage("## " + requestMessageMap.getKey()
-                    .getSimpleName())
-                    .queue();
-
-            sendMessageList(channel, requestMessageMap.getValue());
+        // 기존 메시지 ID가 있다면 삭제하고 새로 작성
+        if (currentMessageId != null) {
+            channel.deleteMessageById(currentMessageId).queue();
         }
 
+        for (Map.Entry<Class<?>, List<MessageEmbed>> requestMessageMap : messageEmbedMap.entrySet()) {
+            channel.sendMessage("## " + requestMessageMap.getKey().getSimpleName())
+                    .queue(message -> {
+                        currentMessageId = message.getId(); // 현재 메시지 ID 저장
+                        sendMessageList(channel, requestMessageMap.getValue());
+                    });
+        }
     }
 
     private void sendMessageList(TextChannel channel, List<MessageEmbed> messageEmbedList) {
@@ -84,31 +108,4 @@ public class DiscordServiceImpl implements DiscordService {
                     sendMessageList(channel, messageEmbedList.subList(chunk, messageEmbedList.size()));
                 });
     }
-
-    private void deleteMessage(TextChannel channel, List<Message> messageList) {
-        if (messageList.isEmpty()) {
-            return;
-        }
-
-        int messageSize = messageList.size();
-        if (messageSize == 1) {
-            String messageId = messageList.get(0).getId();
-            channel.deleteMessageById(messageId)
-                    .queue();
-
-            return;
-        }
-
-        if (messageSize < 100) {
-            channel.deleteMessages(messageList)
-                    .queue();
-
-            return;
-        }
-
-        channel.deleteMessages(messageList.subList(0, TEXT_DELETED_LIMIT))
-                .queue();
-        deleteMessage(channel, messageList.subList(TEXT_DELETED_LIMIT, messageSize));
-    }
-
 }

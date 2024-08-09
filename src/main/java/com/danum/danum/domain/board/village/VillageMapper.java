@@ -31,7 +31,9 @@ public class VillageMapper {
                 .title(villageNewDto.getTitle())
                 .content(villageNewDto.getContent())
                 .created_at(LocalDateTime.now())
-                .view_count(0L).build();
+                .view_count(0L)
+                .like(0L)
+                .build();
     }
 
 }

@@ -38,6 +38,13 @@ public class VillageController {
         return ResponseEntity.ok(villageService.view(id, getLoginUser()));
     }
 
+    @PostMapping("/like/{id}")
+    public ResponseEntity<?> likeStatus(@PathVariable("id") Long id) {
+        villageService.likeStatus(id, getLoginUser());
+
+        return ResponseEntity.ok("좋아요 관련 성공");
+    }
+
     private String getLoginUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

@@ -37,7 +37,7 @@ public class QuestionController {
         return ResponseEntity.ok(questionService.view(id, getLoginUser()));
     }
 
-    @PostMapping("/{id}/like")
+    @PostMapping("/like/{id}")
     public ResponseEntity<?> likeStatus(@PathVariable("id") Long id) {
         questionService.likeStatus(id, getLoginUser());
 
