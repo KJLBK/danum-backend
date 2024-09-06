@@ -1,6 +1,7 @@
 package com.danum.danum.controller.board;
 
 import com.danum.danum.domain.board.village.VillageNewDto;
+import com.danum.danum.domain.board.village.VillageViewDto;
 import com.danum.danum.service.board.village.VillageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -51,4 +54,35 @@ public class VillageController {
         return authentication.getName();
     }
 
+    /**
+     * 특정 거리 내의 Village 게시글을 조회
+     * @param latitude 사용자의 위도
+     * @param longitude 사용자의 경도
+     * @param distance 검색할 반경 거리 (km)
+     * @return 지정된 거리 내의 Village 게시글 목록
+     */
+    @GetMapping("/by-distance")
+    public ResponseEntity<List<VillageViewDto>> getVillagesByDistance(
+            @RequestParam double latitude,
+            @RequestParam double longitude,
+            @RequestParam double distance) {
+        List<VillageViewDto> villages = villageService.getVillagesByDistance(latitude, longitude, distance);
+        return ResponseEntity.ok(villages);
+    }
+
+    /**
+     * 카테고리별로 Village 게시글을 조회
+     * @param latitude 사용자의 위도
+     * @param longitude 사용자의 경도
+     * @param category 검색할 카테고리 (가까운동네, 중간 거리 동네, 먼 동네)
+     * @return 해당 카테고리에 속하는 Village 게시글 목록
+     */
+    @GetMapping("/by-category")
+    public ResponseEntity<List<VillageViewDto>> getVillagesByCategory(
+            @RequestParam double latitude,
+            @RequestParam double longitude,
+            @RequestParam String category) {
+        List<VillageViewDto> villages = villageService.getVillagesByCategory(latitude, longitude, category);
+        return ResponseEntity.ok(villages);
+    }
 }
