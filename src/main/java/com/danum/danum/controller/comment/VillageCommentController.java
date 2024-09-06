@@ -42,7 +42,7 @@ public class VillageCommentController {
         return ResponseEntity.ok("댓글 수정 성공");
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteVillageBoardComment(@PathVariable("id") Long id) {
         villageCommentService.delete(id, getLoginUser());
 
