@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,9 +46,9 @@ public class MemberController {
         return ResponseEntity.ok(accessToken);
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<?> delete(@RequestBody DeleteDto deleteDto) {
-        memberService.delete(deleteDto.getEmail());
+    @DeleteMapping("/{email}")
+    public ResponseEntity<?> delete(@PathVariable("email") String email) {
+        memberService.delete(email);
 
         return ResponseEntity.ok("회원탈퇴에 성공하였습니다.");
     }
