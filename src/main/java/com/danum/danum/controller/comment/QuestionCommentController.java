@@ -43,7 +43,7 @@ public class QuestionCommentController {
         return ResponseEntity.ok("댓글 수정 성공");
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteQuestionBoardComment(@PathVariable("id") Long id) {
         questionCommentService.delete(id, getLoginUser());
 
