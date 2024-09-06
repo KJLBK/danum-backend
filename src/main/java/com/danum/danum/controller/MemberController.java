@@ -1,7 +1,6 @@
 package com.danum.danum.controller;
 
 
-import com.danum.danum.domain.member.DeleteDto;
 import com.danum.danum.domain.member.LoginDto;
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.domain.member.RegisterDto;

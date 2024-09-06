@@ -1,7 +1,5 @@
 package com.danum.danum.repository.board;
 
-import com.danum.danum.domain.board.question.Question;
-import com.danum.danum.domain.board.question.QuestionLike;
 import com.danum.danum.domain.board.village.Village;
 import com.danum.danum.domain.board.village.VillageLike;
 import com.danum.danum.domain.member.Member;
