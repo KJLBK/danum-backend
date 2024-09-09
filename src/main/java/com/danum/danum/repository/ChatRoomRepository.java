@@ -14,6 +14,8 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -129,5 +131,28 @@ public class ChatRoomRepository {
      */
     private String getChatMessagesKey(String roomId) {
         return CHAT_MESSAGES + "_" + roomId;
+    }
+
+    /**
+     * 사용자의 최근 대화 내역을 조회합니다.
+     * @param email 사용자 이메일
+     * @return 최근 대화 내역 목록
+     */
+    public List<ChatMessage> getRecentMessages(String email) {
+        // Redis 저장소에 저장된 메시지만 표시 실시간 X
+        List<ChatRoom> allRooms = findAllRoom();
+        return allRooms.stream()
+                .flatMap(room -> {
+                    List<Object> messages = getMessages(room.getRoomId());
+                    if (!messages.isEmpty()) {
+                        ChatMessage lastMessage = (ChatMessage) messages.get(messages.size() - 1);
+                        if (lastMessage.getSender().equals(email) || lastMessage.getMessage().contains(email)) {
+                            return Stream.of(lastMessage);
+                        }
+                    }
+                    return Stream.empty();
+                })
+                .sorted(Comparator.comparing(ChatMessage::getTimestamp).reversed())
+                .collect(Collectors.toList());
     }
 }
