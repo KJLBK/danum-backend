@@ -51,7 +51,7 @@ public class ChatController {
         redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);
     }
 
-    @GetMapping("/")
+    @GetMapping("/main/message")
     public String mainPage(Model model, Authentication authentication) {
         // 최근 대화 내역을 반환하는 로직
         if (authentication != null && authentication.isAuthenticated()) {
