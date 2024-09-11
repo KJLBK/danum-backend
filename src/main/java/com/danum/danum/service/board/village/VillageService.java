@@ -16,4 +16,8 @@ public interface VillageService {
 
     void likeStatus(Long id, String email);
 
+    List<VillageViewDto> getVillagesByDistance(double latitude, double longitude, double distance);
+
+    List<VillageViewDto> getVillagesByCategory(double latitude, double longitude, String category);
+
 }

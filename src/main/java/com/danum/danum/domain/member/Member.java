@@ -57,6 +57,12 @@ public class Member {
     @Column(name = "member_join")
     private LocalDateTime joinDateTime;
 
+    @Column(name = "latitude") //사용자의 위도
+    private Double latitude;
+
+    @Column(name ="longitude")// 사용자의 경도
+    private Double longitude;
+
     public void updateUserPassword(String password){
         this.password = password;
     }
@@ -67,6 +73,11 @@ public class Member {
 
     public void updateUserName(String username){
         this.name = username;
+    }
+
+    public void updateLocation(Double latitude, Double longitude){
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public UserDetails mappingUserDetails() {

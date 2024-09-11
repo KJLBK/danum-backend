@@ -49,6 +49,12 @@ public class Village {
     @Column(name = "village_like")
     private Long like;
 
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
+
     public void increasedViews() {
         this.view_count++;
     }
@@ -59,6 +65,11 @@ public class Village {
 
     public void subLike() {
         this.like--;
+    }
+
+    public void setLocation(Double latitude, Double longitude){
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
 }
