@@ -120,4 +120,13 @@ public class JwtUtil {
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
+    public String reissueAccessToken(String refreshToken) {
+
+        Authentication authentication = getAuthentication(refreshToken);
+
+        Date now = new Date();
+        Date accessTokenExpired = new Date(now.getTime() + accessTokenExpiredTime);
+
+        return getNewToken(accessTokenExpired, authentication);
+    }
 }
