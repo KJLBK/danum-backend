@@ -121,28 +121,22 @@ public class JwtUtil {
     }
 
     public TokenBox refreshAccessToken(String refreshToken) {
-        try {
-            // 리프레시 토큰 유효성 검사
-            validate(refreshToken);
+        // 리프레시 토큰 유효성 검사
+        validate(refreshToken);
 
-            // 리프레시 토큰에서 인증 정보 추출
-            Authentication authentication = getAuthentication(refreshToken);
+        // 리프레시 토큰에서 인증 정보 추출
+        Authentication authentication = getAuthentication(refreshToken);
 
-            // 새로운 액세스 토큰 생성
-            long now = (new Date()).getTime();
-            Date accessTokenExpired = new Date(now + accessTokenExpiredTime);
-            String newAccessToken = getNewToken(accessTokenExpired, authentication);
+        // 새로운 액세스 토큰 생성
+        long now = (new Date()).getTime();
+        Date accessTokenExpired = new Date(now + accessTokenExpiredTime);
+        String newAccessToken = getNewToken(accessTokenExpired, authentication);
 
-            // 새로운 TokenBox 생성 (액세스 토큰만 새로 생성)
-            TokenDto newAccessTokenDto = new TokenDto(TokenType.ACCESS, newAccessToken);
-            TokenDto existingRefreshTokenDto = new TokenDto(TokenType.REFRESH, refreshToken);
+        // 새로운 TokenBox 생성 (액세스 토큰만 새로 생성)
+        TokenDto newAccessTokenDto = new TokenDto(TokenType.ACCESS, newAccessToken);
+        TokenDto existingRefreshTokenDto = new TokenDto(TokenType.REFRESH, refreshToken);
 
-            return new TokenBox(newAccessTokenDto, existingRefreshTokenDto);
-        } catch (CustomJwtException e) {
-            // 리프레시 토큰이 유효하지 않은 경우
-            throw new CustomJwtException(ErrorCode.TOKEN_SIGNATURE_EXCEPTION);
-            // ErrorCode -> 올바르지 않은 서명입니다-BAD_REQUEST 상태 코드 반환
-        }
+        return new TokenBox(newAccessTokenDto, existingRefreshTokenDto);
     }
 
 
