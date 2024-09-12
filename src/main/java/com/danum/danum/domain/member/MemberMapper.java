@@ -11,6 +11,8 @@ public class MemberMapper {
                 .password(registerDto.getPassword())
                 .phone(registerDto.getPhone())
                 .name(registerDto.getName())
+                .latitude(registerDto.getLatitude())
+                .longitude(registerDto.getLongitude())
                 .exp(0)
                 .contribution(0)
                 .role(Role.USER)
