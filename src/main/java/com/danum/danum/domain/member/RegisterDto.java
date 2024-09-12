@@ -17,6 +17,10 @@ public class RegisterDto {
 
     private String name;
 
+    private Double latitude;
+
+    private Double longitude;
+
     public void settingPassword(String password){
         this.password = password;
     }
