@@ -77,11 +77,6 @@ public class Member {
         this.name = username;
     }
 
-    public void updateLocation(Double latitude, Double longitude){
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
-
     public UserDetails mappingUserDetails() {
         Collection<? extends GrantedAuthority> auth = Stream.of(this.role.toString())
                 .map(SimpleGrantedAuthority::new)
