@@ -88,5 +88,20 @@ public class Member {
                 .authorities(auth)
                 .build();
     }
+    public boolean isActive() {
+        return contribution == 0;
+    }  //회원 기본 상태
+
+    public void activate() {
+        this.contribution = 0;
+    } // 회원 활동 중
+
+    public void deactivate() {
+        this.contribution = 1;
+    } // 회원 정지 중
+
+    public void setContribution(int contribution) {
+        this.contribution = contribution;
+    }
 
 }
