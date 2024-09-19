@@ -46,7 +46,7 @@ public class Member {
     private int exp;
 
     @Column(name = "member_contribution")
-    private int contribution;
+    private Integer contribution;  // int에서 Integer형으로 변경
 
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'USER'")
@@ -88,8 +88,9 @@ public class Member {
                 .authorities(auth)
                 .build();
     }
+
     public boolean isActive() {
-        return contribution == 0;
+        return contribution != null && contribution == 0;
     }  //회원 기본 상태
 
     public void activate() {
@@ -100,8 +101,11 @@ public class Member {
         this.contribution = 1;
     } // 회원 정지 중
 
-    public void setContribution(int contribution) {
+    public void setContribution(Integer contribution) {
         this.contribution = contribution;
     }
 
+    public Integer getContribution() {
+        return this.contribution;
+    }
 }
