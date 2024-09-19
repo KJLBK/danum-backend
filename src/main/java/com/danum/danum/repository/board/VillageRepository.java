@@ -1,6 +1,7 @@
 package com.danum.danum.repository.board;
 
 import com.danum.danum.domain.board.village.Village;
+import com.danum.danum.domain.member.Member;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,6 +16,8 @@ public interface VillageRepository extends JpaRepository<Village, Long> {
             "ORDER BY (6371 * acos(cos(radians(:latitude)) * cos(radians(v.latitude)) * cos(radians(v.longitude) - radians(:longitude)) + sin(radians(:latitude)) * sin(radians(v.latitude))))",
             nativeQuery = true)
     List<Village> findVillagesWithinDistance(@Param("latitude") double latitude, @Param("longitude") double longitude, @Param("distance") double distance);
+
+    List<Village> findAllByMember(Member member);
 }
 /**
  * 주어진 위치(위도, 경도)로부터 특정 거리 이내에 있는 Village들을 찾아 반환
