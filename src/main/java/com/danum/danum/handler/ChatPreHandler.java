@@ -39,17 +39,30 @@ public class ChatPreHandler implements ChannelInterceptor {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 } catch (ExpiredJwtException e) {
                     log.error("JWT 토큰이 만료되었습니다: {}", token);
+                    // 클라이언트에게 에러 메시지 전달
+                    accessor.setUser(null);
+                    accessor.setLeaveMutable(true);
                     throw new CustomException(ErrorCode.TOKEN_EXPIRED_EXCEPTION);
                 } catch (SignatureException e) {
                     log.error("JWT 토큰 서명 확인 중 오류가 발생했습니다: {}", token);
+                    accessor.setUser(null);
+                    accessor.setLeaveMutable(true);
                     throw new CustomException(ErrorCode.TOKEN_SIGNATURE_EXCEPTION);
+                } catch (Exception e) {
+                    log.error("JWT 토큰 검증 중 오류가 발생했습니다: {}", token);
+                    accessor.setUser(null);
+                    accessor.setLeaveMutable(true);
+                    throw new CustomException(ErrorCode.TOKEN_ROLE_NOT_AVAILABLE_EXCEPTION);
                 }
             } else {
                 log.info("JWT 토큰이 없거나 잘못된 형식입니다.");
+                accessor.setUser(null);
+                accessor.setLeaveMutable(true);
                 throw new CustomException(ErrorCode.TOKEN_NOT_FOUND_EXCEPTION);
             }
         }
 
         return message;
     }
+
 }
