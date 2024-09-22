@@ -118,4 +118,9 @@ public class AdminController {
         return ResponseEntity.ok(adminService.getQuestionView(id));
     }
 
+    @GetMapping("/village/{id}")
+    public ResponseEntity<VillageViewDto> getVillageById(@PathVariable("id") Long id){
+        return ResponseEntity.ok(adminService.getVillageView(id));
+    }
+
 }
