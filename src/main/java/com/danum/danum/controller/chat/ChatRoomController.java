@@ -12,7 +12,7 @@ import java.util.List;
 // import 생략...
 
 @RequiredArgsConstructor
-@Controller
+@RestController
 @RequestMapping("/chat")
 public class ChatRoomController {
 
