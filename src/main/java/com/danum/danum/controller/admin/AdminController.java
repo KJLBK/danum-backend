@@ -111,4 +111,16 @@ public class AdminController {
         }
         return ResponseEntity.ok().build();
     }
+
+    // 질문 상세 조회 (추가된 부분)
+    @GetMapping("/questions/{id}")
+    public ResponseEntity<QuestionViewDto> getQuestionById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(adminService.getQuestionView(id));
+    }
+
+    @GetMapping("/village/{id}")
+    public ResponseEntity<VillageViewDto> getVillageById(@PathVariable("id") Long id){
+        return ResponseEntity.ok(adminService.getVillageView(id));
+    }
+
 }
