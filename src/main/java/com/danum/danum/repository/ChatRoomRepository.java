@@ -15,79 +15,99 @@ import org.springframework.stereotype.Repository;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @RequiredArgsConstructor
 @Repository
 public class ChatRoomRepository {
 
-    // 채팅방(topic)에 발행되는 메시지를 처리할 리스너
     private final RedisMessageListenerContainer redisMessageListener;
-
-    // 구독 처리 서비스
     private final RedisSubscriber redisSubscriber;
-
-    // Redis에 저장할 키
-    private static final String CHAT_ROOMS = "CHAT_ROOM";
-    private static final String CHAT_MESSAGES = "CHAT_MESSAGES";
-
-    // RedisTemplate을 통한 Redis 접근
     private final RedisTemplate<String, Object> redisTemplate;
 
-    // Redis의 HashOperations (채팅방 저장용)
-    private HashOperations<String, String, ChatRoom> opsHashChatRoom;
+    private static final String CHAT_ROOMS = "CHAT_ROOM";
+    private static final String CHAT_ROOM_USERS = "CHAT_ROOM_USERS";
+    private static final String USER_CHAT_ROOMS = "USER_CHAT_ROOMS";
+    private static final String CHAT_MESSAGES = "CHAT_MESSAGES";
 
-    // Redis의 ListOperations (채팅 메시지 저장용)
+    private HashOperations<String, String, ChatRoom> opsHashChatRoom;
+    private HashOperations<String, String, Set<String>> opsHashChatRoomUsers;
+    private HashOperations<String, String, Set<String>> opsHashUserChatRooms;
     private ListOperations<String, Object> opsListChatMessages;
 
-    // 채팅방의 대화 메시지를 발행하기 위한 Redis Topic 정보. 서버별로 채팅방에 매치되는 Topic 정보를 Map에 넣어 roomId로 찾을 수 있도록 함
     private Map<String, ChannelTopic> topics;
 
     @PostConstruct
     private void init() {
-        // Redis의 HashOperations 초기화 (채팅방 정보 저장용)
         opsHashChatRoom = redisTemplate.opsForHash();
-
-        // Redis의 ListOperations 초기화 (채팅 메시지 저장용)
+        opsHashChatRoomUsers = redisTemplate.opsForHash();
+        opsHashUserChatRooms = redisTemplate.opsForHash();
         opsListChatMessages = redisTemplate.opsForList();
-
-        // Redis Topic을 저장할 Map 초기화
         topics = new HashMap<>();
     }
 
-    /**
-     * 모든 채팅방 조회
-     */
     public List<ChatRoom> findAllRoom() {
         return opsHashChatRoom.values(CHAT_ROOMS);
     }
 
-    /**
-     * roomId로 특정 채팅방 조회
-     */
     public ChatRoom findRoomById(String id) {
         return opsHashChatRoom.get(CHAT_ROOMS, id);
     }
 
-    /**
-     * 채팅방 생성 : Redis Hash에 채팅방 정보 저장
-     */
-    public ChatRoom createChatRoom(String name) {
-        // 채팅방 생성 (roomId는 UUID로 생성)
+    public ChatRoom createChatRoom(String name, String userId) {
         ChatRoom chatRoom = ChatRoom.create(name);
-        // 생성된 채팅방을 Redis Hash에 저장
         opsHashChatRoom.put(CHAT_ROOMS, chatRoom.getRoomId(), chatRoom);
+        addUserToChatRoom(userId, chatRoom.getRoomId());
         return chatRoom;
     }
 
-    /**
-     * 채팅방 입장 : Redis에 Topic을 만들고 Pub/Sub 통신을 하기 위해 리스너를 설정
-     */
+    public void addUserToChatRoom(String userId, String roomId) {
+        // 채팅방에 사용자 추가
+        Set<String> users = opsHashChatRoomUsers.get(CHAT_ROOM_USERS, roomId);
+        if (users == null) {
+            users = new HashSet<>();
+        }
+        users.add(userId);
+        opsHashChatRoomUsers.put(CHAT_ROOM_USERS, roomId, users);
+
+        // 사용자의 채팅방 목록에 추가
+        Set<String> rooms = opsHashUserChatRooms.get(USER_CHAT_ROOMS, userId);
+        if (rooms == null) {
+            rooms = new HashSet<>();
+        }
+        rooms.add(roomId);
+        opsHashUserChatRooms.put(USER_CHAT_ROOMS, userId, rooms);
+    }
+
+    public void removeUserFromChatRoom(String userId, String roomId) {
+        // 채팅방에서 사용자 제거
+        Set<String> users = opsHashChatRoomUsers.get(CHAT_ROOM_USERS, roomId);
+        if (users != null) {
+            users.remove(userId);
+            opsHashChatRoomUsers.put(CHAT_ROOM_USERS, roomId, users);
+        }
+
+        // 사용자의 채팅방 목록에서 제거
+        Set<String> rooms = opsHashUserChatRooms.get(USER_CHAT_ROOMS, userId);
+        if (rooms != null) {
+            rooms.remove(roomId);
+            opsHashUserChatRooms.put(USER_CHAT_ROOMS, userId, rooms);
+        }
+    }
+
+    public List<ChatRoom> findRoomsByUserId(String userId) {
+        Set<String> roomIds = opsHashUserChatRooms.get(USER_CHAT_ROOMS, userId);
+        if (roomIds == null) {
+            return new ArrayList<>();
+        }
+        return roomIds.stream()
+                .map(this::findRoomById)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
     public void enterChatRoom(String roomId) {
-        // 기존에 있는 Topic을 가져옴
         ChannelTopic topic = topics.get(roomId);
-        // 없으면 새로운 Topic 생성
         if (topic == null) {
             topic = new ChannelTopic(roomId);
             redisMessageListener.addMessageListener(redisSubscriber, topic);
@@ -95,63 +115,40 @@ public class ChatRoomRepository {
         }
     }
 
-    /**
-     * roomId로 Redis Topic 조회 (존재하지 않으면 새로 생성)
-     */
     public ChannelTopic getTopic(String roomId) {
-        // Map에서 Topic 조회
-        ChannelTopic topic = topics.get(roomId);
-        // 없으면 새로 생성
-        if (topic == null) {
-            topic = new ChannelTopic(roomId);
-            // RedisMessageListener에 리스너 추가
+        return topics.computeIfAbsent(roomId, k -> {
+            ChannelTopic topic = new ChannelTopic(roomId);
             redisMessageListener.addMessageListener(redisSubscriber, topic);
-            // Map에 저장
-            topics.put(roomId, topic);
-        }
-        return topic;
+            return topic;
+        });
     }
 
-    /**
-     * 채팅 메시지 저장
-     */
     public void saveChatMessage(ChatMessage message) {
         opsListChatMessages.rightPush(getChatMessagesKey(message.getRoomId()), message);
     }
 
-    /**
-     * 채팅방의 모든 메시지 조회
-     */
     public List<Object> getMessages(String roomId) {
         return opsListChatMessages.range(getChatMessagesKey(roomId), 0, -1);
     }
 
-    /**
-     * 채팅방 메시지를 저장하는 Redis 키 생성
-     */
     private String getChatMessagesKey(String roomId) {
         return CHAT_MESSAGES + "_" + roomId;
     }
 
-    /**
-     * 사용자의 최근 대화 내역을 조회합니다.
-     * @param email 사용자 이메일
-     * @return 최근 대화 내역 목록
-     */
     public List<ChatMessage> getRecentMessages(String email) {
-        // Redis 저장소에 저장된 메시지만 표시 실시간 X
-        List<ChatRoom> allRooms = findAllRoom();
-        return allRooms.stream()
-                .flatMap(room -> {
-                    List<Object> messages = getMessages(room.getRoomId());
+        Set<String> userRooms = opsHashUserChatRooms.get(USER_CHAT_ROOMS, email);
+        if (userRooms == null) {
+            return new ArrayList<>();
+        }
+        return userRooms.stream()
+                .map(roomId -> {
+                    List<Object> messages = getMessages(roomId);
                     if (!messages.isEmpty()) {
-                        ChatMessage lastMessage = (ChatMessage) messages.get(messages.size() - 1);
-                        if (lastMessage.getSender().equals(email) || lastMessage.getMessage().contains(email)) {
-                            return Stream.of(lastMessage);
-                        }
+                        return (ChatMessage) messages.get(messages.size() - 1);
                     }
-                    return Stream.empty();
+                    return null;
                 })
+                .filter(Objects::nonNull)
                 .sorted(Comparator.comparing(ChatMessage::getTimestamp).reversed())
                 .collect(Collectors.toList());
     }

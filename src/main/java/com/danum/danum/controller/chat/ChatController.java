@@ -31,7 +31,6 @@ public class ChatController {
     @Autowired
     private ChatService chatService;
 
-
     @MessageMapping("/chat/message")
     public void message(@Payload ChatMessage message) {
         if (ChatMessage.MessageType.ENTER.equals(message.getType())) {
@@ -40,11 +39,15 @@ public class ChatController {
 
             // 채팅방에 입장할 때 기존 메시지들을 WebSocket으로 전송
             List<Object> previousMessages = chatRoomRepository.getMessages(message.getRoomId());
-            for (Object previousMessage : previousMessages) {
-                messagingTemplate.convertAndSend("/sub/chat/room/" + message.getRoomId(), previousMessage);
+            for (Object prevMsg : previousMessages) {
+                if (prevMsg instanceof ChatMessage) {
+                    messagingTemplate.convertAndSend("/sub/chat/room/" + message.getRoomId(), prevMsg);
+                }
             }
-        } else if (ChatMessage.MessageType.TALK.equals(message.getType())) {
-            // 채팅 메시지를 저장
+        }
+
+        // 새 메시지 저장 및 발행
+        if (ChatMessage.MessageType.TALK.equals(message.getType())) {
             chatRoomRepository.saveChatMessage(message);
         }
 
