@@ -4,9 +4,12 @@ import com.danum.danum.domain.board.question.Question;
 import com.danum.danum.domain.board.question.QuestionViewDto;
 import com.danum.danum.domain.board.village.Village;
 import com.danum.danum.domain.board.village.VillageViewDto;
+import com.danum.danum.domain.comment.question.QuestionComment;
+import com.danum.danum.domain.comment.village.VillageComment;
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.custom.BoardException;
+import com.danum.danum.exception.custom.CommentException;
 import com.danum.danum.exception.custom.MemberException;
 import com.danum.danum.repository.MemberRepository;
 import com.danum.danum.repository.board.QuestionRepository;
@@ -90,14 +93,33 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public void deleteQuestionComment(Long commentId) {
-        questionCommentRepository.deleteById(commentId);
+    public void deleteQuestionComment(Long questionId, Long commentId) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
+        QuestionComment comment = questionCommentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
+
+        if (!comment.getQuestion().getId().equals(questionId)) {
+            throw new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION);
+        }
+
+        questionCommentRepository.delete(comment);
     }
 
     @Override
-    public void deleteVillageComment(Long commentId) {
-        villageCommentRepository.deleteById(commentId);
+    public void deleteVillageComment(Long villageId, Long commentId) {
+        Village village = villageRepository.findById(villageId)
+                .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
+        VillageComment comment = villageCommentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
+
+        if (!comment.getVillage().getId().equals(villageId)) {
+            throw new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION);
+        }
+
+        villageCommentRepository.delete(comment);
     }
+
 
     @Override
     public List<Member> getAllMembers() {
@@ -151,4 +173,18 @@ public class AdminServiceImpl implements AdminService {
         comments.put("villageComments", villageCommentRepository.findAllByMember(member));
         return comments;
     }
+
+    @Override
+    public List<QuestionComment> getQuestionComments(Long questionId) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
+        return questionCommentRepository.findAllByQuestion(question);
+    }
+    @Override
+    public List<VillageComment> getVillageComments(Long villageId) {
+        Village village = villageRepository.findById(villageId)
+                .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
+        return villageCommentRepository.findAllByVillage(village);
+    }
+
 }

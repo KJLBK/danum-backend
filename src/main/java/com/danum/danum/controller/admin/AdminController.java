@@ -4,6 +4,8 @@ import com.danum.danum.domain.board.question.Question;
 import com.danum.danum.domain.board.question.QuestionViewDto;
 import com.danum.danum.domain.board.village.Village;
 import com.danum.danum.domain.board.village.VillageViewDto;
+import com.danum.danum.domain.comment.question.QuestionComment;
+import com.danum.danum.domain.comment.village.VillageComment;
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.service.admin.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,16 +101,21 @@ public class AdminController {
         return ResponseEntity.ok().build();
     }
 
-    // 댓글 삭제 (질문 또는 마을 게시글)
-    @DeleteMapping("/{type}/comments/{id}")
-    public ResponseEntity<Void> deleteComment(@PathVariable("type") String type, @PathVariable("id") Long id) {
-        if ("questions".equals(type)) {
-            adminService.deleteQuestionComment(id);
-        } else if ("villages".equals(type)) {
-            adminService.deleteVillageComment(id);
-        } else {
-            return ResponseEntity.badRequest().build();
-        }
+    // 질문 댓글 삭제
+    @DeleteMapping("/questions/{questionId}/comments/{commentId}")
+    public ResponseEntity<Void> deleteQuestionComment(
+            @PathVariable("questionId") Long questionId,
+            @PathVariable("commentId") Long commentId) {
+        adminService.deleteQuestionComment(questionId, commentId);
+        return ResponseEntity.ok().build();
+    }
+
+    // 마을 게시글 댓글 삭제
+    @DeleteMapping("/villages/{villageId}/comments/{commentId}")
+    public ResponseEntity<Void> deleteVillageComment(
+            @PathVariable("villageId") Long villageId,
+            @PathVariable("commentId") Long commentId) {
+        adminService.deleteVillageComment(villageId, commentId);
         return ResponseEntity.ok().build();
     }
 
@@ -121,6 +128,20 @@ public class AdminController {
     @GetMapping("/village/{id}")
     public ResponseEntity<VillageViewDto> getVillageById(@PathVariable("id") Long id){
         return ResponseEntity.ok(adminService.getVillageView(id));
+    }
+
+    //질문게시글안에 있는 댓글 삭제
+    @GetMapping("/questions/{questionId}/comments")
+    public ResponseEntity<List<QuestionComment>> getQuestionComments(@PathVariable Long questionId) {
+        List<QuestionComment> comments = adminService.getQuestionComments(questionId);
+        return ResponseEntity.ok(comments);
+    }
+
+    //마을게시글안에 있는 댓글 삭제
+    @GetMapping("/villages/{villageId}/comments")
+    public ResponseEntity<List<VillageComment>> getVillageComments(@PathVariable Long villageId) {
+        List<VillageComment> comments = adminService.getVillageComments(villageId);
+        return ResponseEntity.ok(comments);
     }
 
 }
