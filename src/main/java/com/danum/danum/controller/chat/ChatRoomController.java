@@ -5,6 +5,7 @@ import com.danum.danum.domain.chat.ChatRoom;
 import com.danum.danum.repository.ChatRoomRepository;
 import com.danum.danum.service.chat.ChatService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,7 @@ public class ChatRoomController {
 
     // 새로운 채팅방 생성
     @PostMapping("/room")
-    public ChatRoom createRoom(@RequestParam String name, Authentication authentication) {
+    public ChatRoom createRoom(@RequestBody String name, Authentication authentication) {
         String userId = authentication.getName();
         return chatRoomRepository.createChatRoom(name, userId);
     }
@@ -67,16 +68,44 @@ public class ChatRoomController {
         return ResponseEntity.ok().body(Map.of("roomId", chatRoom.getRoomId()));
     }
 
-    // 특정 채팅방의 모든 메시지 조회
-    @GetMapping("/room/{roomId}/messages")
-    public List<Object> getRoomMessages(@PathVariable String roomId) {
-        return chatRoomRepository.getMessages(roomId);
+    // 채팅방 입장 및 이전 메시지 로드
+    @GetMapping("/room/{roomId}/enter")
+    public ResponseEntity<?> enterRoom(@PathVariable String roomId, Authentication authentication) {
+        String userId = authentication.getName();
+        ChatRoom chatRoom = chatRoomRepository.findRoomById(roomId);
+
+        if (chatRoom == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (chatRoom.isOneToOne() && !chatRoom.isValidOneToOneParticipant(userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("이 1:1 채팅방에 참여할 권한이 없습니다.");
+        }
+
+        if (!chatRoom.isOneToOne() && !chatRoom.isParticipant(userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("이 채팅방에 참여할 권한이 없습니다.");
+        }
+
+        List<ChatMessage> messages = chatRoomRepository.getMessages(roomId);
+        chatRoomRepository.enterChatRoom(roomId);
+
+        return ResponseEntity.ok().body(Map.of(
+                "roomInfo", chatRoom,
+                "messages", messages
+        ));
     }
 
-    // 사용자의 최근 대화 내역 조회
+    // 최근 대화 내역 조회
     @GetMapping("/recent-messages")
     public List<ChatMessage> getRecentMessages(Authentication authentication) {
         String email = authentication.getName();
         return chatService.getRecentMessages(email);
+    }
+
+    // 채팅방 메시지 조회
+    // 채팅방 메시지 조회
+    @GetMapping("/room/{roomId}/messages")
+    public List<ChatMessage> getRoomMessages(@PathVariable String roomId) {
+        return chatRoomRepository.getMessages(roomId);
     }
 }
