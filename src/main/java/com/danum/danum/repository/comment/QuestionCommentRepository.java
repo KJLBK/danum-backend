@@ -1,5 +1,6 @@
 package com.danum.danum.repository.comment;
 
+import com.danum.danum.domain.board.question.Question;
 import com.danum.danum.domain.comment.question.QuestionComment;
 import com.danum.danum.domain.member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,5 @@ public interface QuestionCommentRepository extends JpaRepository<QuestionComment
 
     List<QuestionComment> findAllByMember(Member member);
 
+    List<QuestionComment> findAllByQuestion(Question question);
 }

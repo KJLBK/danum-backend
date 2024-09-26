@@ -11,8 +11,10 @@ import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -133,12 +135,28 @@ public class ChatRoomRepository {
 
     // 채팅 메시지 저장
     public void saveChatMessage(ChatMessage message) {
-        opsListChatMessages.rightPush(getChatMessagesKey(message.getRoomId()), message);
+        if (message.getTimestamp() == null) {
+            message.setTimestamp(LocalDateTime.now());
+        }
+
+        // ChatMessage 클래스 직렬화
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatMessage.class));
+
+        // list로 redis에 저장
+        redisTemplate.opsForList().rightPush(getChatMessagesKey(message.getRoomId()), message);
+
+        log.info("Saved chat message: {}", message);
     }
 
     // 채팅방의 모든 메시지 조회
-    public List<Object> getMessages(String roomId) {
-        return opsListChatMessages.range(getChatMessagesKey(roomId), 0, -1);
+    public List<ChatMessage> getMessages(String roomId) {
+        // ChatMessage 클래스 직렬화
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatMessage.class));
+
+        List<Object> messages = redisTemplate.opsForList().range(getChatMessagesKey(roomId), 0, -1);
+        return messages.stream()
+                .map(msg -> (ChatMessage) msg)
+                .collect(Collectors.toList());
     }
 
     // 채팅 메시지 키 생성
@@ -154,16 +172,24 @@ public class ChatRoomRepository {
         }
         return userRooms.stream()
                 .map(roomId -> {
-                    List<Object> messages = getMessages(roomId);
+                    List<ChatMessage> messages = getMessages(roomId);
                     if (!messages.isEmpty()) {
-                        return (ChatMessage) messages.get(messages.size() - 1);
+                        return messages.get(messages.size() - 1);
                     }
                     return null;
                 })
                 .filter(Objects::nonNull)
-                .sorted(Comparator.comparing(ChatMessage::getTimestamp).reversed())
+                .sorted((m1, m2) -> {
+                    LocalDateTime t1 = m1.getTimestamp();
+                    LocalDateTime t2 = m2.getTimestamp();
+                    if (t1 == null && t2 == null) return 0;
+                    if (t1 == null) return 1;
+                    if (t2 == null) return -1;
+                    return t2.compareTo(t1);
+                })
                 .collect(Collectors.toList());
     }
+
 
     // 1:1 채팅방 찾기 또는 생성
     public ChatRoom findOrCreateOneToOneChatRoom(String user1, String user2, String name) {

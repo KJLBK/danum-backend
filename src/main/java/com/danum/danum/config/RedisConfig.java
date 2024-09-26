@@ -32,7 +32,7 @@ public class RedisConfig {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
         config.setHostName(redisHost);
         config.setPort(redisPort);
-        config.setPassword(redisPassword);
+//        config.setPassword(redisPassword);
         return new LettuceConnectionFactory(config);
     }
 
@@ -62,8 +62,6 @@ public class RedisConfig {
         return new ChannelTopic("chatroom");
     }
 
-
-    // 레디스 탬플릿 설정
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         // RedisTemplate 객체를 생성하고 연결 팩토리를 설정
@@ -74,4 +72,6 @@ public class RedisConfig {
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
         return redisTemplate;
     }
+
+    // 레디스 탬플릿 설정
 }

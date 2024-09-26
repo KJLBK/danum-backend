@@ -38,4 +38,13 @@ public class ChatRoom implements Serializable {
         chatRoom.participants = new HashSet<>(Set.of(user1, user2));
         return chatRoom;
     }
+
+    // 사용자 검증
+    public boolean isParticipant(String userId) {
+        return participants.contains(userId);
+    }
+    // 사용자가 2명 이상일시 검증
+    public boolean isValidOneToOneParticipant(String userId) {
+        return isOneToOne && participants.size() == 2 && isParticipant(userId);
+    }
 }
