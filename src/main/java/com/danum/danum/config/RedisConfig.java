@@ -32,7 +32,7 @@ public class RedisConfig {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
         config.setHostName(redisHost);
         config.setPort(redisPort);
-//        config.setPassword(redisPassword);
+        config.setPassword(redisPassword);
         return new LettuceConnectionFactory(config);
     }
 
