@@ -39,7 +39,7 @@ public class Question {
     @OneToOne
     private OpenAiConversation conversation;
 
-    @Column(name = "question_title")
+    @Column(name = "question_title", columnDefinition = "TEXT")
     private String title;
 
     @Column(name = "question_content")

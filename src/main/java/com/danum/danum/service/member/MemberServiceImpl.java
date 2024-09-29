@@ -30,11 +30,8 @@ public class MemberServiceImpl implements MemberService {
     private final static String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-
     private final MemberRepository memberRepository;
-
     private final PasswordEncoder passwordEncoder;
-
     private final JwtUtil jwtUtil;
 
     @Override
@@ -93,6 +90,7 @@ public class MemberServiceImpl implements MemberService {
         String changePassword = updateDto.getPassword();
         String changePhone = updateDto.getPhone();
         String changeName = updateDto.getName();
+        String changeProfileImageUri = updateDto.getProfileImageUri();  // 추가
 
         if (StringUtils.hasText(changePassword)) {
             member.updateUserPassword(
@@ -103,6 +101,9 @@ public class MemberServiceImpl implements MemberService {
         }
         if (StringUtils.hasText(changeName)) {
             member.updateUserName(changeName);
+        }
+        if (StringUtils.hasText(changeProfileImageUri)) {  // 추가
+            member.updateProfileImageUri(changeProfileImageUri);
         }
 
         return memberRepository.save(member);
@@ -133,10 +134,10 @@ public class MemberServiceImpl implements MemberService {
         TokenDto accessToken = tokenBox.getAccessToken();
         TokenDto refreshToken = tokenBox.getRefreshToken();
 
-        Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken.getToken()); // 쿠키에 refresh 토큰 저장
-        cookie.setHttpOnly(true); // Javascript 접근 방지
-        cookie.setSecure(true); // HTTPS 전송만 허용
-        cookie.setPath("/"); // 쿠키 사용 경로 설정
+        Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken.getToken());
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setPath("/");
 
         response.addCookie(cookie);
 
@@ -177,4 +178,10 @@ public class MemberServiceImpl implements MemberService {
         return null;
     }
 
+    @Override
+    public String getProfileImageUri(String email) {
+        Member member = memberRepository.findById(email)
+                .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION));
+        return member.getProfileImageUri();
+    }
 }

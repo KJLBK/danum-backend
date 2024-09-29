@@ -12,6 +12,7 @@ public enum ErrorCode {
     NICKNAME_EXCEPTION(HttpStatus.BAD_REQUEST, "M004", "이미 사용중인 닉네임입니다."),
     PASSWORD_NOT_MATCHED_EXCEPTION(HttpStatus.BAD_REQUEST, "M005", "패스워드가 틀렸습니다."),
     MEMBER_NOT_FOUND_EXCEPTION(HttpStatus.BAD_REQUEST, "M006", "존재하지 않는 회원 입니다."),
+    INVALID_PROFILE_IMAGE_EXCEPTION(HttpStatus.BAD_REQUEST, "I001", "올바르지 않은 프로필 이미지입니다."),
 
     BOARD_NOT_FOUND_EXCEPTION(HttpStatus.BAD_REQUEST, "B001", "존재하지 않는 게시판 입니다."),
 
@@ -30,6 +31,7 @@ public enum ErrorCode {
     MESSAGE_TYPE_NOT_SUPPORTED_EXCEPTION(HttpStatus.NOT_FOUND, "OA002", "지원되지 않는 메시지 타입입니다."),
     MULTIPLE_PROCESSING_MESSAGE_EXCEPTION(HttpStatus.BAD_REQUEST, "OA003", "진행중인 메시지가 하나보다 많습니다."),
     ALREADY_CLOSED_AI_CONVERSATION_EXCEPTION(HttpStatus.BAD_REQUEST, "OA004", "이미 닫힌 대화입니다.");
+
 
     private final HttpStatus status;
 

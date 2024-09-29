@@ -17,6 +17,7 @@ public class MemberMapper {
                 .contribution(0)
                 .role(Role.USER)
                 .joinDateTime(LocalDateTime.now())
+                .profileImageUri(registerDto.getProfileImageUri())
                 .build();
 
     }
