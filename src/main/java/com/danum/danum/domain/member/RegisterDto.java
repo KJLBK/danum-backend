@@ -21,6 +21,8 @@ public class RegisterDto {
 
     private Double longitude;
 
+    private String profileImageUri;
+
     public void settingPassword(String password){
         this.password = password;
     }

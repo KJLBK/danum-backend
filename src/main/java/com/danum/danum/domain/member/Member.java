@@ -1,15 +1,6 @@
 package com.danum.danum.domain.member;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,6 +10,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @NoArgsConstructor
@@ -46,7 +42,7 @@ public class Member {
     private int exp;
 
     @Column(name = "member_contribution")
-    private Integer contribution;  // int에서 Integer형으로 변경
+    private Integer contribution;
 
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'USER'")
@@ -58,23 +54,31 @@ public class Member {
     private LocalDateTime joinDateTime;
 
     @Getter
-    @Column(name = "latitude") //사용자의 위도
+    @Column(name = "latitude")
     private Double latitude;
 
     @Getter
-    @Column(name ="longitude")// 사용자의 경도
+    @Column(name = "longitude")
     private Double longitude;
 
-    public void updateUserPassword(String password){
+    @Getter
+    @Column(name = "profile_image_uri")
+    private String profileImageUri;
+
+    public void updateUserPassword(String password) {
         this.password = password;
     }
 
-    public void updateUserPhone(String phone){
+    public void updateUserPhone(String phone) {
         this.phone = phone;
     }
 
-    public void updateUserName(String username){
+    public void updateUserName(String username) {
         this.name = username;
+    }
+
+    public void updateProfileImageUri(String profileImageUri) {
+        this.profileImageUri = profileImageUri;
     }
 
     public UserDetails mappingUserDetails() {
@@ -91,15 +95,15 @@ public class Member {
 
     public boolean isActive() {
         return contribution != null && contribution == 0;
-    }  //회원 기본 상태
+    }
 
     public void activate() {
         this.contribution = 0;
-    } // 회원 활동 중
+    }
 
     public void deactivate() {
         this.contribution = 1;
-    } // 회원 정지 중
+    }
 
     public void setContribution(Integer contribution) {
         this.contribution = contribution;

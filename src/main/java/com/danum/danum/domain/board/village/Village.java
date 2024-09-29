@@ -34,7 +34,7 @@ public class Village {
     @JoinColumn(name = "member_email")
     private Member member;
 
-    @Column(name = "village_title")
+    @Column(name = "village_title", columnDefinition = "TEXT")
     private String title;
 
     @Column(name = "village_content")
