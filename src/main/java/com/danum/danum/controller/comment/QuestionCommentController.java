@@ -56,4 +56,16 @@ public class QuestionCommentController {
         return authentication.getName();
     }
 
+    @PostMapping("/{questionId}/accept/{commentId}")
+    public ResponseEntity<?> acceptQuestionComment(@PathVariable Long questionId, @PathVariable Long commentId) {
+        questionCommentService.acceptComment(questionId, commentId, getLoginUser());
+        return ResponseEntity.ok("해당 답변을 채택하였습니다.");
+    }
+
+    @PostMapping("/{questionId}/unaccept/{commentId}")
+    public ResponseEntity<?> unacceptQuestionComment(@PathVariable Long questionId, @PathVariable Long commentId) {
+        questionCommentService.unacceptComment(questionId, commentId, getLoginUser());
+        return ResponseEntity.ok("해당 답변 채택이 취소하였습니다.");
+    }
+
 }

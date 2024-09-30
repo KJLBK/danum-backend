@@ -16,4 +16,8 @@ public interface VillageCommentService {
 
     void delete(Long id, String loginUser);
 
+    void acceptComment(Long villageId, Long commentId, String loginUser);
+
+    void unacceptComment(Long villageId, Long commentId, String loginUser);
+
 }

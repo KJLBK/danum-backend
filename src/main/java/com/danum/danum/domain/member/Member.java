@@ -112,4 +112,17 @@ public class Member {
     public Integer getContribution() {
         return this.contribution;
     }
+
+    public int getExp() {
+        return exp;
+    }
+    public void setExp(int exp) {
+        this.exp = exp;
+    }
+
+    public void increaseExp() {
+        this.exp = Math.min(this.exp + 1, 100);
+    }
+
+
 }
