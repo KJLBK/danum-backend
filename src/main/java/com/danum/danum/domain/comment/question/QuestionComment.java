@@ -2,14 +2,7 @@ package com.danum.danum.domain.comment.question;
 
 import com.danum.danum.domain.board.question.Question;
 import com.danum.danum.domain.member.Member;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,6 +36,21 @@ public class QuestionComment {
 
     @Column(name = "comment_created_at")
     private LocalDateTime created_at;
+
+    @Column(name = "is_accepted")
+    private boolean isAccepted = false;
+
+    public boolean isAccepted() {
+        return isAccepted;
+    }
+
+    public void accept() {
+        this.isAccepted = true;
+    }
+
+    public void unaccept() {
+        this.isAccepted = false;
+    }
 
     public void updateContent(String newContent) {
         this.content = newContent;

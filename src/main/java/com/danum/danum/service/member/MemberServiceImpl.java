@@ -28,6 +28,7 @@ import org.springframework.util.StringUtils;
 public class MemberServiceImpl implements MemberService {
 
     private final static String REFRESH_TOKEN_COOKIE_NAME = "refreshToken";
+    private static final int MAX_EXP = 100;
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final MemberRepository memberRepository;
@@ -169,8 +170,16 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Member exp() {
-        return null;
+    public Member exp(String email) {
+        Member member = memberRepository.findById(email)
+                .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION));
+
+        if (member.getExp() < MAX_EXP) {
+            member.setExp(Math.min(member.getExp() + 1, MAX_EXP));
+            return memberRepository.save(member);
+        }
+
+        return member;
     }
 
     @Override

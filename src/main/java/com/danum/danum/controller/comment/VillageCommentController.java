@@ -55,4 +55,18 @@ public class VillageCommentController {
         return authentication.getName();
     }
 
+    @PostMapping("/{villageId}/accept/{commentId}")
+    public ResponseEntity<?> acceptComment(@PathVariable Long villageId, @PathVariable Long commentId) {
+        String loginUser = getLoginUser();
+        villageCommentService.acceptComment(villageId, commentId, loginUser);
+        return ResponseEntity.ok("해당 답변을 채택하였습니다.");
+    }
+
+    @PostMapping("/{villageId}/unaccept/{commentId}")
+    public ResponseEntity<?> unacceptComment(@PathVariable Long villageId, @PathVariable Long commentId) {
+        String loginUser = getLoginUser();
+        villageCommentService.unacceptComment(villageId, commentId, loginUser);
+        return ResponseEntity.ok("해당 답변 채택이 취소하였습니다.");
+    }
+
 }

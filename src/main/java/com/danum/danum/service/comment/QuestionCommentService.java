@@ -16,4 +16,7 @@ public interface QuestionCommentService {
 
     void delete(Long id, String loginUser);
 
+    void acceptComment(Long questionId, Long commentId, String loginUser);
+    void unacceptComment(Long questionId, Long commentId, String loginUser);
+
 }

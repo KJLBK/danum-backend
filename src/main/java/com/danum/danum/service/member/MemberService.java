@@ -25,7 +25,7 @@ public interface MemberService {
 
     Member getMemberByAuthentication();
 
-    Member exp();
+    Member exp(String email);
 
     Member contribution();
 
