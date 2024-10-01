@@ -14,6 +14,8 @@ import com.danum.danum.util.jwt.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Optional;
+
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -124,6 +126,9 @@ public class MemberServiceImpl implements MemberService {
         if (!passwordEncoder.matches(loginDto.getPassword(), member.getPassword())) {
             throw new MemberException(ErrorCode.PASSWORD_NOT_MATCHED_EXCEPTION);
         }
+        if (member.getContribution() == 1) {
+            throw new MemberException(ErrorCode.USER_DEACTIVATED_EXCEPTION);
+        }
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
@@ -192,5 +197,23 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(email)
                 .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION));
         return member.getProfileImageUrl();
+    }
+
+    @Override
+    @Transactional
+    public void activateMember(String email) {
+        Member member = memberRepository.findById(email)
+                .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION));
+        member.activate(); // contribution을 0으로 설정
+        memberRepository.save(member);
+    }
+
+    @Override
+    @Transactional
+    public void deactivateMember(String email) {
+        Member member = memberRepository.findById(email)
+                .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION));
+        member.deactivate(); // contribution을 1로 설정
+        memberRepository.save(member);
     }
 }
