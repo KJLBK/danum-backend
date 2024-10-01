@@ -29,6 +29,6 @@ public interface MemberService {
 
     Member contribution();
 
-    String getProfileImageUri(String email);
+    String getProfileImageUrl(String email);
 
 }

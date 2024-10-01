@@ -46,7 +46,7 @@ public class MemberController {
     @GetMapping("/profile-image")
     public ResponseEntity<String> getProfileImage(Authentication authentication) {
         String email = authentication.getName();
-        String profileImageUri = memberService.getProfileImageUri(email);
-        return ResponseEntity.ok(profileImageUri);
+        String profileImageUrl = memberService.getProfileImageUrl(email);
+        return ResponseEntity.ok(profileImageUrl);
     }
 }
