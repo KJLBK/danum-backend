@@ -8,6 +8,7 @@ import com.danum.danum.service.member.MemberService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,5 +49,19 @@ public class MemberController {
         String email = authentication.getName();
         String profileImageUrl = memberService.getProfileImageUrl(email);
         return ResponseEntity.ok(profileImageUrl);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/admin/{email}/activate")
+    public ResponseEntity<?> activateMember(@PathVariable("email") String email) {
+        memberService.activateMember(email);
+        return ResponseEntity.ok("회원이 활성화되었습니다.");
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/admin/{email}/deactivate")
+    public ResponseEntity<?> deactivateMember(@PathVariable("email") String email) {
+        memberService.deactivateMember(email);
+        return ResponseEntity.ok("회원이 비활성화되었습니다.");
     }
 }

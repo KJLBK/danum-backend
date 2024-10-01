@@ -31,7 +31,7 @@ public enum ErrorCode {
     TOKEN_ROLE_NOT_AVAILABLE_EXCEPTION(HttpStatus.NOT_FOUND, "T002", "토큰 권한이 올바르지 않습니다."),
     TOKEN_EXPIRED_EXCEPTION(HttpStatus.BAD_REQUEST, "T003", "만료된 토큰입니다."),
     TOKEN_SIGNATURE_EXCEPTION(HttpStatus.BAD_REQUEST, "T004", "올바르지 않은 서명입니다."),
-
+    USER_DEACTIVATED_EXCEPTION(HttpStatus.BAD_REQUEST, "T005", "해당 사용자는 계정 비활성화 상태입니다."),
     DISCORD_CHANNEL_NOT_FOUND(HttpStatus.BAD_REQUEST, "D001", "올바른 채널이 아닙니다."),
 
     NO_SUCH_CONVERSATION_EXCEPTION(HttpStatus.BAD_REQUEST, "OA001", "Open Ai 대화를 찾을 수 없습니다."),

@@ -31,4 +31,7 @@ public interface MemberService {
 
     String getProfileImageUrl(String email);
 
+    void activateMember(String email);
+    void deactivateMember(String email);
+
 }
