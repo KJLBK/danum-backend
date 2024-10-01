@@ -15,6 +15,6 @@ public class UpdateDto {
 
     private String name;
 
-    private String profileImageUri;
+    private String profileImageUrl;
 
 }

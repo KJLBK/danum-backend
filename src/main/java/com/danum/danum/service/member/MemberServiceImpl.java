@@ -91,7 +91,7 @@ public class MemberServiceImpl implements MemberService {
         String changePassword = updateDto.getPassword();
         String changePhone = updateDto.getPhone();
         String changeName = updateDto.getName();
-        String changeProfileImageUri = updateDto.getProfileImageUri();  // 추가
+        String changeProfileImageUrl = updateDto.getProfileImageUrl();  // 추가
 
         if (StringUtils.hasText(changePassword)) {
             member.updateUserPassword(
@@ -103,8 +103,8 @@ public class MemberServiceImpl implements MemberService {
         if (StringUtils.hasText(changeName)) {
             member.updateUserName(changeName);
         }
-        if (StringUtils.hasText(changeProfileImageUri)) {  // 추가
-            member.updateProfileImageUri(changeProfileImageUri);
+        if (StringUtils.hasText(changeProfileImageUrl)) {  // 추가
+            member.updateProfileImageUrl(changeProfileImageUrl);
         }
 
         return memberRepository.save(member);
@@ -188,9 +188,9 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public String getProfileImageUri(String email) {
+    public String getProfileImageUrl(String email) {
         Member member = memberRepository.findById(email)
                 .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION));
-        return member.getProfileImageUri();
+        return member.getProfileImageUrl();
     }
 }

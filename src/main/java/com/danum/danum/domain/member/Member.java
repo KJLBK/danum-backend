@@ -62,8 +62,8 @@ public class Member {
     private Double longitude;
 
     @Getter
-    @Column(name = "profile_image_uri")
-    private String profileImageUri;
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
 
     public void updateUserPassword(String password) {
         this.password = password;
@@ -77,8 +77,8 @@ public class Member {
         this.name = username;
     }
 
-    public void updateProfileImageUri(String profileImageUri) {
-        this.profileImageUri = profileImageUri;
+    public void updateProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 
     public UserDetails mappingUserDetails() {
