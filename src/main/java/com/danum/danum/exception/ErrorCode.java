@@ -15,6 +15,7 @@ public enum ErrorCode {
     INVALID_PROFILE_IMAGE_EXCEPTION(HttpStatus.BAD_REQUEST, "I001", "올바르지 않은 프로필 이미지입니다."),
 
     BOARD_NOT_FOUND_EXCEPTION(HttpStatus.BAD_REQUEST, "B001", "존재하지 않는 게시판 입니다."),
+    BOARD_NOT_AUTHOR_EXCEPTION(HttpStatus.BAD_REQUEST, "B002", "작성자가 아닙니다."),
 
     COMMENT_NOT_FOUND_EXCEPTION(HttpStatus.BAD_REQUEST, "C001", "존재하지 않는 댓글 입니다."),
     COMMENT_NOT_CONTENTS_EXCEPTION(HttpStatus.BAD_REQUEST, "C002", "댓글 내용이 없습니다."),
