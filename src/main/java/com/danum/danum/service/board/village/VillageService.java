@@ -2,6 +2,7 @@ package com.danum.danum.service.board.village;
 
 import com.danum.danum.domain.board.village.Village;
 import com.danum.danum.domain.board.village.VillageNewDto;
+import com.danum.danum.domain.board.village.VillageUpdateDto;
 import com.danum.danum.domain.board.village.VillageViewDto;
 
 import java.util.List;
@@ -20,4 +21,7 @@ public interface VillageService {
 
     List<VillageViewDto> getVillagesByCategory(double latitude, double longitude, String category);
 
+    void deleteVillage(Long id);
+
+    void update(VillageUpdateDto villageUpdateDto, String loginUser);
 }

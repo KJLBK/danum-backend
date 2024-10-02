@@ -1,11 +1,6 @@
 package com.danum.danum.service.board.question;
 
-import com.danum.danum.domain.board.question.Question;
-import com.danum.danum.domain.board.question.QuestionEmailToken;
-import com.danum.danum.domain.board.question.QuestionLike;
-import com.danum.danum.domain.board.question.QuestionMapper;
-import com.danum.danum.domain.board.question.QuestionNewDto;
-import com.danum.danum.domain.board.question.QuestionViewDto;
+import com.danum.danum.domain.board.question.*;
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.custom.BoardException;
@@ -112,4 +107,28 @@ public class QuestionServiceImpl implements QuestionService{
         questionRepository.save(question);
     }
 
+    @Override
+    @Transactional
+    public void deleteQuestion(Long id) {
+        Question question = questionRepository.findById(id)
+                .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
+        questionRepository.delete(question);
+    }
+
+    @Override
+    @Transactional
+    public void update(QuestionUpdateDto questionUpdateDto, String loginUser) {
+        Question question = questionRepository.findById(questionUpdateDto.getId())
+                .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
+        userCheck(question.getMember().getEmail(), loginUser);
+        question.update(questionUpdateDto.getContent(), questionUpdateDto.getTitle());
+
+        questionRepository.save(question);
+    }
+
+    private void userCheck(String author, String loginUser) {
+        if (!author.equals(loginUser)) {
+            throw new BoardException(ErrorCode.BOARD_NOT_AUTHOR_EXCEPTION);
+        }
+    }
 }

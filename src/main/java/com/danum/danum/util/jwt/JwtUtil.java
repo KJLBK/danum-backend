@@ -3,6 +3,7 @@ package com.danum.danum.util.jwt;
 import com.danum.danum.domain.jwt.TokenBox;
 import com.danum.danum.domain.jwt.TokenDto;
 import com.danum.danum.domain.jwt.TokenType;
+import com.danum.danum.domain.member.Member;
 import com.danum.danum.exception.custom.CustomJwtException;
 import com.danum.danum.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
@@ -36,7 +37,6 @@ public class JwtUtil {
     private static final String ROLE_CLAIMS_NAME = "role";
 
     private static final String SECURITY_ROLE_PREFIX = "ROLE_";
-
     private final Key key;
 
     @Value("${jwt.expired-time.access-token}")
@@ -128,5 +128,34 @@ public class JwtUtil {
         Date accessTokenExpired = new Date(now.getTime() + accessTokenExpiredTime);
 
         return getNewToken(accessTokenExpired, authentication);
+    }
+
+    public boolean isTokenExpired(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            Date expiration = claims.getExpiration();
+            return expiration.before(new Date());
+        } catch (ExpiredJwtException e) {
+            return true;
+        } catch (Exception e) {
+            throw new CustomJwtException(ErrorCode.TOKEN_EXPIRED_EXCEPTION);
+        }
+    }
+
+    public Date getExpirationTimeFromToken(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.getExpiration();
+        } catch (Exception e) {
+            throw new CustomJwtException(ErrorCode.TOKEN_EXPIRED_EXCEPTION);
+        }
     }
 }

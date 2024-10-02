@@ -72,4 +72,9 @@ public class Village {
         this.longitude = longitude;
     }
 
+    public void update(String newContent, String newTitle) {
+        this.content = newContent;
+        this.title = newTitle;
+    }
+
 }

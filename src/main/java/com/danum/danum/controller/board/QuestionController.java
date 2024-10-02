@@ -1,17 +1,13 @@
 package com.danum.danum.controller.board;
 
 import com.danum.danum.domain.board.question.QuestionNewDto;
+import com.danum.danum.domain.board.question.QuestionUpdateDto;
 import com.danum.danum.service.board.question.QuestionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -42,6 +38,19 @@ public class QuestionController {
         questionService.likeStatus(id, getLoginUser());
 
         return ResponseEntity.ok("좋아요 관련 성공");
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateQuestionBoard(@RequestBody QuestionUpdateDto questionUpdateDto) {
+        questionService.update(questionUpdateDto, getLoginUser());
+
+        return ResponseEntity.ok("게시판 수정 성공");
+    }
+
+    @DeleteMapping("/questions/{id}")
+    public ResponseEntity<?> deleteQuestion(@PathVariable Long id) {
+        questionService.deleteQuestion(id);
+        return ResponseEntity.ok("질문이 삭제되었습니다.");
     }
 
     private String getLoginUser(){

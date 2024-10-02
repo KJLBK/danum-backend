@@ -1,9 +1,6 @@
 package com.danum.danum.controller;
 
-import com.danum.danum.domain.member.LoginDto;
-import com.danum.danum.domain.member.Member;
-import com.danum.danum.domain.member.RegisterDto;
-import com.danum.danum.domain.member.UpdateDto;
+import com.danum.danum.domain.member.*;
 import com.danum.danum.service.member.MemberService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -63,5 +63,12 @@ public class MemberController {
     public ResponseEntity<?> deactivateMember(@PathVariable("email") String email) {
         memberService.deactivateMember(email);
         return ResponseEntity.ok("회원이 비활성화되었습니다.");
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/admin/all-emails")
+    public ResponseEntity<List<String>> getAllMemberEmails() {
+        List<String> memberEmails = memberService.getAllMemberEmails();
+        return ResponseEntity.ok(memberEmails);
     }
 }

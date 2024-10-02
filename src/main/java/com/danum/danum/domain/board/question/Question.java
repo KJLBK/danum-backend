@@ -66,4 +66,8 @@ public class Question {
         this.like--;
     }
 
+    public void update(String newContent, String newTitle) {
+        this.content = newContent;
+        this.title = newTitle;
+    }
 }
