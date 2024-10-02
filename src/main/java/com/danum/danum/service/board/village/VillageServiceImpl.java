@@ -2,15 +2,11 @@ package com.danum.danum.service.board.village;
 
 import com.danum.danum.domain.board.question.Question;
 import com.danum.danum.domain.board.question.QuestionLike;
-import com.danum.danum.domain.board.village.Village;
-import com.danum.danum.domain.board.village.VillageEmailToken;
-import com.danum.danum.domain.board.village.VillageLike;
-import com.danum.danum.domain.board.village.VillageMapper;
-import com.danum.danum.domain.board.village.VillageNewDto;
-import com.danum.danum.domain.board.village.VillageViewDto;
+import com.danum.danum.domain.board.village.*;
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.exception.custom.BoardException;
 import com.danum.danum.exception.ErrorCode;
+import com.danum.danum.exception.custom.CommentException;
 import com.danum.danum.exception.custom.MemberException;
 import com.danum.danum.repository.MemberRepository;
 import com.danum.danum.repository.board.VillageEmailRepository;
@@ -162,5 +158,28 @@ public class VillageServiceImpl implements VillageService{
      */
     private VillageViewDto convertToViewDto(Village village) {
         return new VillageViewDto().toEntity(village);
+    }
+
+    @Override
+    @Transactional
+    public void deleteVillage(Long id) {
+        Village village = villageRepository.findById(id)
+                .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
+        villageRepository.delete(village);
+    }
+
+    public void update(VillageUpdateDto villageUpdateDto, String loginUser) {
+        Village village = villageRepository.findById(villageUpdateDto.getId())
+                .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
+        userCheck(village.getMember().getEmail(), loginUser);
+        village.update(villageUpdateDto.getContent(), villageUpdateDto.getTitle());
+
+        villageRepository.save(village);
+    }
+
+    public void userCheck(String author, String loginUser) {
+        if (author.equals(loginUser)) {
+            throw new CommentException(ErrorCode.COMMENT_NOT_AUTHOR_EXCEPTION);
+        }
     }
 }

@@ -1,19 +1,14 @@
 package com.danum.danum.controller.board;
 
 import com.danum.danum.domain.board.village.VillageNewDto;
+import com.danum.danum.domain.board.village.VillageUpdateDto;
 import com.danum.danum.domain.board.village.VillageViewDto;
 import com.danum.danum.service.board.village.VillageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -46,6 +41,18 @@ public class VillageController {
         villageService.likeStatus(id, getLoginUser());
 
         return ResponseEntity.ok("좋아요 관련 성공");
+    }
+
+    @DeleteMapping("/villages/{id}")
+    public ResponseEntity<?> deleteVillage(@PathVariable Long id) {
+        villageService.deleteVillage(id);
+        return ResponseEntity.ok("마을 게시글이 삭제되었습니다.");
+    }
+
+    public ResponseEntity<?> updateVillageBoard(@RequestBody VillageUpdateDto villageUpdateDto) {
+        villageService.update(villageUpdateDto, getLoginUser());
+
+        return ResponseEntity.ok("게시판 수정 성공");
     }
 
     private String getLoginUser(){
