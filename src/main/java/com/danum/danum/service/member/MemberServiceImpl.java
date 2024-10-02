@@ -13,7 +13,10 @@ import com.danum.danum.repository.MemberRepository;
 import com.danum.danum.util.jwt.JwtUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -215,5 +218,12 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION));
         member.deactivate(); // contribution을 1로 설정
         memberRepository.save(member);
+    }
+
+    @Override
+    public List<String> getAllMemberEmails() {
+        return memberRepository.findAll().stream()
+                .map(Member::getEmail)
+                .collect(Collectors.toList());
     }
 }

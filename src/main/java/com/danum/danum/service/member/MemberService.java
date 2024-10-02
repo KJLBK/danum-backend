@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @Service
 public interface MemberService {
@@ -30,6 +31,8 @@ public interface MemberService {
     Member contribution();
 
     String getProfileImageUrl(String email);
+
+    List<String> getAllMemberEmails();
 
     void activateMember(String email);
     void deactivateMember(String email);
