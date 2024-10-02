@@ -49,6 +49,7 @@ public class VillageController {
         return ResponseEntity.ok("마을 게시글이 삭제되었습니다.");
     }
 
+    @PutMapping("/update")
     public ResponseEntity<?> updateVillageBoard(@RequestBody VillageUpdateDto villageUpdateDto) {
         villageService.update(villageUpdateDto, getLoginUser());
 
