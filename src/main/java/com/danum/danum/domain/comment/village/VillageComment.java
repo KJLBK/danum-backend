@@ -44,6 +44,7 @@ public class VillageComment {
     @Column(name = "comment_created_at")
     private LocalDateTime created_at;
 
+    @Builder.Default
     @Column(name = "is_accepted")
     private boolean isAccepted = false;
 
