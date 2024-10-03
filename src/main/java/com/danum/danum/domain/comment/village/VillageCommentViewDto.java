@@ -21,12 +21,15 @@ public class VillageCommentViewDto {
 
     private LocalDateTime created_at;
 
+    private boolean isAccepted;
+
     public VillageCommentViewDto toEntity(VillageComment villageComment) {
         return VillageCommentViewDto.builder()
                 .comment_id(villageComment.getId())
                 .email(villageComment.getMember().getEmail())
                 .content(villageComment.getContent())
                 .created_at(villageComment.getCreated_at())
+                .isAccepted(villageComment.isAccepted())
                 .build();
     }
 

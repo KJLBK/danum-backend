@@ -2,9 +2,11 @@ package com.danum.danum.controller.comment;
 
 import com.danum.danum.domain.comment.village.VillageCommentNewDto;
 import com.danum.danum.domain.comment.village.VillageCommentUpdateDto;
+import com.danum.danum.service.admin.AdminService;
 import com.danum.danum.service.comment.VillageCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class VillageCommentController {
 
     private final VillageCommentService villageCommentService;
+    private final AdminService adminService;
 
     @PostMapping("/new")
     public ResponseEntity<?> createVillageBoardComment(@RequestBody VillageCommentNewDto villageCommentNewDto) {
@@ -55,18 +58,25 @@ public class VillageCommentController {
         return authentication.getName();
     }
 
-    @PostMapping("/{villageId}/accept/{commentId}")
+    @PostMapping("/{villageId}/accept/{commentId}") // 이거 명세서 villageId 가 Id로 해야하나? 내일 고민하기 241003
     public ResponseEntity<?> acceptComment(@PathVariable Long villageId, @PathVariable Long commentId) {
         String loginUser = getLoginUser();
         villageCommentService.acceptComment(villageId, commentId, loginUser);
         return ResponseEntity.ok("해당 답변을 채택하였습니다.");
     }
 
-    @PostMapping("/{villageId}/unaccept/{commentId}")
+    @PostMapping("/{villageId}/unaccept/{commentId}") // 이거 명세서 villageId 가 Id로 해야하나? 내일 고민하기 241003
     public ResponseEntity<?> unacceptComment(@PathVariable Long villageId, @PathVariable Long commentId) {
         String loginUser = getLoginUser();
         villageCommentService.unacceptComment(villageId, commentId, loginUser);
         return ResponseEntity.ok("해당 답변 채택이 취소하였습니다.");
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/villages/{villageId}/comments/{commentId}")
+    public ResponseEntity<?> deleteVillageComment(
+            @PathVariable("villageId") Long villageId,
+            @PathVariable("commentId") Long commentId) {
+        adminService.deleteVillageComment(villageId, commentId);
+        return ResponseEntity.ok().build();
+    }
 }

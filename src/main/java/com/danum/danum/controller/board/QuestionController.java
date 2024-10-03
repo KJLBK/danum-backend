@@ -2,12 +2,17 @@ package com.danum.danum.controller.board;
 
 import com.danum.danum.domain.board.question.QuestionNewDto;
 import com.danum.danum.domain.board.question.QuestionUpdateDto;
+import com.danum.danum.domain.board.question.QuestionViewDto;
+import com.danum.danum.service.admin.AdminService;
 import com.danum.danum.service.board.question.QuestionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -15,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class QuestionController {
 
     private final QuestionService questionService;
+    private final AdminService adminService;
 
     @PostMapping("/new")
     public ResponseEntity<?> createQuestionBoard(@RequestBody QuestionNewDto questionNewDto){
@@ -59,4 +65,9 @@ public class QuestionController {
         return authentication.getName();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/members/{email}/questions")
+    public ResponseEntity<List<QuestionViewDto>> getMemberQuestions(@PathVariable("email") String email) {
+        return ResponseEntity.ok(adminService.getMemberQuestions(email));
+    }
 }

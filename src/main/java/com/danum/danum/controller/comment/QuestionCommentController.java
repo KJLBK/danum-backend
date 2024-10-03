@@ -2,9 +2,11 @@ package com.danum.danum.controller.comment;
 
 import com.danum.danum.domain.comment.question.QuestionCommentNewDto;
 import com.danum.danum.domain.comment.question.QuestionCommentUpdateDto;
+import com.danum.danum.service.admin.AdminService;
 import com.danum.danum.service.comment.QuestionCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class QuestionCommentController {
 
     private final QuestionCommentService questionCommentService;
+    private final AdminService adminService;
 
     @PostMapping("/new")
     public ResponseEntity<?> createQuestionBoardComment(@RequestBody QuestionCommentNewDto questionCommentNewDto) {
@@ -56,16 +59,23 @@ public class QuestionCommentController {
         return authentication.getName();
     }
 
-    @PostMapping("/{questionId}/accept/{commentId}")
+    @PostMapping("/{questionId}/accept/{commentId}") // 이거 명세서 questionId 가 Id로 해야하나? 내일 고민하기 241003
     public ResponseEntity<?> acceptQuestionComment(@PathVariable Long questionId, @PathVariable Long commentId) {
         questionCommentService.acceptComment(questionId, commentId, getLoginUser());
         return ResponseEntity.ok("해당 답변을 채택하였습니다.");
     }
 
-    @PostMapping("/{questionId}/unaccept/{commentId}")
+    @PostMapping("/{questionId}/unaccept/{commentId}") // 이거 명세서 questionId 가 Id로 해야하나? 내일 고민하기 241003
     public ResponseEntity<?> unacceptQuestionComment(@PathVariable Long questionId, @PathVariable Long commentId) {
         questionCommentService.unacceptComment(questionId, commentId, getLoginUser());
         return ResponseEntity.ok("해당 답변 채택이 취소하였습니다.");
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/questions/{questionId}/comments/{commentId}")
+    public ResponseEntity<Void> deleteQuestionComment(
+            @PathVariable("questionId") Long questionId,
+            @PathVariable("commentId") Long commentId) {
+        adminService.deleteQuestionComment(questionId, commentId);
+        return ResponseEntity.ok().build();
+    }
 }
