@@ -35,6 +35,7 @@ public class Member {
     @Column(name = "member_phone")
     private String phone;
 
+    @Getter
     @Column(name = "member_name")
     private String name;
 
