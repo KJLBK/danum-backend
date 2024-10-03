@@ -1,5 +1,6 @@
 package com.danum.danum.domain.board.village;
 
+import com.danum.danum.domain.member.AuthorDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,7 +16,7 @@ public class VillageViewDto {
 
     private Long village_id;
 
-    private String email;
+    private AuthorDto author;
 
     private String title;
 
@@ -28,9 +29,9 @@ public class VillageViewDto {
     public VillageViewDto toEntity(Village village) {
         return VillageViewDto.builder()
                 .village_id(village.getId())
-                .email(village.getMember().getEmail())
                 .title(village.getTitle())
                 .content(village.getContent())
+                .author(AuthorDto.from(village.getMember()))
                 .created_at(village.getCreated_at())
                 .view_count(village.getView_count())
                 .build();
