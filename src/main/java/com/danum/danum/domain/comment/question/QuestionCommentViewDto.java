@@ -21,12 +21,15 @@ public class QuestionCommentViewDto {
 
     private LocalDateTime created_at;
 
+    private boolean isAccepted;
+
     public QuestionCommentViewDto toEntity(QuestionComment questionComment) {
         return QuestionCommentViewDto.builder()
                 .comment_id(questionComment.getId())
                 .email(questionComment.getMember().getEmail())
                 .content(questionComment.getContent())
                 .created_at(questionComment.getCreated_at())
+                .isAccepted(questionComment.isAccepted())
                 .build();
     }
 

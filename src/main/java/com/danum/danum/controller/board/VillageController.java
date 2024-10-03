@@ -3,9 +3,11 @@ package com.danum.danum.controller.board;
 import com.danum.danum.domain.board.village.VillageNewDto;
 import com.danum.danum.domain.board.village.VillageUpdateDto;
 import com.danum.danum.domain.board.village.VillageViewDto;
+import com.danum.danum.service.admin.AdminService;
 import com.danum.danum.service.board.village.VillageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import java.util.List;
 public class VillageController {
 
     private final VillageService villageService;
+    private final AdminService adminService;
 
     @PostMapping("/new")
     public ResponseEntity<?> createVillageBoard(@RequestBody VillageNewDto villageNewDto){
@@ -49,7 +52,6 @@ public class VillageController {
         return ResponseEntity.ok("마을 게시글이 삭제되었습니다.");
     }
 
-    @PutMapping("/update")
     public ResponseEntity<?> updateVillageBoard(@RequestBody VillageUpdateDto villageUpdateDto) {
         villageService.update(villageUpdateDto, getLoginUser());
 
@@ -92,5 +94,11 @@ public class VillageController {
             @RequestParam String category) {
         List<VillageViewDto> villages = villageService.getVillagesByCategory(latitude, longitude, category);
         return ResponseEntity.ok(villages);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/members/{email}/villages")
+    public ResponseEntity<List<VillageViewDto>> getMemberVillages(@PathVariable("email") String email) {
+        return ResponseEntity.ok(adminService.getMemberVillages(email));
     }
 }
