@@ -178,7 +178,7 @@ public class VillageServiceImpl implements VillageService{
     }
 
     public void userCheck(String author, String loginUser) {
-        if (author.equals(loginUser)) {
+        if (!author.equals(loginUser)) {
             throw new CommentException(ErrorCode.COMMENT_NOT_AUTHOR_EXCEPTION);
         }
     }
