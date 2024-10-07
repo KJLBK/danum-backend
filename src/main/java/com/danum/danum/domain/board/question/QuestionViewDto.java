@@ -29,6 +29,8 @@ public class QuestionViewDto {
 
     private Long view_count;
 
+    private Long like;
+
     public static QuestionViewDto from(Question question) {
         return QuestionViewDto.builder()
                 .question_id(question.getId())
@@ -38,6 +40,7 @@ public class QuestionViewDto {
                 .created_at(question.getCreated_at())
                 .conversation(question.getConversation())
                 .view_count(question.getView_count())
+                .like(question.getLike())
                 .build();
     }
 
