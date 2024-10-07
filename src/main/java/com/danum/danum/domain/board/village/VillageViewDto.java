@@ -26,6 +26,8 @@ public class VillageViewDto {
 
     private Long view_count;
 
+    private Long like;
+
     public VillageViewDto toEntity(Village village) {
         return VillageViewDto.builder()
                 .village_id(village.getId())
@@ -34,6 +36,7 @@ public class VillageViewDto {
                 .author(AuthorDto.from(village.getMember()))
                 .created_at(village.getCreated_at())
                 .view_count(village.getView_count())
+                .like(village.getLike())
                 .build();
     }
 
