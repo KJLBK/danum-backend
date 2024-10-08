@@ -1,5 +1,6 @@
 package com.danum.danum.service.ai;
 
+import com.danum.danum.domain.member.Member;
 import com.danum.danum.domain.openai.OpenAiMessage;
 import com.danum.danum.domain.openai.OpenAiUserMessageDto;
 import com.danum.danum.exception.ErrorCode;
@@ -7,6 +8,8 @@ import com.danum.danum.exception.custom.OpenAiException;
 import com.danum.danum.repository.ai.OpenAiConversationRepository;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.danum.danum.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.messages.AssistantMessage;
@@ -27,12 +30,20 @@ public class OpenAiServiceImpl implements OpenAiService {
 
     private final ChatModel chatModel;
 
+    private final MemberService memberService;
+
     @Override
     public ChatResponse sendMessage(final OpenAiUserMessageDto messageDto,
                                                  final List<OpenAiMessage> messageList) {
         // 프롬프트용 메시지 기록에 사용자 메시지 추가
         List<Message> promptMessage = convertMessageList(messageList);
         promptMessage.add(new UserMessage(messageDto.getMessage()));
+
+        // 프롬프트에 사용자 위치 정보 추가
+        Member member = memberService.getMemberByAuthentication();
+        String userLocation = String.format("사용자의 위치: 위도 %f 경도 %f 이며 이걸 기반으로 한국어로 답장해주세요",
+                member.getLatitude(), member.getLongitude());
+        promptMessage.add(new UserMessage(userLocation));
 
         // 프롬프트 작성 및 api 응답 반환
         Prompt prompt = new Prompt(promptMessage);
