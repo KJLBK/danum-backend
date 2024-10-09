@@ -59,8 +59,6 @@ public class QuestionServiceImpl implements QuestionService{
     public QuestionViewDto view(Long id, String email) {
         Question question = questionRepository.findById(id)
                 .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
-        memberRepository.findById(email)
-                .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION));
 
         viewCheck(question, email);
         return QuestionViewDto.from(question);
