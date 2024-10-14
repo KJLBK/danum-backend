@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,33 +34,25 @@ public class QuestionCommentServiceImpl implements QuestionCommentService {
     @Override
     @Transactional
     public void create(QuestionCommentNewDto questionCommentNewDto) {
+        validateCommentContent(questionCommentNewDto.getContent());
         QuestionComment questionComment = questionCommentMapper.toEntity(questionCommentNewDto);
-
-        if (questionCommentNewDto.getContent().isEmpty()) {
-            throw new CommentException(ErrorCode.COMMENT_NOT_CONTENTS_EXCEPTION);
-        }
-
         questionCommentRepository.save(questionComment);
     }
 
     @Override
-    @Transactional
-    public List<QuestionCommentViewDto> viewList(Long id) {
-        List<QuestionComment> questionCommentList = questionCommentRepository.findAllByQuestionId(id);
-        List<QuestionCommentViewDto> commentViewList = new ArrayList<>();
-        for (QuestionComment questionComment : questionCommentList) {
-            commentViewList.add(new QuestionCommentViewDto().toEntity(questionComment));
-        }
-
-        return commentViewList;
+    @Transactional(readOnly = true)
+    public List<QuestionCommentViewDto> viewList(Long questionId) {
+        // 질문에 대한 모든 댓글을 조회하고 DTO로 변환
+        return questionCommentRepository.findAllByQuestionId(questionId).stream()
+                .map(this::convertToViewDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     public void update(QuestionCommentUpdateDto questionCommentUpdateDto, String loginUser) {
-        QuestionComment questionComment = questionCommentRepository.findById(questionCommentUpdateDto.getId())
-                .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
-        userCheck(questionComment.getMember().getEmail(), loginUser);
+        QuestionComment questionComment = findCommentAndCheckOwnership(questionCommentUpdateDto.getId(), loginUser);
+
         questionComment.updateContent(questionCommentUpdateDto.getContent());
 
         questionCommentRepository.save(questionComment);
@@ -68,63 +61,83 @@ public class QuestionCommentServiceImpl implements QuestionCommentService {
     @Override
     @Transactional
     public void delete(Long id, String loginUser) {
-        QuestionComment questionComment = questionCommentRepository.findById(id)
-                        .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
-        userCheck(questionComment.getMember().getEmail(), loginUser);
-
+        QuestionComment questionComment = findCommentAndCheckOwnership(id, loginUser);
         questionCommentRepository.delete(questionComment);
-    }
-
-    public void userCheck(String author, String loginUser) {
-        if (!author.equals(loginUser)) {
-            throw new CommentException(ErrorCode.COMMENT_NOT_AUTHOR_EXCEPTION);
-        }
     }
 
     @Override
     @Transactional
     public void acceptComment(Long questionId, Long commentId, String loginUser) {
-        Question question = questionRepository.findById(questionId)
-                .orElseThrow(() -> new CommentException(ErrorCode.QUESTION_NOT_FOUND_EXCEPTION));
-
-        if (!question.getMember().getEmail().equals(loginUser)) {
-            throw new CommentException(ErrorCode.NOT_QUESTION_AUTHOR_EXCEPTION);
-        }
-
-        QuestionComment comment = questionCommentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
-
-        // 이미 채택된 댓글이 있는지 확인
-        if (questionCommentRepository.existsByQuestionAndIsAcceptedTrue(question)) {
-            throw new CommentException(ErrorCode.COMMENT_ALREADY_ACCEPTED_EXCEPTION);
-        }
-
-        comment.accept(); // 댓글을 채택 상태로 변경
-        questionCommentRepository.save(comment);
-
-        // 답변자의 경험치 증가
-        memberService.exp(comment.getMember().getEmail());
+        Question question = findQuestionAndCheckOwnership(questionId, loginUser);
+        checkNoExistingAcceptedComment(question);
+        QuestionComment comment = findCommentById(commentId);
+        acceptCommentAndRewardAuthor(comment);
     }
 
     @Override
     @Transactional
     public void unacceptComment(Long questionId, Long commentId, String loginUser) {
+        findQuestionAndCheckOwnership(questionId, loginUser);
+        QuestionComment comment = findCommentById(commentId);
+        unacceptComment(comment);
+    }
+
+    // 댓글 내용 유효성 검사
+    private void validateCommentContent(String content) {
+        if (content.isEmpty()) {
+            throw new CommentException(ErrorCode.COMMENT_NOT_CONTENTS_EXCEPTION);
+        }
+    }
+
+    private QuestionComment findCommentAndCheckOwnership(Long commentId, String loginUser) {
+        QuestionComment comment = findCommentById(commentId);
+        checkCommentOwnership(comment, loginUser);
+        return comment;
+    }
+
+    private QuestionComment findCommentById(Long commentId) {
+        return questionCommentRepository.findById(commentId)
+                .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
+    }
+
+    private void checkCommentOwnership(QuestionComment comment, String loginUser) {
+        if (!comment.getMember().getEmail().equals(loginUser)) {
+            throw new CommentException(ErrorCode.COMMENT_NOT_AUTHOR_EXCEPTION);
+        }
+    }
+
+    private Question findQuestionAndCheckOwnership(Long questionId, String loginUser) {
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new CommentException(ErrorCode.QUESTION_NOT_FOUND_EXCEPTION));
-
         if (!question.getMember().getEmail().equals(loginUser)) {
             throw new CommentException(ErrorCode.NOT_QUESTION_AUTHOR_EXCEPTION);
         }
+        return question;
+    }
 
-        QuestionComment comment = questionCommentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
+    private void checkNoExistingAcceptedComment(Question question) {
+        if (questionCommentRepository.existsByQuestionAndIsAcceptedTrue(question)) {
+            throw new CommentException(ErrorCode.COMMENT_ALREADY_ACCEPTED_EXCEPTION);
+        }
+    }
 
+    private void acceptCommentAndRewardAuthor(QuestionComment comment) {
+        comment.accept();
+        questionCommentRepository.save(comment);
+        memberService.exp(comment.getMember().getEmail());
+    }
+
+    private void unacceptComment(QuestionComment comment) {
         if (!comment.isAccepted()) {
             throw new CommentException(ErrorCode.COMMENT_NOT_ACCEPTED_EXCEPTION);
         }
-
         comment.unaccept();
         questionCommentRepository.save(comment);
+    }
+
+    // QuestionComment 엔티티를 QuestionCommentViewDto로 변환
+    private QuestionCommentViewDto convertToViewDto(QuestionComment questionComment) {
+        return QuestionCommentViewDto.toEntity(questionComment);
     }
 
 }
