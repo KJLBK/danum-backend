@@ -23,7 +23,7 @@ public class QuestionCommentViewDto {
 
     private boolean isAccepted;
 
-    public QuestionCommentViewDto toEntity(QuestionComment questionComment) {
+    public static QuestionCommentViewDto toEntity(QuestionComment questionComment) {
         return QuestionCommentViewDto.builder()
                 .comment_id(questionComment.getId())
                 .email(questionComment.getMember().getEmail())
