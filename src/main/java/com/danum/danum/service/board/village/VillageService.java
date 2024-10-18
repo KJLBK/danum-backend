@@ -1,12 +1,12 @@
 package com.danum.danum.service.board.village;
 
-import com.danum.danum.domain.board.village.Village;
 import com.danum.danum.domain.board.village.VillageNewDto;
 import com.danum.danum.domain.board.village.VillageUpdateDto;
 import com.danum.danum.domain.board.village.VillageViewDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface VillageService {
@@ -26,4 +26,6 @@ public interface VillageService {
     void deleteVillage(Long id);
 
     void update(VillageUpdateDto villageUpdateDto, String loginUser);
+
+    List<VillageViewDto> getPopularVillages(int limit);
 }

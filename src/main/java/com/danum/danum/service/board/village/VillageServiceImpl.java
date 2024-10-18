@@ -14,10 +14,12 @@ import com.danum.danum.repository.board.VillageLikeRepository;
 import com.danum.danum.repository.board.VillageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -160,5 +162,13 @@ public class VillageServiceImpl implements VillageService{
         if (!author.equals(loginUser)) {
             throw new CommentException(ErrorCode.COMMENT_NOT_AUTHOR_EXCEPTION);
         }
+    }
+
+    @Override
+    public List<VillageViewDto> getPopularVillages(int limit) {
+        return villageRepository.findPopularVillages(PageRequest.of(0, limit))
+                .stream()
+                .map(village -> new VillageViewDto().toEntity(village))
+                .collect(Collectors.toList());
     }
 }
