@@ -1,11 +1,15 @@
 package com.danum.danum.controller.board;
 
+import com.danum.danum.domain.board.page.PagedResponseDto;
 import com.danum.danum.domain.board.question.QuestionNewDto;
 import com.danum.danum.domain.board.question.QuestionUpdateDto;
 import com.danum.danum.domain.board.question.QuestionViewDto;
 import com.danum.danum.service.admin.AdminService;
 import com.danum.danum.service.board.question.QuestionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -30,8 +34,9 @@ public class QuestionController {
     }
 
     @GetMapping("/show")
-    public ResponseEntity<?> getQuestionBoardList(){
-        return ResponseEntity.ok(questionService.viewList());
+    public ResponseEntity<PagedResponseDto<QuestionViewDto>> getQuestionBoardList(@PageableDefault(size = 10) Pageable pageable) {
+        Page<QuestionViewDto> questionPage = questionService.viewList(pageable);
+        return ResponseEntity.ok(PagedResponseDto.from(questionPage));
     }
 
     @GetMapping("/show/{id}")

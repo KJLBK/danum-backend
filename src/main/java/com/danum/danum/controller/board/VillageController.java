@@ -1,11 +1,16 @@
 package com.danum.danum.controller.board;
 
+import com.danum.danum.domain.board.page.PagedResponseDto;
 import com.danum.danum.domain.board.village.VillageNewDto;
 import com.danum.danum.domain.board.village.VillageUpdateDto;
 import com.danum.danum.domain.board.village.VillageViewDto;
+import com.danum.danum.domain.board.page.PagedResponseDto;
 import com.danum.danum.service.admin.AdminService;
 import com.danum.danum.service.board.village.VillageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -25,13 +30,13 @@ public class VillageController {
     @PostMapping("/new")
     public ResponseEntity<?> createVillageBoard(@RequestBody VillageNewDto villageNewDto){
         villageService.create(villageNewDto);
-
         return ResponseEntity.ok("게시판 생성 성공");
     }
 
     @GetMapping("/show")
-    public ResponseEntity<?> getVillageBoardList(){
-        return ResponseEntity.ok(villageService.viewList());
+    public ResponseEntity<PagedResponseDto<VillageViewDto>> getVillageBoardList(@PageableDefault(size = 10) Pageable pageable){
+        Page<VillageViewDto> villagePage = villageService.viewList(pageable);
+        return ResponseEntity.ok(PagedResponseDto.from(villagePage));
     }
 
     @GetMapping("/show/{id}")
@@ -42,7 +47,6 @@ public class VillageController {
     @PostMapping("/like/{id}")
     public ResponseEntity<?> likeStatus(@PathVariable("id") Long id) {
         villageService.likeStatus(id, getLoginUser());
-
         return ResponseEntity.ok("좋아요 관련 성공");
     }
 
@@ -52,53 +56,43 @@ public class VillageController {
         return ResponseEntity.ok("마을 게시글이 삭제되었습니다.");
     }
 
+    @PutMapping("/update")
     public ResponseEntity<?> updateVillageBoard(@RequestBody VillageUpdateDto villageUpdateDto) {
         villageService.update(villageUpdateDto, getLoginUser());
-
         return ResponseEntity.ok("게시판 수정 성공");
     }
 
     private String getLoginUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         return authentication.getName();
     }
 
-    /**
-     * 특정 거리 내의 Village 게시글을 조회
-     * @param latitude 사용자의 위도
-     * @param longitude 사용자의 경도
-     * @param distance 검색할 반경 거리 (km)
-     * @return 지정된 거리 내의 Village 게시글 목록
-     */
     @GetMapping("/by-distance")
-    public ResponseEntity<List<VillageViewDto>> getVillagesByDistance(
+    public ResponseEntity<PagedResponseDto<VillageViewDto>> getVillagesByDistance(
             @RequestParam double latitude,
             @RequestParam double longitude,
-            @RequestParam double distance) {
-        List<VillageViewDto> villages = villageService.getVillagesByDistance(latitude, longitude, distance);
-        return ResponseEntity.ok(villages);
+            @RequestParam double distance,
+            @PageableDefault(size = 10) Pageable pageable) {
+        Page<VillageViewDto> villages = villageService.getVillagesByDistance(latitude, longitude, distance, pageable);
+        return ResponseEntity.ok(PagedResponseDto.from(villages));
     }
 
-    /**
-     * 카테고리별로 Village 게시글을 조회
-     * @param latitude 사용자의 위도
-     * @param longitude 사용자의 경도
-     * @param category 검색할 카테고리 (가까운동네, 중간 거리 동네, 먼 동네)
-     * @return 해당 카테고리에 속하는 Village 게시글 목록
-     */
     @GetMapping("/by-category")
-    public ResponseEntity<List<VillageViewDto>> getVillagesByCategory(
+    public ResponseEntity<PagedResponseDto<VillageViewDto>> getVillagesByCategory(
             @RequestParam double latitude,
             @RequestParam double longitude,
-            @RequestParam String category) {
-        List<VillageViewDto> villages = villageService.getVillagesByCategory(latitude, longitude, category);
-        return ResponseEntity.ok(villages);
+            @RequestParam String category,
+            @PageableDefault(size = 10) Pageable pageable) {
+        Page<VillageViewDto> villages = villageService.getVillagesByCategory(latitude, longitude, category, pageable);
+        return ResponseEntity.ok(PagedResponseDto.from(villages));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/members/{email}/villages")
-    public ResponseEntity<List<VillageViewDto>> getMemberVillages(@PathVariable("email") String email) {
-        return ResponseEntity.ok(adminService.getMemberVillages(email));
+    public ResponseEntity<PagedResponseDto<VillageViewDto>> getMemberVillages(
+            @PathVariable("email") String email,
+            @PageableDefault(size = 10) Pageable pageable) {
+        Page<VillageViewDto> villages = adminService.getMemberVillages(email, pageable);
+        return ResponseEntity.ok(PagedResponseDto.from(villages));
     }
 }

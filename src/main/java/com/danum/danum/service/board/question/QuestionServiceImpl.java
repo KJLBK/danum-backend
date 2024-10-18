@@ -10,6 +10,8 @@ import com.danum.danum.repository.board.QuestionEmailRepository;
 import com.danum.danum.repository.board.QuestionLikeRepository;
 import com.danum.danum.repository.board.QuestionRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,15 +45,10 @@ public class QuestionServiceImpl implements QuestionService{
     }
 
     @Override
-    @Transactional
-    public List<QuestionViewDto> viewList() {
-        List<Question> questionList = questionRepository.findAll();
-        List<QuestionViewDto> questionViewDtoList = new ArrayList<>();
-        for (Question question : questionList) {
-            questionViewDtoList.add(QuestionViewDto.from(question));
-        }
-
-        return questionViewDtoList;
+    @Transactional(readOnly = true)
+    public Page<QuestionViewDto> viewList(Pageable pageable) {
+        Page<Question> questionPage = questionRepository.findAll(pageable);
+        return questionPage.map(QuestionViewDto::from);
     }
 
     @Override

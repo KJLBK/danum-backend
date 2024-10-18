@@ -3,6 +3,8 @@ package com.danum.danum.repository.board;
 import com.danum.danum.domain.board.village.Village;
 import com.danum.danum.domain.member.Member;
 import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -11,15 +13,40 @@ import java.util.List;
 
 @Repository
 public interface VillageRepository extends JpaRepository<Village, Long> {
-    @Query(value = "SELECT v.* FROM village v " +
-            "WHERE (6371 * acos(cos(radians(:latitude)) * cos(radians(v.latitude)) * cos(radians(v.longitude) - radians(:longitude)) + sin(radians(:latitude)) * sin(radians(v.latitude)))) <= :distance " +
-            "ORDER BY (6371 * acos(cos(radians(:latitude)) * cos(radians(v.latitude)) * cos(radians(v.longitude) - radians(:longitude)) + sin(radians(:latitude)) * sin(radians(v.latitude))))",
-            nativeQuery = true)
-    List<Village> findVillagesWithinDistance(@Param("latitude") double latitude, @Param("longitude") double longitude, @Param("distance") double distance);
 
-    List<Village> findAllByMember(Member member);
+    @Query("SELECT v FROM Village v WHERE " +
+            "6371 * acos(cos(radians(:latitude)) * cos(radians(v.latitude)) * cos(radians(v.longitude) - radians(:longitude)) + sin(radians(:latitude)) * sin(radians(v.latitude))) <= :distance")
+    Page<Village> findVillagesWithinDistance(
+            @Param("latitude") double latitude,
+            @Param("longitude") double longitude,
+            @Param("distance") double distance,
+            Pageable pageable);
+
+    @Query("SELECT v FROM Village v WHERE " +
+            "6371 * acos(cos(radians(:latitude)) * cos(radians(v.latitude)) * cos(radians(v.longitude) - radians(:longitude)) + sin(radians(:latitude)) * sin(radians(v.latitude))) BETWEEN :minDistance AND :maxDistance")
+    Page<Village> findVillagesBetweenDistances(
+            @Param("latitude") double latitude,
+            @Param("longitude") double longitude,
+            @Param("minDistance") double minDistance,
+            @Param("maxDistance") double maxDistance,
+            Pageable pageable);
+
+    @Query("SELECT v FROM Village v WHERE " +
+            "6371 * acos(cos(radians(:latitude)) * cos(radians(v.latitude)) * cos(radians(v.longitude) - radians(:longitude)) + sin(radians(:latitude)) * sin(radians(v.latitude))) > :distance")
+    Page<Village> findVillagesBeyondDistance(
+            @Param("latitude") double latitude,
+            @Param("longitude") double longitude,
+            @Param("distance") double distance,
+            Pageable pageable);
+
+    Page<Village> findAllByMember(Member member, Pageable pageable);
 }
 /**
+ *
+ * @Query(value = "SELECT v.* FROM village v " +
+ *             "WHERE (6371 * acos(cos(radians(:latitude)) * cos(radians(v.latitude)) * cos(radians(v.longitude) - radians(:longitude)) + sin(radians(:latitude)) * sin(radians(v.latitude)))) <= :distance " +
+ *             "ORDER BY (6371 * acos(cos(radians(:latitude)) * cos(radians(v.latitude)) * cos(radians(v.longitude) - radians(:longitude)) + sin(radians(:latitude)) * sin(radians(v.latitude))))",
+ *             nativeQuery = true)
  * 주어진 위치(위도, 경도)로부터 특정 거리 이내에 있는 Village들을 찾아 반환
  *
  * @param latitude 기준 위치의 위도

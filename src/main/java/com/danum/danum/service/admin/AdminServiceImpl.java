@@ -17,6 +17,8 @@ import com.danum.danum.repository.board.VillageRepository;
 import com.danum.danum.repository.comment.QuestionCommentRepository;
 import com.danum.danum.repository.comment.VillageCommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,18 +52,26 @@ public class AdminServiceImpl implements AdminService {
         return memberRepository.findById(email)
                 .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION));
     }
+
     @Override
+    @Transactional(readOnly = true)
     public List<QuestionViewDto> getMemberQuestions(String email) {
-        Member member = getMemberByEmail(email);
-        List<Question> questions = questionRepository.findAllByMember(member);
-        return questions.stream().map(QuestionViewDto::from).collect(Collectors.toList());
+        Member member = memberRepository.findById(email)
+                .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION));
+
+        return questionRepository.findAllByMember(member).stream()
+                .map(QuestionViewDto::from)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<VillageViewDto> getMemberVillages(String email) {
-        Member member = getMemberByEmail(email);
-        List<Village> villages = villageRepository.findAllByMember(member);
-        return villages.stream().map(village -> new VillageViewDto().toEntity(village)).collect(Collectors.toList());
+    @Transactional(readOnly = true)
+    public Page<VillageViewDto> getMemberVillages(String email, Pageable pageable) {
+        Member member = memberRepository.findById(email)
+                .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION));
+
+        return villageRepository.findAllByMember(member, pageable)
+                .map(village -> new VillageViewDto().toEntity(village));
     }
 
     @Override

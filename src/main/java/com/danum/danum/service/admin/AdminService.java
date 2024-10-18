@@ -7,6 +7,8 @@ import com.danum.danum.domain.board.village.VillageViewDto;
 import com.danum.danum.domain.comment.question.QuestionComment;
 import com.danum.danum.domain.comment.village.VillageComment;
 import com.danum.danum.domain.member.Member;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Map;
@@ -18,8 +20,9 @@ public interface AdminService {
 
     // 회원의 게시글 및 댓글 조회
     List<QuestionViewDto> getMemberQuestions(String email);
-    List<VillageViewDto> getMemberVillages(String email);
+    Page<VillageViewDto> getMemberVillages(String email, Pageable pageable);
     Map<String, List<?>> getMemberComments(String email);
+
 
     void deleteQuestionComment(Long questionId, Long commentId);
     void deleteVillageComment(Long villageId, Long commentId);
