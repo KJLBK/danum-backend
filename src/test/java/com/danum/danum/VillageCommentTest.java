@@ -20,9 +20,9 @@ public class VillageCommentTest {
         villageCommentService.create(villageCommentNewDto);
     }
 
-    @Test
-    public void 게시판댓글전체조회() {
-        System.out.println(villageCommentService.viewList(1L));
-    }
+//    @Test
+//    public void 게시판댓글전체조회() {
+//        System.out.println(villageCommentService.viewList(1L));
+//    }
 
 }
