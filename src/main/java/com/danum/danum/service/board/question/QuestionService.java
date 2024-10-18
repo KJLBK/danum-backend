@@ -6,6 +6,7 @@ import com.danum.danum.domain.board.question.QuestionViewDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface QuestionService {
@@ -22,6 +23,6 @@ public interface QuestionService {
 
     void update(QuestionUpdateDto questionUpdateDto, String loginUser);
 
-
+    List<QuestionViewDto> getPopularQuestions(int limit);
 
 }

@@ -11,13 +11,16 @@ import com.danum.danum.repository.board.QuestionLikeRepository;
 import com.danum.danum.repository.board.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -125,5 +128,13 @@ public class QuestionServiceImpl implements QuestionService{
         if (!author.equals(loginUser)) {
             throw new BoardException(ErrorCode.BOARD_NOT_AUTHOR_EXCEPTION);
         }
+    }
+
+    @Override
+    public List<QuestionViewDto> getPopularQuestions(int limit) {
+        return questionRepository.findPopularQuestions(PageRequest.of(0, limit))
+                .stream()
+                .map(QuestionViewDto::from)
+                .collect(Collectors.toList());
     }
 }
