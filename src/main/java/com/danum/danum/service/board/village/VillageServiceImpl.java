@@ -13,6 +13,8 @@ import com.danum.danum.repository.board.VillageEmailRepository;
 import com.danum.danum.repository.board.VillageLikeRepository;
 import com.danum.danum.repository.board.VillageRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,15 +49,10 @@ public class VillageServiceImpl implements VillageService{
     }
 
     @Override
-    @Transactional
-    public List<VillageViewDto> viewList() {
-        List<Village> villageList =  villageRepository.findAll();
-        List<VillageViewDto> villageViews = new ArrayList<>();
-        for (Village village : villageList) {
-            villageViews.add(new VillageViewDto().toEntity(village));
-        }
-
-        return villageViews;
+    @Transactional(readOnly = true)
+    public Page<VillageViewDto> viewList(Pageable pageable) {
+        Page<Village> villagePage = villageRepository.findAll(pageable);
+        return villagePage.map(village -> new VillageViewDto().toEntity(village));
     }
 
     @Override
@@ -64,7 +61,6 @@ public class VillageServiceImpl implements VillageService{
         Village village = villageRepository.findById(id)
                 .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
         viewCheck(village, email);
-
         return new VillageViewDto().toEntity(village);
     }
 
@@ -110,45 +106,28 @@ public class VillageServiceImpl implements VillageService{
     }
 
     @Override
-    public List<VillageViewDto> getVillagesByDistance(double latitude, double longitude, double distance) {
-        // 지정된 거리 내의 Village 게시글을 조회하고 DTO로 변환하여 반환
-        List<Village> villages = villageRepository.findVillagesWithinDistance(latitude, longitude, distance);
-        return villages.stream()
-                .map(this::convertToViewDto)
-                .collect(Collectors.toList());
+    public Page<VillageViewDto> getVillagesByDistance(double latitude, double longitude, double distance, Pageable pageable) {
+        return villageRepository.findVillagesWithinDistance(latitude, longitude, distance, pageable)
+                .map(this::convertToViewDto);
     }
 
     @Override
-    public List<VillageViewDto> getVillagesByCategory(double latitude, double longitude, String category) {
-        List<Village> villages;
-        // 카테고리에 따라 다른 거리 범위의 Village 게시글 조회
+    public Page<VillageViewDto> getVillagesByCategory(double latitude, double longitude, String category, Pageable pageable) {
+        Page<Village> villages;
         switch (category) {
-            // 가까운 동네 (5km 이내)
             case "가까운 동네":
-                villages = villageRepository.findVillagesWithinDistance(latitude, longitude, 5);
+                villages = villageRepository.findVillagesWithinDistance(latitude, longitude, 5, pageable);
                 break;
             case "중간 거리 동네":
-                // 중간 거리 동네 (5km ~ 10km)
-                List<Village> mediumVillages = villageRepository.findVillagesWithinDistance(latitude, longitude, 10);
-                List<Village> nearVillages = villageRepository.findVillagesWithinDistance(latitude, longitude, 5);
-                mediumVillages.removeAll(nearVillages);
-                villages = mediumVillages;
+                villages = villageRepository.findVillagesBetweenDistances(latitude, longitude, 5, 10, pageable);
                 break;
             case "먼 동네":
-                // 먼 동네 (10km 이상)
-                List<Village> allVillages = villageRepository.findAll();
-                List<Village> withinTenKm = villageRepository.findVillagesWithinDistance(latitude, longitude, 10);
-                allVillages.removeAll(withinTenKm);
-                villages = allVillages;
+                villages = villageRepository.findVillagesBeyondDistance(latitude, longitude, 10, pageable);
                 break;
             default:
-                // 기본적으로 모든 Village 게시글 반환
-                villages = villageRepository.findAll();
+                villages = villageRepository.findAll(pageable);
         }
-        // 조회된 Village 게시글을 DTO로 변환하여 반환
-        return villages.stream()
-                .map(this::convertToViewDto)
-                .collect(Collectors.toList());
+        return villages.map(this::convertToViewDto);
     }
 
     /**

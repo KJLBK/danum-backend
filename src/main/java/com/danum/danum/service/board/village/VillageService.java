@@ -4,6 +4,8 @@ import com.danum.danum.domain.board.village.Village;
 import com.danum.danum.domain.board.village.VillageNewDto;
 import com.danum.danum.domain.board.village.VillageUpdateDto;
 import com.danum.danum.domain.board.village.VillageViewDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -11,15 +13,15 @@ public interface VillageService {
 
     void create(VillageNewDto villageNewDto);
 
-    List<VillageViewDto> viewList();
+    Page<VillageViewDto> viewList(Pageable pageable);
 
     VillageViewDto view(Long id, String email);
 
     void likeStatus(Long id, String email);
 
-    List<VillageViewDto> getVillagesByDistance(double latitude, double longitude, double distance);
+    Page<VillageViewDto> getVillagesByDistance(double latitude, double longitude, double distance, Pageable pageable);
 
-    List<VillageViewDto> getVillagesByCategory(double latitude, double longitude, String category);
+    Page<VillageViewDto> getVillagesByCategory(double latitude, double longitude, String category, Pageable pageable);
 
     void deleteVillage(Long id);
 

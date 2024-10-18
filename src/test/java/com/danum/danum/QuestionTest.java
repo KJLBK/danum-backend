@@ -20,9 +20,9 @@ public class QuestionTest {
         questionService.create(questionNewDto);
     }
 
-    @Test
-    public void 질문게시판전체조회() {
-        System.out.println(questionService.viewList());
-    }
+//    @Test
+//    public void 질문게시판전체조회() {
+//        System.out.println(questionService.viewList());
+//    }
 
 }

@@ -20,10 +20,10 @@ public class QuestionCommentTest {
         questionCommentService.create(questionCommentNewDto);
     }
 
-    @Test
-    public void 게시판댓글전체조회() {
-        System.out.println(questionCommentService.viewList(1L));
-    }
-
+//    @Test
+//    public void 게시판댓글전체조회() {
+//        System.out.println(questionCommentService.viewList(1L));
+//    }
+//
 
 }

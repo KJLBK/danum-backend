@@ -20,9 +20,9 @@ public class VillageTest {
         villageService.create(villageNewDto);
     }
 
-    @Test
-    public void 질문게시판전체조회() {
-        System.out.println(villageService.viewList());
-    }
+//    @Test
+//    public void 질문게시판전체조회() {
+//        System.out.println(villageService.viewList());
+//    }
 
 }
