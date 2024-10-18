@@ -23,7 +23,7 @@ public class VillageCommentViewDto {
 
     private boolean isAccepted;
 
-    public VillageCommentViewDto toEntity(VillageComment villageComment) {
+    public static VillageCommentViewDto toEntity(VillageComment villageComment) {
         return VillageCommentViewDto.builder()
                 .comment_id(villageComment.getId())
                 .email(villageComment.getMember().getEmail())
