@@ -9,14 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -29,7 +22,6 @@ public class VillageCommentController {
     @PostMapping("/new")
     public ResponseEntity<?> createVillageBoardComment(@RequestBody VillageCommentNewDto villageCommentNewDto) {
         villageCommentService.create(villageCommentNewDto);
-
         return ResponseEntity.ok("댓글 생성 성공");
     }
 
@@ -41,42 +33,38 @@ public class VillageCommentController {
     @PutMapping("/update")
     public ResponseEntity<?> updateVillageBoardComment(@RequestBody VillageCommentUpdateDto villageCommentUpdateDto) {
         villageCommentService.update(villageCommentUpdateDto, getLoginUser());
-
         return ResponseEntity.ok("댓글 수정 성공");
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteVillageBoardComment(@PathVariable("id") Long id) {
         villageCommentService.delete(id, getLoginUser());
-
         return ResponseEntity.ok("댓글 삭제 성공");
     }
 
-    private String getLoginUser(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        return authentication.getName();
-    }
-
-    @PostMapping("/{villageId}/accept/{commentId}") // 이거 명세서 villageId 가 Id로 해야하나? 내일 고민하기 241003
-    public ResponseEntity<?> acceptComment(@PathVariable Long villageId, @PathVariable Long commentId) {
-        String loginUser = getLoginUser();
-        villageCommentService.acceptComment(villageId, commentId, loginUser);
+    @PostMapping("/{villageId}/accept/{commentId}")
+    public ResponseEntity<?> acceptVillageComment(@PathVariable Long villageId, @PathVariable Long commentId) {
+        villageCommentService.acceptComment(villageId, commentId, getLoginUser());
         return ResponseEntity.ok("해당 답변을 채택하였습니다.");
     }
 
-    @PostMapping("/{villageId}/unaccept/{commentId}") // 이거 명세서 villageId 가 Id로 해야하나? 내일 고민하기 241003
-    public ResponseEntity<?> unacceptComment(@PathVariable Long villageId, @PathVariable Long commentId) {
-        String loginUser = getLoginUser();
-        villageCommentService.unacceptComment(villageId, commentId, loginUser);
-        return ResponseEntity.ok("해당 답변 채택이 취소하였습니다.");
+    @PostMapping("/{villageId}/unaccept/{commentId}")
+    public ResponseEntity<?> unacceptVillageComment(@PathVariable Long villageId, @PathVariable Long commentId) {
+        villageCommentService.unacceptComment(villageId, commentId, getLoginUser());
+        return ResponseEntity.ok("해당 답변 채택을 취소하였습니다.");
     }
+
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/villages/{villageId}/comments/{commentId}")
-    public ResponseEntity<?> deleteVillageComment(
+    public ResponseEntity<Void> deleteVillageComment(
             @PathVariable("villageId") Long villageId,
             @PathVariable("commentId") Long commentId) {
         adminService.deleteVillageComment(villageId, commentId);
         return ResponseEntity.ok().build();
+    }
+
+    private String getLoginUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
     }
 }
