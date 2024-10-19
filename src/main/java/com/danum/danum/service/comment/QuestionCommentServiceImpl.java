@@ -6,11 +6,13 @@ import com.danum.danum.domain.comment.question.QuestionCommentMapper;
 import com.danum.danum.domain.comment.question.QuestionCommentNewDto;
 import com.danum.danum.domain.comment.question.QuestionCommentUpdateDto;
 import com.danum.danum.domain.comment.question.QuestionCommentViewDto;
+import com.danum.danum.domain.notification.Notification;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.custom.CommentException;
 import com.danum.danum.repository.comment.QuestionCommentRepository;
 import com.danum.danum.repository.board.QuestionRepository;
 import com.danum.danum.service.member.MemberService;
+import com.danum.danum.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,12 +33,19 @@ public class QuestionCommentServiceImpl implements QuestionCommentService {
 
     private final MemberService memberService;
 
+    private final NotificationService notificationService;
+
     @Override
     @Transactional
     public void create(QuestionCommentNewDto questionCommentNewDto) {
         validateCommentContent(questionCommentNewDto.getContent());
         QuestionComment questionComment = questionCommentMapper.toEntity(questionCommentNewDto);
         questionCommentRepository.save(questionComment);
+
+        Question question = questionComment.getQuestion();
+        String content = String.format("새로운 댓글: %s", questionComment.getContent());
+        String link = "/questions/" + question.getId();
+        notificationService.createNotification(question.getMember().getEmail(), content, link, Notification.NotificationType.QUESTION_COMMENT);
     }
 
     @Override
