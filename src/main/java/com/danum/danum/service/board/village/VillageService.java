@@ -1,6 +1,7 @@
 package com.danum.danum.service.board.village;
 
 import com.danum.danum.domain.board.village.VillageNewDto;
+import com.danum.danum.domain.board.village.VillagePostType;
 import com.danum.danum.domain.board.village.VillageUpdateDto;
 import com.danum.danum.domain.board.village.VillageViewDto;
 import org.springframework.data.domain.Page;
@@ -28,4 +29,7 @@ public interface VillageService {
     void update(VillageUpdateDto villageUpdateDto, String loginUser);
 
     List<VillageViewDto> getPopularVillages(int limit);
+
+    Page<VillageViewDto> getVillagesByPostType(VillagePostType postType, Pageable pageable);
+
 }
