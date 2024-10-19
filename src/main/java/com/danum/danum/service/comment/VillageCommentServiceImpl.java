@@ -2,11 +2,13 @@ package com.danum.danum.service.comment;
 
 import com.danum.danum.domain.board.village.Village;
 import com.danum.danum.domain.comment.village.*;
+import com.danum.danum.domain.notification.Notification;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.custom.CommentException;
 import com.danum.danum.repository.board.VillageRepository;
 import com.danum.danum.repository.comment.VillageCommentRepository;
 import com.danum.danum.service.member.MemberService;
+import com.danum.danum.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,7 @@ public class VillageCommentServiceImpl implements VillageCommentService {
     private final VillageCommentMapper villageCommentMapper;
     private final VillageRepository villageRepository;
     private final MemberService memberService;
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -29,6 +32,11 @@ public class VillageCommentServiceImpl implements VillageCommentService {
         validateCommentContent(villageCommentNewDto.getContent());
         VillageComment villageComment = villageCommentMapper.toEntity(villageCommentNewDto);
         villageCommentRepository.save(villageComment);
+
+        Village village = villageComment.getVillage();
+        String content = String.format("새로운 댓글: %s", villageComment.getContent());
+        String link = "/villages/" + village.getId();
+        notificationService.createNotification(village.getMember().getEmail(), content, link, Notification.NotificationType.VILLAGE_COMMENT);
     }
 
     @Override

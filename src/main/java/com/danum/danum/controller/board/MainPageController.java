@@ -2,16 +2,18 @@ package com.danum.danum.controller;
 
 import com.danum.danum.domain.board.question.QuestionViewDto;
 import com.danum.danum.domain.board.village.VillageViewDto;
+import com.danum.danum.domain.notification.Notification;
 import com.danum.danum.service.board.question.QuestionService;
 import com.danum.danum.service.board.village.VillageService;
+import com.danum.danum.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -25,6 +27,7 @@ public class MainPageController {
 
     private final QuestionService questionService;
     private final VillageService villageService;
+    private final NotificationService notificationService;
 
     private Map<String, List<?>> cachedPopularPosts = new HashMap<>();
 
@@ -58,5 +61,25 @@ public class MainPageController {
         cachedPopularPosts = new HashMap<>();
         cachedPopularPosts.put("popularQuestions", popularQuestions);
         cachedPopularPosts.put("popularVillages", popularVillages);
+    }
+
+    @GetMapping("/notifications")
+    public ResponseEntity<List<Notification>> getNotifications(Authentication authentication) {
+        String userEmail = authentication.getName();
+        List<Notification> notifications = notificationService.getNotifications(userEmail);
+        return ResponseEntity.ok(notifications);
+    }
+
+    @GetMapping("/notifications/unread-count")
+    public ResponseEntity<Long> getUnreadNotificationCount(Authentication authentication) {
+        String userEmail = authentication.getName();
+        long unreadCount = notificationService.getUnreadCount(userEmail);
+        return ResponseEntity.ok(unreadCount);
+    }
+
+    @PostMapping("/notifications/{notificationId}/read")
+    public ResponseEntity<Void> markNotificationAsRead(@PathVariable Long notificationId) {
+        notificationService.markAsRead(notificationId);
+        return ResponseEntity.ok().build();
     }
 }
