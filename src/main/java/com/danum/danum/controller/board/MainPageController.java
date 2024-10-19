@@ -3,6 +3,7 @@ package com.danum.danum.controller;
 import com.danum.danum.domain.board.question.QuestionViewDto;
 import com.danum.danum.domain.board.village.VillageViewDto;
 import com.danum.danum.domain.notification.Notification;
+import com.danum.danum.domain.notification.NotificationDto;
 import com.danum.danum.service.board.question.QuestionService;
 import com.danum.danum.service.board.village.VillageService;
 import com.danum.danum.service.notification.NotificationService;
@@ -64,9 +65,9 @@ public class MainPageController {
     }
 
     @GetMapping("/notifications")
-    public ResponseEntity<List<Notification>> getNotifications(Authentication authentication) {
+    public ResponseEntity<List<NotificationDto>> getNotifications(Authentication authentication) {
         String userEmail = authentication.getName();
-        List<Notification> notifications = notificationService.getNotifications(userEmail);
+        List<NotificationDto> notifications = notificationService.getNotifications(userEmail);
         return ResponseEntity.ok(notifications);
     }
 
