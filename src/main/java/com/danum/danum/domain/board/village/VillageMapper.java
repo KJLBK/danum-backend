@@ -31,9 +31,11 @@ public class VillageMapper {
                 .title(villageNewDto.getTitle())
                 .content(villageNewDto.getContent())
                 .created_at(LocalDateTime.now())
+                .latitude(member.getLatitude())
+                .longitude(member.getLongitude()) //게시글 필터링할때 이값으로 필터링 ??
                 .view_count(0L)
                 .like(0L)
+                .postType(villageNewDto.getPostType())
                 .build();
     }
-
 }

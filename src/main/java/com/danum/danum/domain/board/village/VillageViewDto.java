@@ -28,6 +28,8 @@ public class VillageViewDto {
 
     private Long like;
 
+    private VillagePostType postType;
+
     public VillageViewDto toEntity(Village village) {
         return VillageViewDto.builder()
                 .village_id(village.getId())
@@ -37,6 +39,7 @@ public class VillageViewDto {
                 .created_at(village.getCreated_at())
                 .view_count(village.getView_count())
                 .like(village.getLike())
+                .postType(village.getPostType())
                 .build();
     }
 

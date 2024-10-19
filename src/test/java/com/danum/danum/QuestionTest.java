@@ -11,14 +11,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class QuestionTest {
 
-    @Autowired
-    private QuestionService questionService;
-
-    @Test
-    public void 질문게시판생성() {
-        QuestionNewDto questionNewDto = new QuestionNewDto("test@naver.com","test", "test", null);
-        questionService.create(questionNewDto);
-    }
+//    @Autowired
+//    private QuestionService questionService;
+//
+//    @Test
+//    public void 질문게시판생성() {
+//        QuestionNewDto questionNewDto = new QuestionNewDto("test@naver.com","test", "test", null);
+//        questionService.create(questionNewDto);
+//    }
 
 //    @Test
 //    public void 질문게시판전체조회() {

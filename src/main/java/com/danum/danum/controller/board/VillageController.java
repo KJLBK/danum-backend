@@ -2,6 +2,7 @@ package com.danum.danum.controller.board;
 
 import com.danum.danum.domain.board.page.PagedResponseDto;
 import com.danum.danum.domain.board.village.VillageNewDto;
+import com.danum.danum.domain.board.village.VillagePostType;
 import com.danum.danum.domain.board.village.VillageUpdateDto;
 import com.danum.danum.domain.board.village.VillageViewDto;
 import com.danum.danum.domain.board.page.PagedResponseDto;
@@ -65,6 +66,14 @@ public class VillageController {
     private String getLoginUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
+    }
+
+    @GetMapping("/by-type/{postType}")
+    public ResponseEntity<PagedResponseDto<VillageViewDto>> getVillagesByPostType(
+            @PathVariable VillagePostType postType,
+            @PageableDefault(size = 10) Pageable pageable) {
+        Page<VillageViewDto> villagePage = villageService.getVillagesByPostType(postType, pageable);
+        return ResponseEntity.ok(PagedResponseDto.from(villagePage));
     }
 
     @GetMapping("/by-distance")

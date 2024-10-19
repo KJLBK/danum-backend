@@ -15,4 +15,6 @@ public class VillageNewDto {
 
     private String content;
 
+    private VillagePostType postType;
+
 }

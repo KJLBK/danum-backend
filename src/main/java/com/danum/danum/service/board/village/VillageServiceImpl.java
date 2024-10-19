@@ -171,4 +171,13 @@ public class VillageServiceImpl implements VillageService{
                 .map(village -> new VillageViewDto().toEntity(village))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<VillageViewDto> getVillagesByPostType(VillagePostType postType, Pageable pageable) {
+        Page<Village> villagePage = villageRepository.findByPostType(postType, pageable);
+        return villagePage.map(this::convertToViewDto);
+    }
+
+
 }

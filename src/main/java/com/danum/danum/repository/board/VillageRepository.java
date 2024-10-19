@@ -1,6 +1,7 @@
 package com.danum.danum.repository.board;
 
 import com.danum.danum.domain.board.village.Village;
+import com.danum.danum.domain.board.village.VillagePostType;
 import com.danum.danum.domain.member.Member;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Page;
@@ -44,4 +45,7 @@ public interface VillageRepository extends JpaRepository<Village, Long> {
 
     @Query("SELECT v FROM Village v ORDER BY v.view_count DESC")
     List<Village> findPopularVillages(Pageable pageable);
+
+    Page<Village> findByPostType(VillagePostType postType, Pageable pageable);
+
 }
