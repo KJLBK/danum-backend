@@ -104,4 +104,9 @@ public class VillageController {
         Page<VillageViewDto> villages = adminService.getMemberVillages(email, pageable);
         return ResponseEntity.ok(PagedResponseDto.from(villages));
     }
+
+    @GetMapping("/{id}/has-accepted-comment")
+    public ResponseEntity<Boolean> hasAcceptedComment(@PathVariable Long id) {
+        return ResponseEntity.ok(villageService.hasAcceptedComment(id));
+    }
 }

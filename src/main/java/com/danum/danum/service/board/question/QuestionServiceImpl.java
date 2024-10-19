@@ -9,6 +9,7 @@ import com.danum.danum.repository.MemberRepository;
 import com.danum.danum.repository.board.QuestionEmailRepository;
 import com.danum.danum.repository.board.QuestionLikeRepository;
 import com.danum.danum.repository.board.QuestionRepository;
+import com.danum.danum.repository.comment.QuestionCommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +36,8 @@ public class QuestionServiceImpl implements QuestionService{
     private final MemberRepository memberRepository;
 
     private final QuestionLikeRepository questionLikeRepository;
+
+    private final QuestionCommentRepository questionCommentRepository;
 
     @Override
     @Transactional
@@ -136,5 +139,12 @@ public class QuestionServiceImpl implements QuestionService{
                 .stream()
                 .map(QuestionViewDto::from)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean hasAcceptedComment(Long questionId) {
+        return questionCommentRepository.existsByQuestionAndIsAcceptedTrue(questionRepository.findById(questionId)
+                .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION)));
     }
 }

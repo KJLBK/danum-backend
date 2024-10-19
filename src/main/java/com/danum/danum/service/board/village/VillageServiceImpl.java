@@ -12,6 +12,7 @@ import com.danum.danum.repository.MemberRepository;
 import com.danum.danum.repository.board.VillageEmailRepository;
 import com.danum.danum.repository.board.VillageLikeRepository;
 import com.danum.danum.repository.board.VillageRepository;
+import com.danum.danum.repository.comment.VillageCommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,6 +39,8 @@ public class VillageServiceImpl implements VillageService{
     private final VillageLikeRepository villageLikeRepository;
 
     private final MemberRepository memberRepository;
+
+    private final VillageCommentRepository villageCommentRepository;
 
     @Override
     @Transactional
@@ -179,5 +182,10 @@ public class VillageServiceImpl implements VillageService{
         return villagePage.map(this::convertToViewDto);
     }
 
-
+    @Override
+    @Transactional(readOnly = true)
+    public boolean hasAcceptedComment(Long villageId) {
+        return villageCommentRepository.existsByVillageAndIsAcceptedTrue(villageRepository.findById(villageId)
+                .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION)));
+    }
 }

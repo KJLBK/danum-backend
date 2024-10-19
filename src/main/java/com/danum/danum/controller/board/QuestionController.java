@@ -75,4 +75,9 @@ public class QuestionController {
     public ResponseEntity<List<QuestionViewDto>> getMemberQuestions(@PathVariable("email") String email) {
         return ResponseEntity.ok(adminService.getMemberQuestions(email));
     }
+
+    @GetMapping("/{id}/has-accepted-comment")
+    public ResponseEntity<Boolean> hasAcceptedComment(@PathVariable Long id) {
+        return ResponseEntity.ok(questionService.hasAcceptedComment(id));
+    }
 }
