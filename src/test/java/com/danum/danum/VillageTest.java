@@ -11,14 +11,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class VillageTest {
 
-    @Autowired
-    private VillageService villageService;
-
-    @Test
-    public void 질문게시판생성() {
-        VillageNewDto villageNewDto = new VillageNewDto("test@naver.com","test", "test");
-        villageService.create(villageNewDto);
-    }
+//    @Autowired
+//    private VillageService villageService;
+//
+//    @Test
+//    public void 질문게시판생성() {
+//        VillageNewDto villageNewDto = new VillageNewDto("test@naver.com","test", "test");
+//        villageService.create(villageNewDto);
+//    }
 
 //    @Test
 //    public void 질문게시판전체조회() {

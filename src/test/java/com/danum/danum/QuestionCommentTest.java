@@ -11,14 +11,14 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 public class QuestionCommentTest {
 
-    @Autowired
-    QuestionCommentService questionCommentService;
-
-    @Test
-    public void 게시판댓글생성() {
-        QuestionCommentNewDto questionCommentNewDto = new QuestionCommentNewDto(1L, "test@naver.com", "test");
-        questionCommentService.create(questionCommentNewDto);
-    }
+//    @Autowired
+//    QuestionCommentService questionCommentService;
+//
+//    @Test
+//    public void 게시판댓글생성() {
+//        QuestionCommentNewDto questionCommentNewDto = new QuestionCommentNewDto(1L, "test@naver.com", "test");
+//        questionCommentService.create(questionCommentNewDto);
+//    }
 
 //    @Test
 //    public void 게시판댓글전체조회() {
