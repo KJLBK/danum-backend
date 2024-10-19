@@ -32,4 +32,5 @@ public interface VillageService {
 
     Page<VillageViewDto> getVillagesByPostType(VillagePostType postType, Pageable pageable);
 
+    boolean hasAcceptedComment(Long villageId);
 }

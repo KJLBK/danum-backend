@@ -25,4 +25,5 @@ public interface QuestionService {
 
     List<QuestionViewDto> getPopularQuestions(int limit);
 
+    boolean hasAcceptedComment(Long questionId);
 }
