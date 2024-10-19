@@ -1,6 +1,7 @@
 package com.danum.danum.service.notification;
 
 import com.danum.danum.domain.notification.Notification;
+import com.danum.danum.domain.notification.NotificationDto;
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.repository.notification.NotificationRepository;
 import com.danum.danum.repository.MemberRepository;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +23,7 @@ public class NotificationService {
     @Transactional
     public void createNotification(String memberEmail, String content, String link, Notification.NotificationType type) {
         Member member = memberRepository.findById(memberEmail)
-                .orElseThrow(() -> new RuntimeException("Member not found"));
+                .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다"));
 
         Notification notification = Notification.builder()
                 .member(member)
@@ -36,23 +38,26 @@ public class NotificationService {
     }
 
     @Transactional(readOnly = true)
-    public List<Notification> getNotifications(String memberEmail) {
+    public List<NotificationDto> getNotifications(String memberEmail) {
         Member member = memberRepository.findById(memberEmail)
-                .orElseThrow(() -> new RuntimeException("Member not found"));
-        return notificationRepository.findByMemberOrderByCreatedAtDesc(member);
+                .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다"));
+        return notificationRepository.findByMemberOrderByCreatedAtDesc(member)
+                .stream()
+                .map(NotificationDto::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public long getUnreadCount(String memberEmail) {
         Member member = memberRepository.findById(memberEmail)
-                .orElseThrow(() -> new RuntimeException("Member not found"));
+                .orElseThrow(() -> new RuntimeException("회원을 찾을 수 없습니다"));
         return notificationRepository.countByMemberAndIsReadFalse(member);
     }
 
     @Transactional
     public void markAsRead(Long notificationId) {
         Notification notification = notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new RuntimeException("Notification not found"));
+                .orElseThrow(() -> new RuntimeException("알림을 찾을 수 없습니다."));
         notification.markAsRead();
     }
 }
