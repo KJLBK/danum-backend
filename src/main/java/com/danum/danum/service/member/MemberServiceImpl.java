@@ -96,7 +96,10 @@ public class MemberServiceImpl implements MemberService {
         String changePassword = updateDto.getPassword();
         String changePhone = updateDto.getPhone();
         String changeName = updateDto.getName();
-        String changeProfileImageUrl = updateDto.getProfileImageUrl();  // 추가
+        String changeProfileImageUrl = updateDto.getProfileImageUrl();
+        Double changeLatitude = updateDto.getLatitude();
+        Double changeLongitude = updateDto.getLongitude();
+        String changeAddress = updateDto.getAddress();
 
         if (StringUtils.hasText(changePassword)) {
             member.updateUserPassword(
@@ -110,6 +113,12 @@ public class MemberServiceImpl implements MemberService {
         }
         if (StringUtils.hasText(changeProfileImageUrl)) {  // 추가
             member.updateProfileImageUrl(changeProfileImageUrl);
+        }
+        if (changeLatitude != null && changeLongitude != null) {
+            member.updateUserLocation(changeLatitude, changeLongitude);
+        }
+        if (StringUtils.hasText(changeAddress)) {
+            member.updateUserAddress(changeAddress);
         }
 
         return memberRepository.save(member);

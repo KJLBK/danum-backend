@@ -63,6 +63,10 @@ public class Member {
     private Double longitude;
 
     @Getter
+    @Column(name = "address")
+    private String address;
+
+    @Getter
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
@@ -76,6 +80,15 @@ public class Member {
 
     public void updateUserName(String username) {
         this.name = username;
+    }
+
+    public void updateUserAddress(String address) {
+        this.address = address;
+    }
+
+    public void updateUserLocation(Double latitude, Double longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public void updateProfileImageUrl(String profileImageUrl) {

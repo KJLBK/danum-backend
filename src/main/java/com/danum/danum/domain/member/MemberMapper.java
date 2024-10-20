@@ -13,13 +13,13 @@ public class MemberMapper {
                 .name(registerDto.getName())
                 .latitude(registerDto.getLatitude())
                 .longitude(registerDto.getLongitude())
+                .address(registerDto.getAddress())
                 .exp(0)
                 .contribution(0)
                 .role(Role.USER)
                 .joinDateTime(LocalDateTime.now())
                 .profileImageUrl(registerDto.getProfileImageUrl())
                 .build();
-
     }
 
 }
