@@ -19,6 +19,8 @@ public class UpdateDto {
 
     private Double longitude;
 
+    private String address;
+
     private String profileImageUrl;
 
 }
