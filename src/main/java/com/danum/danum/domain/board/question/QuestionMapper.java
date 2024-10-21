@@ -7,6 +7,7 @@ import com.danum.danum.exception.custom.MemberException;
 import com.danum.danum.exception.custom.OpenAiException;
 import com.danum.danum.repository.MemberRepository;
 import com.danum.danum.repository.ai.OpenAiConversationRepository;
+import com.danum.danum.util.AddressParser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,7 @@ public class QuestionMapper {
         }
 
         Member member = optionalMember.get();
+        String addressTag = AddressParser.parseAddress(member.getAddress());
 
         Question.QuestionBuilder count = Question.builder()
                 .member(member)
@@ -37,7 +39,8 @@ public class QuestionMapper {
                 .content(questionNewDto.getContent())
                 .created_at(LocalDateTime.now())
                 .view_count(0L)
-                .like(0L);
+                .like(0L)
+                .addressTag(addressTag);
 
         if(questionNewDto.getCreateId() != null) {
             OpenAiConversation conversation = conversationRepository.findById(questionNewDto.getCreateId())

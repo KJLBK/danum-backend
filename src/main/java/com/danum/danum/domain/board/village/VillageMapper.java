@@ -4,6 +4,7 @@ import com.danum.danum.domain.member.Member;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.custom.MemberException;
 import com.danum.danum.repository.MemberRepository;
+import com.danum.danum.util.AddressParser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +26,7 @@ public class VillageMapper {
         }
 
         Member member = optionalMember.get();
+        String addressTag = AddressParser.parseAddress(member.getAddress());
 
         return Village.builder()
                 .member(member)
@@ -36,6 +38,7 @@ public class VillageMapper {
                 .view_count(0L)
                 .like(0L)
                 .postType(villageNewDto.getPostType())
+                .addressTag(addressTag)
                 .build();
     }
 }

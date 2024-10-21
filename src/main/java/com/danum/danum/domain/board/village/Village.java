@@ -51,6 +51,9 @@ public class Village {
     @Column(name = "post_type")
     private VillagePostType postType;
 
+    @Column(name = "address_tag")
+    private String addressTag;
+
     public void increasedViews() {
         this.view_count++;
     }
@@ -71,6 +74,10 @@ public class Village {
     public void update(String newContent, String newTitle) {
         this.content = newContent;
         this.title = newTitle;
+    }
+
+    public void setAddressTag(String addressTag) {
+        this.addressTag = addressTag;
     }
 
 }

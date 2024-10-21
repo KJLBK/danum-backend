@@ -31,6 +31,8 @@ public class QuestionViewDto {
 
     private Long like;
 
+    private String addressTag;
+
     public static QuestionViewDto from(Question question) {
         return QuestionViewDto.builder()
                 .question_id(question.getId())
@@ -41,6 +43,7 @@ public class QuestionViewDto {
                 .conversation(question.getConversation())
                 .view_count(question.getView_count())
                 .like(question.getLike())
+                .addressTag(question.getAddressTag())
                 .build();
     }
 

@@ -54,6 +54,9 @@ public class Question {
     @Column(name = "question_like")
     private Long like;
 
+    @Column(name = "address_tag")
+    private String addressTag;
+
     public void increasedViews() {
         this.view_count++;
     }
@@ -69,5 +72,9 @@ public class Question {
     public void update(String newContent, String newTitle) {
         this.content = newContent;
         this.title = newTitle;
+    }
+
+    public void setAddressTag(String addressTag) {
+        this.addressTag = addressTag;
     }
 }
