@@ -41,8 +41,8 @@ public class OpenAiServiceImpl implements OpenAiService {
 
         // 프롬프트에 사용자 위치 정보 추가
         Member member = memberService.getMemberByAuthentication();
-        String userLocation = String.format("사용자의 위치: 위도 %f 경도 %f 이며 이걸 기반으로 한국어로 답장해주세요",
-                member.getLatitude(), member.getLongitude());
+        String userLocation = String.format("사용자의 위치: 위도 %f 경도 %f 이며 주소는 %s 입니다. 이걸 기반으로 한국어로 답장해주세요",
+                member.getLatitude(), member.getLongitude(), member.getAddress());
         promptMessage.add(new UserMessage(userLocation));
 
         // 프롬프트 작성 및 api 응답 반환

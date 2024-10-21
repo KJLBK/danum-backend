@@ -30,6 +30,8 @@ public class VillageViewDto {
 
     private VillagePostType postType;
 
+    private String addressTag;
+
     public VillageViewDto toEntity(Village village) {
         return VillageViewDto.builder()
                 .village_id(village.getId())
@@ -40,6 +42,7 @@ public class VillageViewDto {
                 .view_count(village.getView_count())
                 .like(village.getLike())
                 .postType(village.getPostType())
+                .addressTag(village.getAddressTag())
                 .build();
     }
 
