@@ -26,4 +26,6 @@ public interface QuestionService {
     List<QuestionViewDto> getPopularQuestions(int limit);
 
     boolean hasAcceptedComment(Long questionId);
+
+    Page<QuestionViewDto> getQuestionsByRegion(String city, String district, Pageable pageable);
 }

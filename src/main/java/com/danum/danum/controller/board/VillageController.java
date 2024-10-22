@@ -76,26 +76,6 @@ public class VillageController {
         return ResponseEntity.ok(PagedResponseDto.from(villagePage));
     }
 
-    @GetMapping("/by-distance")
-    public ResponseEntity<PagedResponseDto<VillageViewDto>> getVillagesByDistance(
-            @RequestParam double latitude,
-            @RequestParam double longitude,
-            @RequestParam double distance,
-            @PageableDefault(size = 10) Pageable pageable) {
-        Page<VillageViewDto> villages = villageService.getVillagesByDistance(latitude, longitude, distance, pageable);
-        return ResponseEntity.ok(PagedResponseDto.from(villages));
-    }
-
-    @GetMapping("/by-category")
-    public ResponseEntity<PagedResponseDto<VillageViewDto>> getVillagesByCategory(
-            @RequestParam double latitude,
-            @RequestParam double longitude,
-            @RequestParam String category,
-            @PageableDefault(size = 10) Pageable pageable) {
-        Page<VillageViewDto> villages = villageService.getVillagesByCategory(latitude, longitude, category, pageable);
-        return ResponseEntity.ok(PagedResponseDto.from(villages));
-    }
-
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/members/{email}/villages")
     public ResponseEntity<PagedResponseDto<VillageViewDto>> getMemberVillages(
@@ -108,5 +88,13 @@ public class VillageController {
     @GetMapping("/{id}/has-accepted-comment")
     public ResponseEntity<Boolean> hasAcceptedComment(@PathVariable Long id) {
         return ResponseEntity.ok(villageService.hasAcceptedComment(id));
+    }
+
+    @GetMapping("/local")
+    public ResponseEntity<PagedResponseDto<VillageViewDto>> getLocalVillages(
+            @PageableDefault(size = 10) Pageable pageable) {
+        String userEmail = getLoginUser();
+        Page<VillageViewDto> villages = villageService.getLocalVillages(userEmail, pageable);
+        return ResponseEntity.ok(PagedResponseDto.from(villages));
     }
 }
