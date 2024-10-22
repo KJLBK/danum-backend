@@ -13,10 +13,12 @@ import com.danum.danum.repository.board.VillageEmailRepository;
 import com.danum.danum.repository.board.VillageLikeRepository;
 import com.danum.danum.repository.board.VillageRepository;
 import com.danum.danum.repository.comment.VillageCommentRepository;
+import com.danum.danum.util.AddressParser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +43,8 @@ public class VillageServiceImpl implements VillageService{
     private final MemberRepository memberRepository;
 
     private final VillageCommentRepository villageCommentRepository;
+
+    private final AddressParser addressParser;
 
     @Override
     @Transactional
@@ -110,36 +114,6 @@ public class VillageServiceImpl implements VillageService{
         villageRepository.save(village);
     }
 
-    @Override
-    public Page<VillageViewDto> getVillagesByDistance(double latitude, double longitude, double distance, Pageable pageable) {
-        return villageRepository.findVillagesWithinDistance(latitude, longitude, distance, pageable)
-                .map(this::convertToViewDto);
-    }
-
-    @Override
-    public Page<VillageViewDto> getVillagesByCategory(double latitude, double longitude, String category, Pageable pageable) {
-        Page<Village> villages;
-        switch (category) {
-            case "가까운 동네":
-                villages = villageRepository.findVillagesWithinDistance(latitude, longitude, 5, pageable);
-                break;
-            case "중간 거리 동네":
-                villages = villageRepository.findVillagesBetweenDistances(latitude, longitude, 5, 10, pageable);
-                break;
-            case "먼 동네":
-                villages = villageRepository.findVillagesBeyondDistance(latitude, longitude, 10, pageable);
-                break;
-            default:
-                villages = villageRepository.findAll(pageable);
-        }
-        return villages.map(this::convertToViewDto);
-    }
-
-    /**
-     * Village 엔티티를 VillageViewDto로 변환
-     * @param village 변환할 Village 엔티티
-     * @return 변환된 VillageViewDto 객체
-     */
     private VillageViewDto convertToViewDto(Village village) {
         return new VillageViewDto().toEntity(village);
     }
@@ -187,5 +161,16 @@ public class VillageServiceImpl implements VillageService{
     public boolean hasAcceptedComment(Long villageId) {
         return villageCommentRepository.existsByVillageAndIsAcceptedTrue(villageRepository.findById(villageId)
                 .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION)));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<VillageViewDto> getLocalVillages(String userEmail, Pageable pageable) {
+        Member member = memberRepository.findById(userEmail)
+                .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION));
+        String userAddressTag = AddressParser.parseAddress(member.getAddress());
+
+        Page<Village> localVillages = villageRepository.findByAddressTagStartingWith(userAddressTag, pageable);
+        return localVillages.map(this::convertToViewDto);
     }
 }

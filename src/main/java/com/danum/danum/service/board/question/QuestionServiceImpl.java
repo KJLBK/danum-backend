@@ -147,4 +147,42 @@ public class QuestionServiceImpl implements QuestionService{
         return questionCommentRepository.existsByQuestionAndIsAcceptedTrue(questionRepository.findById(questionId)
                 .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION)));
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<QuestionViewDto> getQuestionsByRegion(String city, String district, Pageable pageable) {
+        RegionSearchStrategy strategy = RegionSearchStrategy.getStrategy(city, district);
+        Page<Question> questionPage = strategy.search(questionRepository, city, district, pageable);
+        return questionPage.map(QuestionViewDto::from);
+    }
+}
+
+enum RegionSearchStrategy {
+    ALL {
+        @Override
+        Page<Question> search(QuestionRepository repo, String city, String district, Pageable pageable) {
+            return repo.findAll(pageable);
+        }
+    },
+    CITY {
+        @Override
+        Page<Question> search(QuestionRepository repo, String city, String district, Pageable pageable) {
+            return repo.findByAddressTagStartingWith(city, pageable);
+        }
+    },
+    DISTRICT {
+        @Override
+        Page<Question> search(QuestionRepository repo, String city, String district, Pageable pageable) {
+            String fullRegion = String.join(" ", city, district);
+            return repo.findByAddressTagStartingWith(fullRegion, pageable);
+        }
+    };
+
+    abstract Page<Question> search(QuestionRepository repo, String city, String district, Pageable pageable);
+
+    static RegionSearchStrategy getStrategy(String city, String district) {
+        return Optional.ofNullable(city)
+                .map(c -> Optional.ofNullable(district).map(d -> DISTRICT).orElse(CITY))
+                .orElse(ALL);
+    }
 }

@@ -80,4 +80,13 @@ public class QuestionController {
     public ResponseEntity<Boolean> hasAcceptedComment(@PathVariable Long id) {
         return ResponseEntity.ok(questionService.hasAcceptedComment(id));
     }
+
+    @GetMapping("/region")
+    public ResponseEntity<PagedResponseDto<QuestionViewDto>> getQuestionsByRegion(
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) String district,
+            @PageableDefault(size = 10) Pageable pageable) {
+        Page<QuestionViewDto> questionPage = questionService.getQuestionsByRegion(city, district, pageable);
+        return ResponseEntity.ok(PagedResponseDto.from(questionPage));
+    }
 }

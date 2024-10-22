@@ -20,10 +20,6 @@ public interface VillageService {
 
     void likeStatus(Long id, String email);
 
-    Page<VillageViewDto> getVillagesByDistance(double latitude, double longitude, double distance, Pageable pageable);
-
-    Page<VillageViewDto> getVillagesByCategory(double latitude, double longitude, String category, Pageable pageable);
-
     void deleteVillage(Long id);
 
     void update(VillageUpdateDto villageUpdateDto, String loginUser);
@@ -33,4 +29,7 @@ public interface VillageService {
     Page<VillageViewDto> getVillagesByPostType(VillagePostType postType, Pageable pageable);
 
     boolean hasAcceptedComment(Long villageId);
+
+    Page<VillageViewDto> getLocalVillages(String userEmail, Pageable pageable);
+
 }
