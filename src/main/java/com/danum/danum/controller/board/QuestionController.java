@@ -72,8 +72,11 @@ public class QuestionController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/members/{email}/questions")
-    public ResponseEntity<List<QuestionViewDto>> getMemberQuestions(@PathVariable("email") String email) {
-        return ResponseEntity.ok(adminService.getMemberQuestions(email));
+    public ResponseEntity<PagedResponseDto<QuestionViewDto>> getMemberQuestions(
+            @PathVariable("email") String email,
+            @PageableDefault(size = 10) Pageable pageable) {
+        Page<QuestionViewDto> questions = adminService.getMemberQuestions(email, pageable);
+        return ResponseEntity.ok(PagedResponseDto.from(questions));
     }
 
     @GetMapping("/{id}/has-accepted-comment")
