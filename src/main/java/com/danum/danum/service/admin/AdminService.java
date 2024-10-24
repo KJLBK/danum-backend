@@ -19,12 +19,11 @@ public interface AdminService {
     Member getMemberByEmail(String email);
 
     // 회원의 게시글 및 댓글 조회
-    List<QuestionViewDto> getMemberQuestions(String email);
+    Page<QuestionViewDto> getMemberQuestions(String email, Pageable pageable);
     Page<VillageViewDto> getMemberVillages(String email, Pageable pageable);
     Map<String, List<?>> getMemberComments(String email);
 
-
+    // 댓글 삭제
     void deleteQuestionComment(Long questionId, Long commentId);
     void deleteVillageComment(Long villageId, Long commentId);
-
 }

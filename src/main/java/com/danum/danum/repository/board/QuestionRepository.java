@@ -13,6 +13,7 @@ import java.util.List;
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<Question> findAllByMember(Member member);
+    Page<Question> findPageByMember(Member member, Pageable pageable);
 
     @Query("SELECT q FROM Question q ORDER BY q.view_count DESC")
     List<Question> findPopularQuestions(Pageable pageable);

@@ -16,6 +16,7 @@ import com.danum.danum.repository.board.QuestionRepository;
 import com.danum.danum.repository.board.VillageRepository;
 import com.danum.danum.repository.comment.QuestionCommentRepository;
 import com.danum.danum.repository.comment.VillageCommentRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,25 +30,27 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
 
-    @Autowired
-    private MemberRepository memberRepository;
-    @Autowired
-    private QuestionRepository questionRepository;
-    @Autowired
-    private VillageRepository villageRepository;
-    @Autowired
-    private QuestionCommentRepository questionCommentRepository;
-    @Autowired
-    private VillageCommentRepository villageCommentRepository;
+    private final MemberRepository memberRepository;
+
+    private final QuestionRepository questionRepository;
+
+    private final VillageRepository villageRepository;
+
+    private final QuestionCommentRepository questionCommentRepository;
+
+    private final VillageCommentRepository villageCommentRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<Member> getAllMembers() {
         return memberRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Member getMemberByEmail(String email) {
         return memberRepository.findById(email)
                 .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION));
@@ -55,26 +58,22 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<QuestionViewDto> getMemberQuestions(String email) {
-        Member member = memberRepository.findById(email)
-                .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION));
-
-        return questionRepository.findAllByMember(member).stream()
-                .map(QuestionViewDto::from)
-                .collect(Collectors.toList());
+    public Page<QuestionViewDto> getMemberQuestions(String email, Pageable pageable) {
+        Member member = getMemberByEmail(email);
+        return questionRepository.findPageByMember(member, pageable)
+                .map(QuestionViewDto::from);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<VillageViewDto> getMemberVillages(String email, Pageable pageable) {
-        Member member = memberRepository.findById(email)
-                .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION));
-
+        Member member = getMemberByEmail(email);
         return villageRepository.findAllByMember(member, pageable)
                 .map(village -> new VillageViewDto().toEntity(village));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Map<String, List<?>> getMemberComments(String email) {
         Member member = getMemberByEmail(email);
         Map<String, List<?>> comments = new HashMap<>();
@@ -84,30 +83,30 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
+    @Transactional
     public void deleteQuestionComment(Long questionId, Long commentId) {
-        Question question = questionRepository.findById(questionId)
-                .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
         QuestionComment comment = questionCommentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
 
-        if (!comment.getQuestion().getId().equals(questionId)) {
-            throw new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION);
-        }
-
+        validateCommentBelongsToPost(questionId, comment.getQuestion().getId());
         questionCommentRepository.delete(comment);
     }
 
     @Override
+    @Transactional
     public void deleteVillageComment(Long villageId, Long commentId) {
-        Village village = villageRepository.findById(villageId)
-                .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
         VillageComment comment = villageCommentRepository.findById(commentId)
                 .orElseThrow(() -> new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION));
 
-        if (!comment.getVillage().getId().equals(villageId)) {
-            throw new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION);
-        }
-
+        validateCommentBelongsToPost(villageId, comment.getVillage().getId());
         villageCommentRepository.delete(comment);
+    }
+
+    private void validateCommentBelongsToPost(Long postId, Long commentPostId) {
+        boolean commentBelongsToPost = postId.equals(commentPostId);
+        switch(String.valueOf(!commentBelongsToPost)) {
+            case "true":
+                throw new CommentException(ErrorCode.COMMENT_NOT_FOUND_EXCEPTION);
+        }
     }
 }
