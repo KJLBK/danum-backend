@@ -22,10 +22,10 @@ import java.util.List;
 @RestController
 public class ChatController {
 
-    private RedisPublisher redisPublisher;
-    private ChatRoomRepository chatRoomRepository;
-    private SimpMessageSendingOperations messagingTemplate;
-    private ChatService chatService;
+    private final RedisPublisher redisPublisher;
+    private final ChatRoomRepository chatRoomRepository;
+    private final SimpMessageSendingOperations messagingTemplate;
+    private final ChatService chatService;
 
     @MessageMapping("/chat/message")
     public void message(@Payload ChatMessage message) {
