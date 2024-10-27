@@ -38,15 +38,25 @@ public class Notification {
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private NotificationType type;
+
+    @Column(name = "room_id")
+    private String roomId;
 
     public void markAsRead() {
         this.isRead = true;
     }
 
+    public void updateContent(String newContent) {
+        this.content = newContent;
+        this.createdAt = LocalDateTime.now();  // 시간도 업데이트
+    }
+
     public enum NotificationType {
         QUESTION_COMMENT,
-        VILLAGE_COMMENT
+        VILLAGE_COMMENT,
+        CHAT_MESSAGE,
+        CHAT_ROOM_INVITE
     }
 }

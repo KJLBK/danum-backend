@@ -6,6 +6,7 @@ import com.danum.danum.domain.member.Member;
 import com.danum.danum.repository.notification.NotificationRepository;
 import com.danum.danum.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
@@ -35,6 +37,7 @@ public class NotificationService {
                 .build();
 
         notificationRepository.save(notification);
+        log.info("Notification created: {}", notification.getId());
     }
 
     @Transactional(readOnly = true)
