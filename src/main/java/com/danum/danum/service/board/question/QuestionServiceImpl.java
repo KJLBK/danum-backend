@@ -5,7 +5,7 @@ import com.danum.danum.domain.member.Member;
 import com.danum.danum.exception.ErrorCode;
 import com.danum.danum.exception.custom.BoardException;
 import com.danum.danum.exception.custom.MemberException;
-import com.danum.danum.repository.MemberRepository;
+import com.danum.danum.repository.*;
 import com.danum.danum.repository.board.QuestionEmailRepository;
 import com.danum.danum.repository.board.QuestionLikeRepository;
 import com.danum.danum.repository.board.QuestionRepository;
@@ -17,143 +17,162 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class QuestionServiceImpl implements QuestionService{
+public class QuestionServiceImpl implements QuestionService {
 
     private final QuestionRepository questionRepository;
-
     private final QuestionMapper questionMapper;
-
     private final QuestionEmailRepository questionEmailRepository;
-
     private final MemberRepository memberRepository;
-
     private final QuestionLikeRepository questionLikeRepository;
-
     private final QuestionCommentRepository questionCommentRepository;
 
     @Override
     @Transactional
     public void create(QuestionNewDto questionNewDto) {
-        memberRepository.findById(questionNewDto.getEmail())
-                .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION));
-
+        findMemberByEmail(questionNewDto.getEmail());
         Question question = questionMapper.toEntity(questionNewDto);
-
         questionRepository.save(question);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<QuestionViewDto> viewList(Pageable pageable) {
-        Page<Question> questionPage = questionRepository.findAll(pageable);
-        return questionPage.map(QuestionViewDto::from);
+        return questionRepository.findAll(pageable)
+                .map(QuestionViewDto::from);
     }
 
     @Override
     @Transactional
     public QuestionViewDto view(Long id, String email) {
-        Question question = questionRepository.findById(id)
-                .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
-
-        viewCheck(question, email);
-        return QuestionViewDto.from(question);
-    }
-
-    private void viewCheck(Question question, String email) {
-        Optional<QuestionEmailToken> optionalQuestionEmailToken = questionEmailRepository.findById(question.getId());
-        if (optionalQuestionEmailToken.isPresent() && optionalQuestionEmailToken.get().getEmail().equals(email)) {
-            return;
-        }
-        
-        QuestionEmailToken token = QuestionEmailToken.builder()
-                .id(question.getId())
-                .email(email)
-                .build();
-        question.increasedViews();
-
-        questionRepository.save(question);
-        questionEmailRepository.save(token);
+        Question question = findQuestionById(id);
+        processViewCount(question, email);
+        return convertToViewDto(question);
     }
 
     @Override
+    @Transactional
     public void likeStatus(Long id, String email) {
-        Question question = questionRepository.findById(id)
-                .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
-        Member member = memberRepository.findById(email)
-                .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION));
-
-        Optional<QuestionLike> optionalQuestionLike = questionLikeRepository.findByQuestionIdAndMemberEmail(question, member);
-
-        if (optionalQuestionLike.isPresent()) {
-            question.subLike();
-            questionLikeRepository.delete(optionalQuestionLike.get());
-            questionRepository.save(question);
-            return;
-        }
-
-        QuestionLike questionLike = QuestionLike.builder()
-                .questionId(question)
-                .memberEmail(member)
-                .build();
-        question.addLike();
-        questionLikeRepository.save(questionLike);
-        questionRepository.save(question);
+        Question question = findQuestionById(id);
+        Member member = findMemberByEmail(email);
+        processLikeStatus(question, member);
     }
 
     @Override
     @Transactional
     public void deleteQuestion(Long id) {
-        Question question = questionRepository.findById(id)
-                .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
+        Question question = findQuestionById(id);
         questionRepository.delete(question);
     }
 
     @Override
     @Transactional
     public void update(QuestionUpdateDto questionUpdateDto, String loginUser) {
-        Question question = questionRepository.findById(questionUpdateDto.getId())
-                .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
-        userCheck(question.getMember().getEmail(), loginUser);
-        question.update(questionUpdateDto.getContent(), questionUpdateDto.getTitle());
-
-        questionRepository.save(question);
-    }
-
-    private void userCheck(String author, String loginUser) {
-        if (!author.equals(loginUser)) {
-            throw new BoardException(ErrorCode.BOARD_NOT_AUTHOR_EXCEPTION);
-        }
+        Question question = findQuestionById(questionUpdateDto.getId());
+        validateAuthor(question.getMember().getEmail(), loginUser);
+        updateQuestionContent(question, questionUpdateDto);
     }
 
     @Override
     public List<QuestionViewDto> getPopularQuestions(int limit) {
         return questionRepository.findPopularQuestions(PageRequest.of(0, limit))
                 .stream()
-                .map(QuestionViewDto::from)
+                .map(this::convertToViewDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public boolean hasAcceptedComment(Long questionId) {
-        return questionCommentRepository.existsByQuestionAndIsAcceptedTrue(questionRepository.findById(questionId)
-                .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION)));
+        Question question = findQuestionById(questionId);
+        return questionCommentRepository.existsByQuestionAndIsAcceptedTrue(question);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<QuestionViewDto> getQuestionsByRegion(String city, String district, Pageable pageable) {
         RegionSearchStrategy strategy = RegionSearchStrategy.getStrategy(city, district);
-        Page<Question> questionPage = strategy.search(questionRepository, city, district, pageable);
-        return questionPage.map(QuestionViewDto::from);
+        return strategy.search(questionRepository, city, district, pageable)
+                .map(this::convertToViewDto);
+    }
+
+    // Private helper methods
+    private Question findQuestionById(Long id) {
+        return questionRepository.findById(id)
+                .orElseThrow(() -> new BoardException(ErrorCode.BOARD_NOT_FOUND_EXCEPTION));
+    }
+
+    private Member findMemberByEmail(String email) {
+        return memberRepository.findById(email)
+                .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION));
+    }
+
+    private void processViewCount(Question question, String email) {
+        boolean hasAlreadyViewed = questionEmailRepository.findById(question.getId())
+                .map(token -> token.getEmail().equals(email))
+                .orElse(false);
+
+        if (!hasAlreadyViewed) {
+            saveNewView(question, email);
+        }
+    }
+
+    private void saveNewView(Question question, String email) {
+        QuestionEmailToken token = QuestionEmailToken.builder()
+                .id(question.getId())
+                .email(email)
+                .build();
+
+        question.increasedViews();
+        questionRepository.save(question);
+        questionEmailRepository.save(token);
+    }
+
+    private void processLikeStatus(Question question, Member member) {
+        Optional<QuestionLike> existingLike = questionLikeRepository
+                .findByQuestionIdAndMemberEmail(question, member);
+
+        existingLike.ifPresentOrElse(
+                like -> removeLike(question, like),
+                () -> addLike(question, member)
+        );
+    }
+
+    private void removeLike(Question question, QuestionLike like) {
+        question.subLike();
+        questionLikeRepository.delete(like);
+        questionRepository.save(question);
+    }
+
+    private void addLike(Question question, Member member) {
+        QuestionLike questionLike = QuestionLike.builder()
+                .questionId(question)
+                .memberEmail(member)
+                .build();
+
+        question.addLike();
+        questionLikeRepository.save(questionLike);
+        questionRepository.save(question);
+    }
+
+    private void validateAuthor(String author, String loginUser) {
+        if (!author.equals(loginUser)) {
+            throw new BoardException(ErrorCode.BOARD_NOT_AUTHOR_EXCEPTION);
+        }
+    }
+
+    private void updateQuestionContent(Question question, QuestionUpdateDto updateDto) {
+        question.update(updateDto.getContent(), updateDto.getTitle());
+        questionRepository.save(question);
+    }
+
+    private QuestionViewDto convertToViewDto(Question question) {
+        return QuestionViewDto.from(question);
     }
 }
 
