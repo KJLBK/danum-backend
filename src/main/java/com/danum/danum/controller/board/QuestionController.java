@@ -16,8 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/board/question")
@@ -27,9 +25,8 @@ public class QuestionController {
     private final AdminService adminService;
 
     @PostMapping("/new")
-    public ResponseEntity<?> createQuestionBoard(@RequestBody QuestionNewDto questionNewDto){
+    public ResponseEntity<?> createQuestionBoard(@RequestBody QuestionNewDto questionNewDto) {
         questionService.create(questionNewDto);
-
         return ResponseEntity.ok("게시판 생성 성공");
     }
 
@@ -40,21 +37,21 @@ public class QuestionController {
     }
 
     @GetMapping("/show/{id}")
-    public ResponseEntity<?> getQuestionBoardById(@PathVariable("id") Long id){
-        return ResponseEntity.ok(questionService.view(id, getLoginUser()));
+    public ResponseEntity<?> getQuestionBoardById(@PathVariable("id") Long id) {
+        QuestionViewDto question = questionService.view(id, getCurrentUserEmail());
+        return ResponseEntity.ok(question);
     }
 
     @PostMapping("/like/{id}")
     public ResponseEntity<?> likeStatus(@PathVariable("id") Long id) {
-        questionService.likeStatus(id, getLoginUser());
-
+        questionService.likeStatus(id, getCurrentUserEmail());
         return ResponseEntity.ok("좋아요 관련 성공");
     }
 
     @PutMapping("/update")
     public ResponseEntity<?> updateQuestionBoard(@RequestBody QuestionUpdateDto questionUpdateDto) {
-        questionService.update(questionUpdateDto, getLoginUser());
-
+        validateUpdateRequest(questionUpdateDto);
+        questionService.update(questionUpdateDto, getCurrentUserEmail());
         return ResponseEntity.ok("게시판 수정 성공");
     }
 
@@ -62,12 +59,6 @@ public class QuestionController {
     public ResponseEntity<?> deleteQuestion(@PathVariable Long id) {
         questionService.deleteQuestion(id);
         return ResponseEntity.ok("질문이 삭제되었습니다.");
-    }
-
-    private String getLoginUser(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        return authentication.getName();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -91,5 +82,16 @@ public class QuestionController {
             @PageableDefault(size = 10) Pageable pageable) {
         Page<QuestionViewDto> questionPage = questionService.getQuestionsByRegion(city, district, pageable);
         return ResponseEntity.ok(PagedResponseDto.from(questionPage));
+    }
+
+    private String getCurrentUserEmail() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
+    }
+
+    private void validateUpdateRequest(QuestionUpdateDto updateDto) {
+        if (updateDto == null || updateDto.getId() == null) {
+            throw new IllegalArgumentException("올바르지 않은 수정 요청입니다.");
+        }
     }
 }
