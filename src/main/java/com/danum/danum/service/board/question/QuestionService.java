@@ -28,4 +28,6 @@ public interface QuestionService {
     boolean hasAcceptedComment(Long questionId);
 
     Page<QuestionViewDto> getQuestionsByRegion(String city, String district, Pageable pageable);
+
+    Page<QuestionViewDto> searchQuestions(String keyword, Pageable pageable);
 }

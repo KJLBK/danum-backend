@@ -46,8 +46,15 @@ public class VillageServiceImpl implements VillageService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<VillageViewDto> searchVillages(String keyword, Pageable pageable) {
+        return villageRepository.searchByKeyword(keyword, pageable)
+                .map(this::convertToViewDto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<VillageViewDto> viewList(Pageable pageable) {
-        return villageRepository.findAll(pageable)
+        return villageRepository.findAllByOrderByCreatedAtDesc(pageable)
                 .map(this::convertToViewDto);
     }
 

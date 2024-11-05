@@ -1,6 +1,7 @@
 package com.danum.danum.domain.board.village;
 
 import com.danum.danum.domain.member.AuthorDto;
+import com.danum.danum.repository.PostDateComparable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class VillageViewDto {
+public class VillageViewDto implements PostDateComparable {
 
     private Long village_id;
 

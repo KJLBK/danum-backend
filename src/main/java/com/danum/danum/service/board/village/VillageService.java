@@ -32,4 +32,5 @@ public interface VillageService {
 
     Page<VillageViewDto> getLocalVillages(String userEmail, Pageable pageable);
 
+    Page<VillageViewDto> searchVillages(String keyword, Pageable pageable);
 }

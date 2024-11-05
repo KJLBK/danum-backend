@@ -2,6 +2,7 @@ package com.danum.danum.domain.board.question;
 
 import com.danum.danum.domain.member.AuthorDto;
 import com.danum.danum.domain.openai.OpenAiConversation;
+import com.danum.danum.repository.PostDateComparable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class QuestionViewDto {
+public class QuestionViewDto implements PostDateComparable {
 
     private Long question_id;
 
