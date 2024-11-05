@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface QuestionService {
 
-    void create(QuestionNewDto questionNewDto);
+    QuestionViewDto create(QuestionNewDto questionNewDto);
 
     Page<QuestionViewDto> viewList(Pageable pageable);
 

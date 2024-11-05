@@ -24,19 +24,22 @@ public class OpenAiConversationServiceImpl implements OpenAiConversationService 
     }
 
     @Override
+    @Transactional
     public OpenAiConversation loadProgressingConversation(final Member member) {
-        List<OpenAiConversation> conversationList = openAiConversationRepository.findByMemberAndStatus(member,
-                OpenAiConversationStatus.PROCESSING);
+        List<OpenAiConversation> conversationList = openAiConversationRepository.findByMemberAndStatus(
+                member, OpenAiConversationStatus.PROCESSING);
 
-        if (conversationList.isEmpty()) {
-            return generateConversation(member);
+        // 진행 중인 대화가 있으면 모두 종료
+        for (OpenAiConversation existingConversation : conversationList) {
+            existingConversation.conversationClose();
+            openAiConversationRepository.save(existingConversation);
         }
 
-        if (conversationList.size() > 1) {
-            throw new OpenAiException(ErrorCode.MULTIPLE_PROCESSING_MESSAGE_EXCEPTION);
-        }
-
-        return conversationList.get(0);
+        // 새로운 대화 생성
+        return openAiConversationRepository.save(OpenAiConversation.builder()
+                .member(member)
+                .status(OpenAiConversationStatus.PROCESSING)
+                .build());
     }
 
     @Override
