@@ -10,7 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -21,4 +20,10 @@ public interface VillageRepository extends JpaRepository<Village, Long> {
 
     @Query("SELECT v FROM Village v ORDER BY v.view_count DESC")
     List<Village> findPopularVillages(Pageable pageable);
+
+    @Query("SELECT v FROM Village v ORDER BY v.created_at DESC")
+    Page<Village> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+    @Query("SELECT v FROM Village v WHERE v.title LIKE %:keyword% OR v.content LIKE %:keyword% ORDER BY v.created_at DESC")
+    Page<Village> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
 }

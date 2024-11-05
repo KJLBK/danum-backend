@@ -42,8 +42,15 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<QuestionViewDto> searchQuestions(String keyword, Pageable pageable) {
+        return questionRepository.searchByKeyword(keyword, pageable)
+                .map(QuestionViewDto::from);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<QuestionViewDto> viewList(Pageable pageable) {
-        return questionRepository.findAll(pageable)
+        return questionRepository.findAllByOrderByCreatedAtDesc(pageable)
                 .map(QuestionViewDto::from);
     }
 

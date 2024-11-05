@@ -1,25 +1,28 @@
-package com.danum.danum.controller;
+package com.danum.danum.controller.board;
 
+import com.danum.danum.domain.board.page.PagedResponseDto;
 import com.danum.danum.domain.board.question.QuestionViewDto;
 import com.danum.danum.domain.board.village.VillageViewDto;
-import com.danum.danum.domain.notification.Notification;
 import com.danum.danum.domain.notification.NotificationDto;
+import com.danum.danum.repository.PostDateComparable;
 import com.danum.danum.service.board.question.QuestionService;
 import com.danum.danum.service.board.village.VillageService;
 import com.danum.danum.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequiredArgsConstructor
@@ -33,17 +36,40 @@ public class MainPageController {
     private Map<String, List<?>> cachedPopularPosts = new HashMap<>();
 
     @GetMapping("/recent-posts")
-    public ResponseEntity<Map<String, List<?>>> getRecentPosts() {
-        PageRequest pageRequest = PageRequest.of(0, 5); // 첫 페이지, 5개 항목
+    public ResponseEntity<PagedResponseDto<Object>> getRecentPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        PageRequest pageRequest = PageRequest.of(page, size);
 
-        List<QuestionViewDto> recentQuestions = questionService.viewList(pageRequest).getContent();
-        List<VillageViewDto> recentVillages = villageService.viewList(pageRequest).getContent();
+        Page<QuestionViewDto> questionPage = questionService.viewList(pageRequest);
+        Page<VillageViewDto> villagePage = villageService.viewList(pageRequest);
 
-        Map<String, List<?>> response = new HashMap<>();
-        response.put("recentQuestions", recentQuestions);
-        response.put("recentVillages", recentVillages);
+        List<QuestionViewDto> allQuestions = questionService.viewList(PageRequest.of(0, Integer.MAX_VALUE)).getContent();
+        List<VillageViewDto> allVillages = villageService.viewList(PageRequest.of(0, Integer.MAX_VALUE)).getContent();
 
-        return ResponseEntity.ok(response);
+        List<Object> allPosts = Stream.concat(
+                allQuestions.stream(),
+                allVillages.stream()
+        ).sorted(Comparator.comparing(
+                post -> ((PostDateComparable) post).getCreated_at()
+        ).reversed()).collect(Collectors.toList());
+
+        int start = page * size;
+        int end = Math.min(start + size, allPosts.size());
+        List<Object> pagedPosts = allPosts.subList(start, end);
+
+        long totalElements = allPosts.size();
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+
+        return ResponseEntity.ok(PagedResponseDto.builder()
+                .content(pagedPosts)
+                .pageNumber(page)
+                .pageSize(size)
+                .totalElements(totalElements)
+                .totalPages(totalPages)
+                .last(page >= totalPages - 1)
+                .build());
     }
 
     @GetMapping("/popular-posts")
@@ -82,5 +108,42 @@ public class MainPageController {
     public ResponseEntity<Void> markNotificationAsRead(@PathVariable Long notificationId) {
         notificationService.markAsRead(notificationId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<PagedResponseDto<Object>> searchPosts(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        Page<QuestionViewDto> questionPage = questionService.searchQuestions(keyword, pageRequest);
+        Page<VillageViewDto> villagePage = villageService.searchVillages(keyword, pageRequest);
+
+        List<Object> combinedPosts = Stream.concat(
+                        questionPage.getContent().stream(),
+                        villagePage.getContent().stream()
+                )
+                .sorted(Comparator.comparing(
+                        post -> ((PostDateComparable) post).getCreated_at()
+                ).reversed())
+                .collect(Collectors.toList());
+
+        int start = page * size;
+        int end = Math.min(start + size, combinedPosts.size());
+        List<Object> pagedPosts = combinedPosts.subList(start, end);
+
+        long totalElements = questionPage.getTotalElements() + villagePage.getTotalElements();
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+
+        return ResponseEntity.ok(PagedResponseDto.builder()
+                .content(pagedPosts)
+                .pageNumber(page)
+                .pageSize(size)
+                .totalElements(totalElements)
+                .totalPages(totalPages)
+                .last(page >= totalPages - 1)
+                .build());
     }
 }
