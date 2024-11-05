@@ -17,4 +17,11 @@ public class QuestionNewDto {
 
     private Long createId;
 
+    public void setCreateId(Long createId) {
+        this.createId = createId;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 }

@@ -34,10 +34,11 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     @Transactional
-    public void create(QuestionNewDto questionNewDto) {
+    public QuestionViewDto create(QuestionNewDto questionNewDto) {
         findMemberByEmail(questionNewDto.getEmail());
         Question question = questionMapper.toEntity(questionNewDto);
-        questionRepository.save(question);
+        Question savedQuestion = questionRepository.save(question);
+        return QuestionViewDto.from(savedQuestion);
     }
 
     @Override

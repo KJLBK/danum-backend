@@ -57,6 +57,15 @@ public class Question {
     @Column(name = "address_tag")
     private String addressTag;
 
+    // ai 답변을 저장할 필드 추가
+    @Column(name = "ai_response", columnDefinition = "TEXT")
+    private String aiResponse;
+
+    // ai 답변을 설정하는 메서드 추가
+    public void setAiResponse(String aiResponse) {
+        this.aiResponse = aiResponse;
+    }
+
     public void increasedViews() {
         this.view_count++;
     }

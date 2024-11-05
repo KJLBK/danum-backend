@@ -34,8 +34,10 @@ public class QuestionViewDto implements PostDateComparable {
 
     private String addressTag;
 
+    private Long createId;
+
     public static QuestionViewDto from(Question question) {
-        return QuestionViewDto.builder()
+        QuestionViewDtoBuilder builder = QuestionViewDto.builder()
                 .question_id(question.getId())
                 .title(question.getTitle())
                 .content(question.getContent())
@@ -44,8 +46,14 @@ public class QuestionViewDto implements PostDateComparable {
                 .conversation(question.getConversation())
                 .view_count(question.getView_count())
                 .like(question.getLike())
-                .addressTag(question.getAddressTag())
-                .build();
+                .addressTag(question.getAddressTag());
+
+        OpenAiConversation conversation = question.getConversation();
+        if (conversation != null) {
+            builder.createId(conversation.getCreateId());
+        }
+
+        return builder.build();
     }
 
 }
