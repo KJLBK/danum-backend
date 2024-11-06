@@ -206,9 +206,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public String getProfileImageUrl(String email) {
-        Member member = memberRepository.findById(email)
+        return memberRepository.findById(email)
+                .map(Member::getProfileImageUrl)
                 .orElseThrow(() -> new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION));
-        return member.getProfileImageUrl();
     }
 
     @Override
