@@ -109,36 +109,37 @@ public class MainPageController {
         notificationService.markAsRead(notificationId);
         return ResponseEntity.ok().build();
     }
-
     @GetMapping("/search")
     public ResponseEntity<PagedResponseDto<Object>> searchPosts(
             @RequestParam String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        PageRequest pageRequest = PageRequest.of(page, size);
+        Page<QuestionViewDto> allQuestions = questionService.searchQuestions(keyword, PageRequest.of(0, Integer.MAX_VALUE));
+        Page<VillageViewDto> allVillages = villageService.searchVillages(keyword, PageRequest.of(0, Integer.MAX_VALUE));
 
-        Page<QuestionViewDto> questionPage = questionService.searchQuestions(keyword, pageRequest);
-        Page<VillageViewDto> villagePage = villageService.searchVillages(keyword, pageRequest);
-
-        List<Object> combinedPosts = Stream.concat(
-                        questionPage.getContent().stream(),
-                        villagePage.getContent().stream()
+        List<Object> allPosts = Stream.concat(
+                        allQuestions.getContent().stream(),
+                        allVillages.getContent().stream()
                 )
                 .sorted(Comparator.comparing(
                         post -> ((PostDateComparable) post).getCreated_at()
                 ).reversed())
                 .collect(Collectors.toList());
 
-        int start = page * size;
-        int end = Math.min(start + size, combinedPosts.size());
-        List<Object> pagedPosts = combinedPosts.subList(start, end);
-
-        long totalElements = questionPage.getTotalElements() + villagePage.getTotalElements();
+        long totalElements = allPosts.size();
         int totalPages = (int) Math.ceil((double) totalElements / size);
 
+        if (page >= totalPages && totalElements > 0) {
+            page = totalPages - 1;
+        }
+
+        int start = page * size;
+        int end = Math.min(start + size, allPosts.size());
+        List<Object> pagedContent = allPosts.subList(start, end);
+
         return ResponseEntity.ok(PagedResponseDto.builder()
-                .content(pagedPosts)
+                .content(pagedContent)
                 .pageNumber(page)
                 .pageSize(size)
                 .totalElements(totalElements)
