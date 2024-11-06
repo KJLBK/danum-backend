@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -25,6 +26,12 @@ public class MemberController {
     @PostMapping("/join")
     public ResponseEntity<?> register(@RequestBody RegisterDto registerDto) {
         Member member = memberService.join(registerDto);
+        return ResponseEntity.ok(member);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<Member> getMyInfo(Authentication authentication) {
+        Member member = memberService.getMemberByAuthentication();
         return ResponseEntity.ok(member);
     }
 
@@ -46,12 +53,14 @@ public class MemberController {
         return ResponseEntity.ok("회원탈퇴에 성공하였습니다.");
     }
 
-
     @GetMapping("/profile-image")
     public ResponseEntity<String> getProfileImage(Authentication authentication) {
-        String email = authentication.getName();
-        String profileImageUrl = memberService.getProfileImageUrl(email);
-        return ResponseEntity.ok(profileImageUrl);
+        return ResponseEntity.ok(
+                Optional.ofNullable(authentication)
+                        .map(Authentication::getName)
+                        .map(memberService::getProfileImageUrl)
+                        .orElse(null)
+        );
     }
 
     @PreAuthorize("hasRole('ADMIN')")
