@@ -6,12 +6,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
 import java.util.List;
 
 @Slf4j
@@ -22,9 +24,18 @@ public class ChatController {
     private final SimpMessageSendingOperations messagingTemplate;
 
     @MessageMapping("/chat/message")
-    public void message(@Payload ChatMessage message) {
+    public void message(@Payload ChatMessage message, SimpMessageHeaderAccessor headerAccessor) {
         try {
-            chatService.processMessage(message);
+            Principal user = headerAccessor.getUser();
+            if (user != null) {
+                String sender = user.getName();
+                log.debug("Processing message from authenticated user: {}", sender);
+                message.setSender(sender);
+                chatService.processMessage(message);
+            } else {
+                log.error("No authentication found in WebSocket session");
+                throw new IllegalArgumentException("User not authenticated");
+            }
         } catch (IllegalArgumentException e) {
             log.error("Failed to process message: {}", e.getMessage());
         }
