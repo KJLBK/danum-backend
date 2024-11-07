@@ -85,16 +85,42 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public void processMessage(ChatMessage message) {
-        ChatRoom chatRoom = validateAndGetChatRoom(message.getRoomId(), message.getSender());
+        log.debug("Processing message - RoomId: {}, Sender: {}, Type: {}",
+                message.getRoomId(), message.getSender(), message.getType());
 
-        handleEnterMessage(message);
-        publishMessage(message);
-        saveChatMessage(message);
+        try {
+            // 채팅방 정보 조회
+            ChatRoom chatRoom = chatRoomRepository.findRoomById(message.getRoomId());
+            log.debug("Found chatRoom: {}", chatRoom);
 
-        // ENTER 타입이 아닌 경우에만 알림 생성
-        if (!ChatMessage.MessageType.ENTER.equals(message.getType())) {
-            createMessageNotification(message, chatRoom);
+            // 채팅방 참여자 목록 조회
+            Set<String> usersInRoom = chatRoomRepository.getUsersInRoom(message.getRoomId());
+            log.debug("Users in room: {}", usersInRoom);
+
+            if (!usersInRoom.contains(message.getSender())) {
+                log.error("User {} is not in the room participants list: {}",
+                        message.getSender(), usersInRoom);
+                throw new IllegalArgumentException("User not authorized for this chat room");
+            }
+
+            handleEnterMessage(message);
+            publishMessage(message);
+            saveChatMessage(message);
+
+            if (!ChatMessage.MessageType.ENTER.equals(message.getType())) {
+                createMessageNotification(message, chatRoom);
+            }
+        } catch (Exception e) {
+            log.error("Error processing message: ", e);
+            throw e;
         }
+    }
+
+    private boolean isUserAuthorizedForRoom(String userId, String roomId) {
+        Set<String> usersInRoom = chatRoomRepository.getUsersInRoom(roomId);
+        log.debug("Checking authorization - User: {}, Room: {}, Users in room: {}",
+                userId, roomId, usersInRoom);
+        return usersInRoom.contains(userId);
     }
 
     @Override
@@ -117,8 +143,12 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public void enterChatRoom(String roomId) {
-        log.info("User entering chat room: {}", roomId);
+        log.debug("Entering chat room: {}", roomId);
+        ChatRoom room = chatRoomRepository.findRoomById(roomId);
+        log.debug("Found room: {}", room);
+
         chatRoomRepository.enterChatRoom(roomId);
+        log.debug("Successfully entered chat room");
     }
 
     @Override
@@ -132,10 +162,12 @@ public class ChatServiceImpl implements ChatService {
             throw new IllegalArgumentException("Chat room not found");
         }
 
-        if (room.isOneToOne() && !room.isValidOneToOneParticipant(userId)) {
-            throw new IllegalArgumentException("User not authorized for this chat room");
+        if (room.isOneToOne()) {
+            Set<String> participants = chatRoomRepository.getUsersInRoom(roomId);
+            if (!participants.contains(userId)) {
+                throw new IllegalArgumentException("User not authorized for this chat room");
+            }
         }
-
         return room;
     }
 

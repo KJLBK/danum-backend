@@ -26,12 +26,12 @@ public class ChatRoomController {
         return "/chat/room";
     }
 
-    @GetMapping("/rooms")
+    @GetMapping("/rooms") // 사용안하는 api
     public List<ChatRoom> rooms(Authentication authentication) {
         return chatService.findRoomsByUserId(authentication.getName());
     }
 
-    @PostMapping("/room")
+    @PostMapping("/room") // 사용 X
     public ChatRoom createRoom(@RequestBody String name, Authentication authentication) {
         return chatService.createChatRoom(name, authentication.getName());
     }
