@@ -2,6 +2,9 @@ package com.danum.danum.service.chat;
 
 import com.danum.danum.domain.chat.ChatMessage;
 import com.danum.danum.domain.chat.ChatRoom;
+import com.danum.danum.domain.chat.dto.ChatPartnerInfo;
+import com.danum.danum.domain.chat.dto.MessageInfo;
+import com.danum.danum.domain.chat.dto.RecentChatDto;
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.domain.notification.Notification;
 import com.danum.danum.repository.ChatRoomRepository;
@@ -14,9 +17,11 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -88,32 +93,28 @@ public class ChatServiceImpl implements ChatService {
         log.debug("Processing message - RoomId: {}, Sender: {}, Type: {}",
                 message.getRoomId(), message.getSender(), message.getType());
 
-        try {
-            // 채팅방 정보 조회
-            ChatRoom chatRoom = chatRoomRepository.findRoomById(message.getRoomId());
-            log.debug("Found chatRoom: {}", chatRoom);
+        ChatRoom chatRoom = Optional.ofNullable(chatRoomRepository.findRoomById(message.getRoomId()))
+                .orElseThrow(() -> new RuntimeException("Chat room not found"));
 
-            // 채팅방 참여자 목록 조회
-            Set<String> usersInRoom = chatRoomRepository.getUsersInRoom(message.getRoomId());
-            log.debug("Users in room: {}", usersInRoom);
+        Set<String> usersInRoom = chatRoomRepository.getUsersInRoom(message.getRoomId());
 
-            if (!usersInRoom.contains(message.getSender())) {
-                log.error("User {} is not in the room participants list: {}",
-                        message.getSender(), usersInRoom);
-                throw new IllegalArgumentException("User not authorized for this chat room");
-            }
+        Optional.of(message.getSender())
+                .filter(usersInRoom::contains)
+                .orElseThrow(() -> new IllegalArgumentException("User not authorized for this chat room"));
 
-            handleEnterMessage(message);
-            publishMessage(message);
-            saveChatMessage(message);
+        Optional.of(message)
+                .filter(msg -> msg.getType() == ChatMessage.MessageType.ENTER)
+                .ifPresent(msg -> {
+                    chatRoomRepository.enterChatRoom(msg.getRoomId());
+                    msg.setMessage(msg.getSender() + "님이 입장하셨습니다.");
+                });
 
-            if (!ChatMessage.MessageType.ENTER.equals(message.getType())) {
-                createMessageNotification(message, chatRoom);
-            }
-        } catch (Exception e) {
-            log.error("Error processing message: ", e);
-            throw e;
-        }
+        publishMessage(message);
+        chatRoomRepository.saveChatMessage(message);
+
+        Optional.of(message)
+                .filter(msg -> msg.getType() != ChatMessage.MessageType.ENTER)
+                .ifPresent(msg -> createMessageNotification(msg, chatRoom));
     }
 
     private boolean isUserAuthorizedForRoom(String userId, String roomId) {
@@ -185,7 +186,8 @@ public class ChatServiceImpl implements ChatService {
     }
 
     private void publishMessage(ChatMessage message) {
-        redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()), message);
+        Optional.of(chatRoomRepository.getTopic(message.getRoomId()))
+                .ifPresent(topic -> redisPublisher.publish(topic, message));
     }
 
     private void createMessageNotification(ChatMessage message, ChatRoom chatRoom) {
@@ -254,5 +256,50 @@ public class ChatServiceImpl implements ChatService {
             return String.format("%s로부터 새 메시지가 도착했습니다.", message.getSender());
         }
         return String.format("[%s] 새 메시지가 도착했습니다.", chatRoom.getName());
+    }
+
+    public List<RecentChatDto> getRecentChatsForUser(String userEmail, int limit) {
+        return findRoomsByUserId(userEmail).stream()
+                .map(room -> buildRecentChatDto(room, userEmail))
+                .sorted(Comparator.comparing(RecentChatDto::getLastMessageTime, Comparator.nullsLast(Comparator.reverseOrder())))
+                .limit(limit)
+                .collect(Collectors.toList());
+    }
+
+    private RecentChatDto buildRecentChatDto(ChatRoom room, String userEmail) {
+        return RecentChatDto.builder()
+                .roomId(room.getRoomId())
+                .roomName(room.getName())
+                .isOneToOne(room.isOneToOne())
+                .lastMessageInfo(getLastMessageInfo(room.getRoomId()))
+                .chatPartnerInfo(getChatPartnerInfo(room, userEmail))
+                .build();
+    }
+
+    private MessageInfo getLastMessageInfo(String roomId) {
+        return Optional.ofNullable(getRoomMessages(roomId))
+                .filter(messages -> !messages.isEmpty())
+                .map(messages -> messages.get(messages.size() - 1))
+                .map(message -> MessageInfo.builder()
+                        .content(message.getMessage())
+                        .timestamp(message.getTimestamp())
+                        .build())
+                .orElse(MessageInfo.empty());
+    }
+
+    private ChatPartnerInfo getChatPartnerInfo(ChatRoom room, String userEmail) {
+        return Optional.of(room)
+                .filter(ChatRoom::isOneToOne)
+                .map(r -> r.getParticipants().stream()
+                        .filter(participantId -> !participantId.equals(userEmail))
+                        .findFirst()
+                        .flatMap(memberRepository::findById)
+                        .map(partner -> ChatPartnerInfo.builder()
+                                .email(partner.getEmail())
+                                .name(partner.getName())
+                                .profileImageUrl(partner.getProfileImageUrl())
+                                .build())
+                        .orElse(ChatPartnerInfo.empty()))
+                .orElse(ChatPartnerInfo.empty());
     }
 }

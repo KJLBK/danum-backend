@@ -2,6 +2,7 @@ package com.danum.danum.service.chat;
 
 import com.danum.danum.domain.chat.ChatMessage;
 import com.danum.danum.domain.chat.ChatRoom;
+import com.danum.danum.domain.chat.dto.RecentChatDto;
 import org.springframework.data.redis.listener.ChannelTopic;
 import java.util.List;
 import java.util.Set;
@@ -21,6 +22,7 @@ public interface ChatService {
     List<ChatMessage> getRoomMessages(String roomId);
     List<ChatMessage> getRecentMessages(String email);
     void processMessage(ChatMessage message);
+    List<RecentChatDto> getRecentChatsForUser(String userEmail, int limit);
 
     // 1:1 채팅
     ChatRoom createOneToOneChatRoom(String currentUserId, String targetUserId, String name);

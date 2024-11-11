@@ -3,10 +3,12 @@ package com.danum.danum.controller.board;
 import com.danum.danum.domain.board.page.PagedResponseDto;
 import com.danum.danum.domain.board.question.QuestionViewDto;
 import com.danum.danum.domain.board.village.VillageViewDto;
+import com.danum.danum.domain.chat.dto.RecentChatDto;
 import com.danum.danum.domain.notification.NotificationDto;
 import com.danum.danum.repository.PostDateComparable;
 import com.danum.danum.service.board.question.QuestionService;
 import com.danum.danum.service.board.village.VillageService;
+import com.danum.danum.service.chat.ChatService;
 import com.danum.danum.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -32,6 +34,7 @@ public class MainPageController {
     private final QuestionService questionService;
     private final VillageService villageService;
     private final NotificationService notificationService;
+    private final ChatService chatService;
 
     private Map<String, List<?>> cachedPopularPosts = new HashMap<>();
 
@@ -146,5 +149,12 @@ public class MainPageController {
                 .totalPages(totalPages)
                 .last(page >= totalPages - 1)
                 .build());
+    }
+
+    @GetMapping("/recent-chats")
+    public ResponseEntity<List<RecentChatDto>> getRecentChats(Authentication authentication) {
+        String userEmail = authentication.getName();
+        List<RecentChatDto> recentChats = chatService.getRecentChatsForUser(userEmail, 5);
+        return ResponseEntity.ok(recentChats);
     }
 }

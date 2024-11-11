@@ -17,6 +17,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Repository
@@ -99,64 +100,77 @@ public class RedisChatRoomRepository implements ChatRoomRepository {
 
     @Override
     public void enterChatRoom(String roomId) {
-        ChannelTopic topic = topics.get(roomId);
-        if (topic == null) {
-            topic = new ChannelTopic(roomId);
-            redisMessageListener.addMessageListener(redisSubscriber, topic);
-            topics.put(roomId, topic);
-        }
+        ChannelTopic existingTopic = topics.get(roomId);
+        Optional.ofNullable(existingTopic)
+                .map(Collections::singleton)
+                .ifPresent(topic -> redisMessageListener.removeMessageListener(redisSubscriber, topic));
+
+        ChannelTopic newTopic = new ChannelTopic(roomId);
+        redisMessageListener.addMessageListener(redisSubscriber, newTopic);
+        topics.put(roomId, newTopic);
+        log.debug("Chat room listener registered for room: {}", roomId);
     }
 
     @Override
     public ChannelTopic getTopic(String roomId) {
-        return topics.computeIfAbsent(roomId, k -> {
-            ChannelTopic topic = new ChannelTopic(roomId);
-            redisMessageListener.addMessageListener(redisSubscriber, topic);
-            return topic;
+        return topics.computeIfPresent(roomId, (key, existingTopic) -> {
+            redisMessageListener.removeMessageListener(redisSubscriber, Collections.singleton(existingTopic));
+            ChannelTopic newTopic = new ChannelTopic(roomId);
+            redisMessageListener.addMessageListener(redisSubscriber, newTopic);
+            return newTopic;
         });
     }
 
     @Override
     public void saveChatMessage(ChatMessage message) {
-        if (message.getTimestamp() == null) {
-            message.setTimestamp(LocalDateTime.now());
-        }
-
+        String key = getChatMessagesKey(message.getRoomId());
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatMessage.class));
-        redisTemplate.opsForList().rightPush(getChatMessagesKey(message.getRoomId()), message);
 
-        log.info("Saved chat message: {}", message);
+        Optional.ofNullable(message.getTimestamp())
+                .orElseGet(() -> {
+                    message.setTimestamp(LocalDateTime.now());
+                    return message.getTimestamp();
+                });
+
+        List<Object> existingMessages = redisTemplate.opsForList().range(key, 0, -1);
+        boolean shouldSaveMessage = existingMessages.stream()
+                .map(msg -> (ChatMessage) msg)
+                .noneMatch(existing -> isSameMessage(existing, message));
+
+        Optional.of(shouldSaveMessage)
+                .filter(Boolean::booleanValue)
+                .ifPresent(save -> {
+                    redisTemplate.opsForList().rightPush(key, message);
+                    log.debug("Chat message saved: {}", message);
+                });
+    }
+
+    private boolean isSameMessage(ChatMessage msg1, ChatMessage msg2) {
+        return Stream.of(
+                msg1.getMessage().equals(msg2.getMessage()),
+                msg1.getSender().equals(msg2.getSender()),
+                msg1.getType() == msg2.getType(),
+                Objects.equals(msg1.getTimestamp(), msg2.getTimestamp())
+        ).allMatch(Boolean::booleanValue);
     }
 
     @Override
     public List<ChatMessage> getMessages(String roomId) {
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatMessage.class));
-        List<Object> messages = redisTemplate.opsForList().range(getChatMessagesKey(roomId), 0, -1);
-        return messages.stream()
+        return redisTemplate.opsForList().range(getChatMessagesKey(roomId), 0, -1).stream()
                 .map(msg -> (ChatMessage) msg)
+                .distinct()
+                .sorted(Comparator.comparing(ChatMessage::getTimestamp))
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<ChatMessage> getRecentMessages(String email) {
-        Set<String> userRooms = getUserRooms(email);
-        return userRooms.stream()
-                .map(roomId -> {
-                    List<ChatMessage> messages = getMessages(roomId);
-                    if (!messages.isEmpty()) {
-                        return messages.get(messages.size() - 1);
-                    }
-                    return null;
-                })
-                .filter(Objects::nonNull)
-                .sorted((m1, m2) -> {
-                    LocalDateTime t1 = m1.getTimestamp();
-                    LocalDateTime t2 = m2.getTimestamp();
-                    if (t1 == null && t2 == null) return 0;
-                    if (t1 == null) return 1;
-                    if (t2 == null) return -1;
-                    return t2.compareTo(t1);
-                })
+        return getUserRooms(email).stream()
+                .map(this::getMessages)
+                .filter(messages -> !messages.isEmpty())
+                .map(messages -> messages.get(messages.size() - 1))
+                .sorted(Comparator.comparing(ChatMessage::getTimestamp).reversed())
                 .collect(Collectors.toList());
     }
 
@@ -197,6 +211,6 @@ public class RedisChatRoomRepository implements ChatRoomRepository {
     }
 
     private String getChatMessagesKey(String roomId) {
-        return CHAT_MESSAGES + "_" + roomId;
+        return String.join("_", CHAT_MESSAGES, roomId);
     }
 }
