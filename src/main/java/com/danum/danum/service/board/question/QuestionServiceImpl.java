@@ -52,7 +52,11 @@ public class QuestionServiceImpl implements QuestionService {
     @Transactional(readOnly = true)
     public Page<QuestionViewDto> viewList(Pageable pageable) {
         return questionRepository.findAllByOrderByCreatedAtDesc(pageable)
-                .map(QuestionViewDto::from);
+                .map(question -> {
+                    boolean hasAccepted = questionCommentRepository.existsByQuestionAndIsAcceptedTrue(question);
+                    question.setHasAcceptedComment(hasAccepted);
+                    return QuestionViewDto.from(question);
+                });
     }
 
     @Transactional(readOnly = true)
