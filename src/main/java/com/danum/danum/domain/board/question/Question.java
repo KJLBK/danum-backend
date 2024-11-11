@@ -1,23 +1,17 @@
 package com.danum.danum.domain.board.question;
 
+import com.danum.danum.domain.comment.question.QuestionComment;
 import com.danum.danum.domain.member.Member;
 import com.danum.danum.domain.openai.OpenAiConversation;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -60,6 +54,24 @@ public class Question {
     // ai 답변을 저장할 필드 추가
     @Column(name = "ai_response", columnDefinition = "TEXT")
     private String aiResponse;
+
+    @OneToMany(mappedBy = "question", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<QuestionComment> questionComments = new ArrayList<>();
+
+    @Transient
+    private Boolean hasAcceptedComment;
+
+    public boolean hasAcceptedComment() {
+        if (hasAcceptedComment != null) {
+            return hasAcceptedComment;
+        }
+        return false;
+    }
+
+    public void setHasAcceptedComment(boolean hasAcceptedComment) {
+        this.hasAcceptedComment = hasAcceptedComment;
+    }
 
     // ai 답변을 설정하는 메서드 추가
     public void setAiResponse(String aiResponse) {

@@ -55,10 +55,11 @@ public class QuestionServiceImpl implements QuestionService {
                 .map(QuestionViewDto::from);
     }
 
-    @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public QuestionViewDto view(Long id, String email) {
         Question question = findQuestionById(id);
+        boolean hasAccepted = questionCommentRepository.existsByQuestionAndIsAcceptedTrue(question);
+        question.setHasAcceptedComment(hasAccepted);
         processViewCount(question, email);
         return convertToViewDto(question);
     }
