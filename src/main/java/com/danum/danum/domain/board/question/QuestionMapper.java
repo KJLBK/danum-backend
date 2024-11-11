@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Component
@@ -19,10 +20,9 @@ import java.util.Optional;
 public class QuestionMapper {
 
     private final MemberRepository memberRepository;
-
     private final OpenAiConversationRepository conversationRepository;
 
-    public Question toEntity(QuestionNewDto questionNewDto){
+    public Question toEntity(QuestionNewDto questionNewDto) {
         String authorEmail = questionNewDto.getEmail();
         Optional<Member> optionalMember = memberRepository.findById(authorEmail);
 
@@ -33,23 +33,23 @@ public class QuestionMapper {
         Member member = optionalMember.get();
         String addressTag = AddressParser.parseAddress(member.getAddress());
 
-        Question.QuestionBuilder count = Question.builder()
+        Question.QuestionBuilder builder = Question.builder()
                 .member(member)
                 .title(questionNewDto.getTitle())
                 .content(questionNewDto.getContent())
                 .created_at(LocalDateTime.now())
                 .view_count(0L)
                 .like(0L)
-                .addressTag(addressTag);
+                .addressTag(addressTag)
+                .questionComments(new ArrayList<>());
 
         if(questionNewDto.getCreateId() != null) {
             OpenAiConversation conversation = conversationRepository.findById(questionNewDto.getCreateId())
                     .orElseThrow(() -> new OpenAiException(ErrorCode.NO_SUCH_CONVERSATION_EXCEPTION));
 
-            count.conversation(conversation);
+            builder.conversation(conversation);
         }
 
-        return count.build();
+        return builder.build();
     }
-
 }

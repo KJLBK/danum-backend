@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,29 +26,23 @@ public class ChatController {
 
     @MessageMapping("/chat/message")
     public void message(@Payload ChatMessage message, SimpMessageHeaderAccessor headerAccessor) {
-        try {
-            Principal user = headerAccessor.getUser();
-            if (user != null) {
-                String sender = user.getName();
-                log.debug("Processing message from authenticated user: {}", sender);
-                message.setSender(sender);
-                chatService.processMessage(message);
-            } else {
-                log.error("No authentication found in WebSocket session");
-                throw new IllegalArgumentException("User not authenticated");
-            }
-        } catch (IllegalArgumentException e) {
-            log.error("Failed to process message: {}", e.getMessage());
-        }
+        Optional.ofNullable(headerAccessor.getUser())
+                .map(Principal::getName)
+                .ifPresent(sender -> {
+                    log.debug("Processing message from authenticated user: {}", sender);
+                    message.setSender(sender);
+                    chatService.processMessage(message);
+                });
     }
 
     @GetMapping("/main/message")
     public String mainPage(Model model, Authentication authentication) {
-        if (authentication != null && authentication.isAuthenticated()) {
-            String email = authentication.getName();
-            List<ChatMessage> recentMessages = chatService.getRecentMessages(email);
-            model.addAttribute("최근 대화방", recentMessages);
-        }
+        Optional.ofNullable(authentication)
+                .filter(Authentication::isAuthenticated)
+                .map(Authentication::getName)
+                .map(chatService::getRecentMessages)
+                .ifPresent(messages -> model.addAttribute("최근 대화방", messages));
+
         return "main";
     }
 }

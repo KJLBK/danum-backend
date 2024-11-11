@@ -17,24 +17,16 @@ import java.time.LocalDateTime;
 public class QuestionViewDto implements PostDateComparable {
 
     private Long question_id;
-
     private String title;
-
     private String content;
-
     private AuthorDto author;
-
     private LocalDateTime created_at;
-
     private OpenAiConversation conversation;
-
     private Long view_count;
-
     private Long like;
-
     private String addressTag;
-
     private Long createId;
+    private boolean hasAcceptedComment;
 
     public static QuestionViewDto from(Question question) {
         QuestionViewDtoBuilder builder = QuestionViewDto.builder()
@@ -46,7 +38,8 @@ public class QuestionViewDto implements PostDateComparable {
                 .conversation(question.getConversation())
                 .view_count(question.getView_count())
                 .like(question.getLike())
-                .addressTag(question.getAddressTag());
+                .addressTag(question.getAddressTag())
+                .hasAcceptedComment(question.hasAcceptedComment());
 
         OpenAiConversation conversation = question.getConversation();
         if (conversation != null) {
