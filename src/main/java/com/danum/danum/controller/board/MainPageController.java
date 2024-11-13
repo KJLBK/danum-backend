@@ -154,7 +154,7 @@ public class MainPageController {
     @GetMapping("/recent-chats")
     public ResponseEntity<List<RecentChatDto>> getRecentChats(Authentication authentication) {
         String userEmail = authentication.getName();
-        List<RecentChatDto> recentChats = chatService.getRecentChatsForUser(userEmail, 5);
+        List<RecentChatDto> recentChats = chatService.getRecentChatsForUser(userEmail, 10);
         return ResponseEntity.ok(recentChats);
     }
 }
