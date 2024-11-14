@@ -83,11 +83,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Member update(UpdateDto updateDto) {
-        String memberEmail = updateDto.getEmail();
-        Optional<Member> optionalMember = memberRepository.findById(memberEmail);
-        Member member = optionalMember.orElseThrow(() ->
-                new MemberException(ErrorCode.MEMBER_NOT_FOUND_EXCEPTION)
-        );
+        Member member = getMemberByAuthentication();
 
         String changePassword = updateDto.getPassword();
         String changePhone = updateDto.getPhone();
@@ -97,7 +93,11 @@ public class MemberServiceImpl implements MemberService {
         Double changeLongitude = updateDto.getLongitude();
         String changeAddress = updateDto.getAddress();
 
-        // 이름이 변경되었을 때만 중복 검사 수행
+        if (StringUtils.hasText(changeName) && !changeName.equals(member.getName())) {
+            validateDuplicatedName(changeName);
+            member.updateUserName(changeName);
+        }
+
         if (StringUtils.hasText(changeName) && !changeName.equals(member.getName())) {
             validateDuplicatedName(changeName);
             member.updateUserName(changeName);
