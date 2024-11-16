@@ -297,7 +297,9 @@ public class ChatServiceImpl implements ChatService {
                         .map(partner -> ChatPartnerInfo.builder()
                                 .email(partner.getEmail())
                                 .name(partner.getName())
-                                .profileImageUrl(partner.getProfileImageUrl())
+                                .profileImageUrl(Optional.ofNullable(partner.getProfileImageUrl())
+                                        .filter(url -> !url.isEmpty())
+                                        .orElse(null))
                                 .build())
                         .orElse(ChatPartnerInfo.empty()))
                 .orElse(ChatPartnerInfo.empty());
